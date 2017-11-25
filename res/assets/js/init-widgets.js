@@ -1,4 +1,4 @@
-require(['jquery', 'pytsite-widget'], function ($, widget) {
+require(['jquery', 'widget'], function ($, widget) {
     $(function () {
         widget.initAll();
     });

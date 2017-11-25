@@ -96,7 +96,7 @@ class Select2(Select):
         """
         super().__init__(uid, **kwargs)
 
-        self._js_module = 'pytsite-widget-select-select2'
+        self._js_module = 'widget-select-select2'
         self._theme = kwargs.get('theme', 'bootstrap')
         self._ajax_url = kwargs.get('ajax_url')
         self._ajax_delay = kwargs.get('ajax_delay', 750)
@@ -255,7 +255,7 @@ class DateTime(_Text):
 
         super().__init__(uid, **kwargs)
 
-        self._js_module = 'pytsite-widget-select-date-time'
+        self._js_module = 'widget-select-date-time'
         self._css = self._css.replace('widget-input-text', 'widget-select-datetime')
         self.add_rule(_validation.rule.DateTime())
 
@@ -331,7 +331,7 @@ class Pager(_Abstract):
         self._data['per_page'] = self._items_per_page
         self._data['visible_numbers'] = self._visible_numbers
 
-        self._js_module = 'pytsite-widget-select-pager'
+        self._js_module = 'widget-select-pager'
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget.
@@ -487,7 +487,7 @@ class Score(_Abstract):
 
         self.css += ' widget-select-score'
 
-        self._js_module = 'pytsite-widget-select-score'
+        self._js_module = 'widget-select-score'
 
     def _get_element(self, **kwargs) -> _html.Element:
         cont = _html.Div(css='switches-wrap')
@@ -519,7 +519,7 @@ class TrafficLightScore(Score):
         super().__init__(uid, max=3, show_numbers=False, **kwargs)
 
         self._css += ' widget-select-traffic-light-score'
-        self._js_module = 'pytsite-widget-select-traffic-light-score'
+        self._js_module = 'widget-select-traffic-light-score'
 
 
 class ColorPicker(_Text):
@@ -529,7 +529,7 @@ class ColorPicker(_Text):
         super().__init__(uid, **kwargs)
 
         self._css += ' widget-select-color-picker'
-        self._js_module = 'pytsite-widget-select-color-picker'
+        self._js_module = 'widget-select-color-picker'
 
     def _get_element(self, **kwargs):
         self._data['color'] = self.value

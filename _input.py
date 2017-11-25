@@ -47,7 +47,7 @@ class Text(_Abstract):
         self._append = kwargs.get('append')
         self._css = ' '.join((self._css, 'widget-input-text'))
         self._type = 'text'
-        self._js_module = 'pytsite-widget-input-text'
+        self._js_module = 'widget-input-text'
 
     @property
     def max_length(self, ) -> int:
@@ -171,7 +171,7 @@ class TypeaheadText(Text):
         if not source_url:
             raise ValueError('AJAX endpoint is not specified.')
 
-        self._js_module = 'pytsite-widget-input-typeahead-text'
+        self._js_module = 'widget-input-typeahead-text'
         self._css = ' '.join((self._css, 'widget-input-typeahead-text'))
         source_url_query_arg = kwargs.get('source_url_query_arg', self.uid)
         source_url_q = kwargs.get('source_url_args', {})
@@ -217,7 +217,7 @@ class Integer(Number):
         super().__init__(uid, **kwargs)
 
         self._css = ' '.join((self._css, 'widget-input-integer'))
-        self._js_module = 'pytsite-widget-input-integer'
+        self._js_module = 'widget-input-integer'
         self.add_rule(_validation.rule.Integer())
 
     def set_val(self, value, **kwargs):
@@ -247,7 +247,7 @@ class Decimal(Number):
 
         self._css = ' '.join((self._css, 'widget-input-decimal'))
         self.add_rule(_validation.rule.Decimal())
-        self._js_module = 'pytsite-widget-input-decimal'
+        self._js_module = 'widget-input-decimal'
 
     def set_val(self, value, **kwargs):
         """Set value of the widget.
@@ -278,7 +278,7 @@ class StringList(_Abstract):
 
         self._css = ' '.join((self._css, 'widget-string-list'))
         self._data['max_values'] = self._max_values
-        self._js_module = 'pytsite-widget-input-string-list'
+        self._js_module = 'widget-input-string-list'
 
     @property
     def add_btn_label(self) -> str:
@@ -315,7 +315,7 @@ class ListStringList(StringList):
 
         self._col_titles = kwargs.get('col_titles', ())
         self._css = self._css.replace('widget-string-list', 'widget-list-list')
-        self._js_module = 'pytsite-widget-input-list-list'
+        self._js_module = 'widget-input-list-list'
 
         if not self._col_titles:
             raise ValueError("'col_titles' is not specified")
@@ -376,7 +376,7 @@ class Tokens(Text):
         super().__init__(uid, **kwargs)
 
         self._css = ' '.join((self._css, 'widget-token-input'))
-        self._js_module = 'pytsite-widget-input-tokens'
+        self._js_module = 'widget-input-tokens'
         self._local_source = kwargs.get('local_source')
         self._remote_source = kwargs.get('remote_source')
         self._data = {
@@ -419,7 +419,7 @@ class File(_Abstract):
         self._upload_endpoint = kwargs.get('upload_endpoint')
 
         self._css = ' '.join((self._css, 'widget-file'))
-        self._js_module = 'pytsite-widget-input-file'
+        self._js_module = 'widget-input-file'
 
         self._data['max_files'] = self._max_files
 

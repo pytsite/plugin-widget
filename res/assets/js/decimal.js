@@ -1,4 +1,4 @@
-define(['jquery-inputmask', 'pytsite-widget-input-text'], function () {
+define(['jquery-inputmask', 'widget-input-text'], function () {
     return function (widget) {
         var options = {
             allowMinus: false
