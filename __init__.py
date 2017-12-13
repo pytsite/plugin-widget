@@ -1,15 +1,17 @@
 """Pytsite Widget Plugin
 """
-# Public API
-from . import _button as button, _input as input, _select as select, _static as static, _misc as misc
-from ._base import Abstract, Container, MultiRow
-
 __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
+from pytsite import plugman as _plugman
 
-def _init():
+if _plugman.is_installed(__name__):
+    from . import _button as button, _input as input, _select as select, _static as static, _misc as misc
+    from ._base import Abstract, Container, MultiRow
+
+
+def plugin_load():
     from pytsite import tpl, lang
     from plugins import assetman
     lang.register_package(__name__)
@@ -18,8 +20,8 @@ def _init():
     assetman.register_package(__name__)
     assetman.t_copy(__name__ + '@bootstrap-table/**/*', 'bootstrap-table')
     assetman.t_copy(__name__ + '@jquery-color-picker/**/*', 'jquery-color-picker')
-    assetman.t_less(__name__ + '@css/*', 'css')
-    assetman.t_js(__name__ + '@js/*', 'js')
+    assetman.t_less(__name__)
+    assetman.t_js(__name__)
 
     assetman.js_module('widget', __name__ + '@js/widget')
     assetman.js_module('widget-multi-row', __name__ + '@js/multi-row')
@@ -41,6 +43,3 @@ def _init():
 
     assetman.preload(__name__ + '@css/widget.css', True)
     assetman.preload(__name__ + '@js/init-widgets.js', True)
-
-
-_init()
