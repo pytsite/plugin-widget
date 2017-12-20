@@ -14,6 +14,7 @@ if _plugman.is_installed(__name__):
 def plugin_load():
     from pytsite import tpl, lang
     from plugins import assetman
+
     lang.register_package(__name__)
     tpl.register_package(__name__)
 
@@ -43,3 +44,11 @@ def plugin_load():
 
     assetman.preload(__name__ + '@css/widget.css', True)
     assetman.preload(__name__ + '@js/init-widgets.js', True)
+
+
+def plugin_install():
+    from plugins import assetman
+
+    plugin_load()
+    assetman.build(__name__)
+    assetman.build_translations()
