@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 1.2 (2018-02-12)
+
+- Support for PytSite-7.9.
+- Support for dictionary-based data fields in `misc.BootstrapTable`.
+
+
 ### 1.1.2 (2017-12-21)
 
 Init code refactored.

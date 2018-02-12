@@ -1,11 +1,11 @@
-"""Input Widgets
+"""PytSite Input Widgets
 """
-from pytsite import html as _html, util as _util, tpl as _tpl, validation as _validation, router as _router
-from ._base import Abstract as _Abstract
-
 __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
+
+from pytsite import html as _html, util as _util, tpl as _tpl, validation as _validation, router as _router
+from ._base import Abstract as _Abstract
 
 
 class Hidden(_Abstract):

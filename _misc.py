@@ -1,22 +1,22 @@
-"""Various widgets
+"""PytSite Various Widgets
 """
+__author__ = 'Alexander Shepetko'
+__email__ = 'a@shepetko.com'
+__license__ = 'MIT'
+
 import re as _re
+from typing import List as _List, Tuple as _Tuple
 from abc import abstractmethod as _abstractmethod
 from typing import Union as _Union
 from pytsite import html as _html, lang as _lang, util as _util
 from . import _base
-
-__author__ = 'Alexander Shepetko'
-__email__ = 'a@shepetko.com'
-__license__ = 'MIT'
 
 
 class BootstrapTable(_base.Abstract):
     def __init__(self, uid: str, **kwargs):
         super().__init__(uid, **kwargs)
 
-        self._data_fields = []
-        self._data_fields_titles = []
+        self._data_fields = []  # type: _List[_Tuple[str, str, bool]]  # name, title, sortable
         self._default_sort_field = kwargs.get('default_sort_field')
         self._default_sort_order = kwargs.get('default_sort_order', 'asc')
         self._toolbar = _html.Div(uid='bootstrap-table-toolbar')
@@ -28,10 +28,10 @@ class BootstrapTable(_base.Abstract):
         return self._toolbar
 
     @property
-    def data_fields(self) -> list:
+    def data_fields(self) -> tuple:
         """Get data fields
         """
-        return self._data_fields
+        return tuple(self._data_fields)
 
     @data_fields.setter
     def data_fields(self, value: _Union[tuple, list]):
@@ -56,6 +56,8 @@ class BootstrapTable(_base.Abstract):
                 raise TypeError("Invalid format of data field definition: {}".format(f))
 
     def insert_data_field(self, name: str, title: str = None, sortable: bool = True, pos: int = None):
+        """Insert a data field
+        """
         title = _lang.t(title) if title else _lang.t(name)
 
         if not pos:
@@ -64,25 +66,35 @@ class BootstrapTable(_base.Abstract):
         self._data_fields.insert(pos, (name, title, sortable))
 
     def remove_data_field(self, name: str):
+        """Remove a data field
+        """
         self._data_fields = [i for i in self._data_fields if i[0] != name]
 
     @property
     def default_sort_field(self) -> str:
+        """Get default sort field
+        """
         return self._default_sort_field
 
     @default_sort_field.setter
     def default_sort_field(self, value: str):
+        """Set default sort field
+        """
         self._default_sort_field = value
 
     @property
     def default_sort_order(self) -> int:
+        """Get default sort order
+        """
         return self._default_sort_order
 
     @default_sort_order.setter
     def default_sort_order(self, value: int):
+        """Set default sort field
+        """
         self._default_sort_order = value
 
-    def _build_head_row(self, row: _html.Tr):
+    def _alter_head_row(self, row: _html.Tr):
         pass
 
     @_abstractmethod
@@ -127,16 +139,12 @@ class BootstrapTable(_base.Abstract):
         # Checkbox column
         t_head_row.append(_html.Th(data_field='__state', data_checkbox='true'))
 
-        # Head cells
-        if not isinstance(self._data_fields, (list, tuple)):
-            raise TypeError('List or tuple expected.')
+        # Head row's cells
         for f in self._data_fields:
-            if not isinstance(f, (list, tuple)):
-                raise TypeError('List or tuple expected.')
-            th = _html.Th(f[1], data_field=f[0], data_sortable='true' if f[2] else 'false')
-            t_head_row.append(th)
+            t_head_row.append(_html.Th(f[1], data_field=f[0], data_sortable='true' if f[2] else 'false'))
 
-        self._build_head_row(t_head_row)
+        # Call alternation hook
+        self._alter_head_row(t_head_row)
 
         r = _html.TagLessElement()
         r.append(self._toolbar)

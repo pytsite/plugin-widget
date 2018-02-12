@@ -1,11 +1,11 @@
-"""Button Widgets.
+"""PytSite Button Widgets
 """
-from pytsite import html as _html
-from . import _base
-
 __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
+
+from pytsite import html as _html
+from . import _base
 
 
 class Button(_base.Abstract):

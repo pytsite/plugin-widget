@@ -1,13 +1,13 @@
-"""PytSite Base Widget
+"""PytSite Base Widgets
 """
+__author__ = 'Alexander Shepetko'
+__email__ = 'a@shepetko.com'
+__license__ = 'MIT'
+
 from typing import Iterable as _Iterable, Tuple as _Tuple, List as _List
 from abc import ABC as _ABC, abstractmethod as _abstractmethod
 from copy import deepcopy as _deepcopy
 from pytsite import html as _html, validation as _validation, lang as _lang
-
-__author__ = 'Alexander Shepetko'
-__email__ = 'a@shepetko.com'
-__license__ = 'MIT'
 
 
 class Abstract(_ABC):

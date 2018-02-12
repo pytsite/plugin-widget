@@ -1,12 +1,12 @@
-"""Static Widgets.
+"""PytSite Static Widgets
 """
-from typing import Union as _Union
-from pytsite import html as _html
-from . import _base
-
 __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
+
+from typing import Union as _Union
+from pytsite import html as _html
+from . import _base
 
 
 class HTML(_base.Abstract):

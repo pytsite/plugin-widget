@@ -1,5 +1,9 @@
 """PytSite Select Widgets
 """
+__author__ = 'Alexander Shepetko'
+__email__ = 'a@shepetko.com'
+__license__ = 'MIT'
+
 from typing import Union as _Union, List as _List, Tuple as _Tuple
 from collections import OrderedDict as _OrderedDict
 from math import ceil as _ceil
@@ -8,10 +12,6 @@ from pytsite import html as _html, lang as _lang, validation as _validation, uti
 from plugins import hreflang as _hreflang
 from ._base import Abstract as _Abstract
 from ._input import Text as _Text
-
-__author__ = 'Alexander Shepetko'
-__email__ = 'a@shepetko.com'
-__license__ = 'MIT'
 
 
 class Checkbox(_Abstract):
