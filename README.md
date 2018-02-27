@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 1.3 (2018-02-27)
+
+- New widget `misc.TreeTable` added.
+- `select.Select` fixed.
+
+
 ### 1.2 (2018-02-12)
 
 - Support for PytSite-7.9.

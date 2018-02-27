@@ -6,22 +6,20 @@ __license__ = 'MIT'
 
 import re as _re
 from typing import List as _List, Tuple as _Tuple
-from abc import abstractmethod as _abstractmethod
 from typing import Union as _Union
 from pytsite import html as _html, lang as _lang, util as _util
 from . import _base
 
 
-class BootstrapTable(_base.Abstract):
+class DataTable(_base.Abstract):
     def __init__(self, uid: str, **kwargs):
         super().__init__(uid, **kwargs)
 
         self._data_fields = []  # type: _List[_Tuple[str, str, bool]]  # name, title, sortable
         self._default_sort_field = kwargs.get('default_sort_field')
         self._default_sort_order = kwargs.get('default_sort_order', 'asc')
-        self._toolbar = _html.Div(uid='bootstrap-table-toolbar')
+        self._toolbar = _html.Div(uid='{}-toolbar'.format(uid), css='data-table-toolbar')
         self._data_url = kwargs.get('data_url')
-        self._js_module = 'widget-misc-bootstrap-table'
 
     @property
     def toolbar(self) -> _html.Div:
@@ -83,26 +81,22 @@ class BootstrapTable(_base.Abstract):
         self._default_sort_field = value
 
     @property
-    def default_sort_order(self) -> int:
+    def default_sort_order(self) -> str:
         """Get default sort order
         """
         return self._default_sort_order
 
     @default_sort_order.setter
-    def default_sort_order(self, value: int):
+    def default_sort_order(self, value: str):
         """Set default sort field
         """
-        self._default_sort_order = value
+        self._default_sort_order = value if value == 'desc' else 'asc'
 
-    def _alter_head_row(self, row: _html.Tr):
-        pass
 
-    @_abstractmethod
-    def get_rows(self, offset: int = 0, limit: int = 0, sort_field: str = None, sort_order: str = None,
-                 search: str = None) -> list:
-        """Get rows
-        """
-        pass
+class BootstrapTable(DataTable):
+    def __init__(self, uid: str, **kwargs):
+        super().__init__(uid, **kwargs)
+        self._js_module = 'widget-misc-bootstrap-table'
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Get table HTML skeleton
@@ -111,7 +105,7 @@ class BootstrapTable(_base.Abstract):
         table = _html.Table(
             css='hidden sr-only',
             data_url=self._data_url,
-            data_toolbar='#bootstrap-table-toolbar',
+            data_toolbar='#{}-toolbar'.format(self.uid),
             data_show_refresh='true',
             data_search='true',
             data_pagination='true',
@@ -143,11 +137,50 @@ class BootstrapTable(_base.Abstract):
         for f in self._data_fields:
             t_head_row.append(_html.Th(f[1], data_field=f[0], data_sortable='true' if f[2] else 'false'))
 
-        # Call alternation hook
-        self._alter_head_row(t_head_row)
-
         r = _html.TagLessElement()
         r.append(self._toolbar)
+        r.append(table)
+
+        return r
+
+
+class TreeTable(DataTable):
+    def __init__(self, uid: str, **kwargs):
+        """Init
+        """
+        super().__init__(uid, **kwargs)
+
+        self._js_module = 'widget-misc-bootstrap-table'
+
+    def render(self, **kwargs) -> str:
+        """Render the widget
+        """
+        self._data['data-url'] = self._data_url
+        self._data['data-fields'] = ','.join(['{}:{}'.format(v[0], v[1]) for v in self.data_fields])
+        self._data['sort_field'] = self._default_sort_field
+        self._data['sort_order'] = self._default_sort_order
+
+        self._group_wrap = False
+        self._js_module = 'widget-misc-tree-table'
+
+        return super().render(**kwargs)
+
+    def _get_element(self, **kwargs) -> _html.Element:
+        """Get widget's HTML element
+        """
+        # Root element
+        r = _html.TagLessElement()
+
+        # Append toolbar
+        r.append(self._toolbar)
+
+        # Append table
+        table = _html.Table(
+            css='table table-hover table-bordered table-striped',
+        )
+        table.append(_html.THead())
+        table.append(_html.TBody())
+        table.append(_html.TFoot())
         r.append(table)
 
         return r

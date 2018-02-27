@@ -4,7 +4,7 @@ __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Iterable as _Iterable, Tuple as _Tuple, List as _List
+from typing import Tuple as _Tuple, List as _List, Optional as _Optional
 from abc import ABC as _ABC, abstractmethod as _abstractmethod
 from copy import deepcopy as _deepcopy
 from pytsite import html as _html, validation as _validation, lang as _lang
@@ -18,7 +18,7 @@ class Abstract(_ABC):
         """Init
         """
         self._uid = uid
-        self._wrap_em = _html.Div()
+        self._wrap_em = kwargs.get('wrap_em', _html.Div())
         self._name = kwargs.get('name', uid)
         self._language = kwargs.get('language', _lang.get_current())
         self._weight = kwargs.get('weight', 0)
@@ -63,14 +63,13 @@ class Abstract(_ABC):
         if self.required:
             self.add_rule(_validation.rule.NonEmpty())
 
+        # It is important to filter value through the setter-method
         if 'value' in kwargs:
-            # It is important to filter value through the setter-method
             self.set_val(kwargs.get('value'), mode='init')
         else:
-            self._value = _deepcopy(self._default)
+            self.set_val(_deepcopy(self._default), mode='init')
 
-    @_abstractmethod
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> _Optional[_html.Element]:
         """Hook.
         """
         pass
@@ -78,8 +77,11 @@ class Abstract(_ABC):
     def get_element(self, **kwargs) -> _html.Element:
         """Get an HTML element representation of the widget
         """
+        class_id = self.__module__ + '.' + self.__class__.__name__
+        class_id_css = self.__class__.__name__.lower().replace('_', '-')
+
         # Wrapper div
-        self._wrap_em.set_attr('data_cid', self.__module__ + '.' + self.__class__.__name__)
+        self._wrap_em.set_attr('data_cid', class_id)
         self._wrap_em.set_attr('data_uid', self._uid)
         self._wrap_em.set_attr('data_weight', self._weight)
         self._wrap_em.set_attr('data_form_area', self._form_area)
@@ -95,11 +97,8 @@ class Abstract(_ABC):
         if self._replaces:
             self._wrap_em.set_attr('data_replaces', self._replaces)
 
-        # Get widget's HTML element
-        em = self._get_element(**kwargs)
-
         # Wrapper CSS
-        wrap_css = 'pytsite-widget widget-uid-{} {}'.format(self._uid, self._css)
+        wrap_css = 'pytsite-widget pytsite-widget-{} widget-uid-{} {}'.format(class_id_css, self._uid, self._css)
         if self._hidden:
             wrap_css += ' hidden sr-only'
         self._wrap_em.set_attr('css', wrap_css)
@@ -109,12 +108,15 @@ class Abstract(_ABC):
             for k, v in self._data.items():
                 self._wrap_em.set_attr('data_' + k, v)
 
-        # Wrap into 'form-group' div
-        if self._group_wrap:
-            em = self._wrap_into_group(em)
+        # Get widget's HTML element
+        em = self._get_element(**kwargs)
+        if em:
+            # Wrap into 'form-group' div
+            if self._group_wrap:
+                em = self._wrap_into_group(em)
 
-        # Wrap widget's HTML
-        self._wrap_em.append(em)
+            # Wrap widget's HTML
+            self._wrap_em.append(em)
 
         return self._wrap_em
 
@@ -445,8 +447,8 @@ class Abstract(_ABC):
 
         return self
 
-    def add_rules(self, rules: _Iterable):
-        """Add multiple validation rules.
+    def add_rules(self, rules: _List[_validation.rule.Rule]):
+        """Add multiple validation rules
         """
         for rule in rules:
             self.add_rule(rule)

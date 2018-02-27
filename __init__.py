@@ -37,6 +37,7 @@ def plugin_load():
     assetman.js_module('widget-select-traffic-light-score', __name__ + '@js/traffic-light-score')
     assetman.js_module('widget-select-color-picker', __name__ + '@js/color-picker')
     assetman.js_module('widget-misc-bootstrap-table', __name__ + '@js/bootstrap-table')
+    assetman.js_module('widget-misc-tree-table', __name__ + '@js/tree-table')
 
 
 def plugin_install():

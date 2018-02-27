@@ -64,10 +64,11 @@ class Select(_Abstract):
         super().__init__(uid, **kwargs)
 
         self._items = kwargs.get('items', [])
-        if type(self._items) not in (list, tuple):
-            raise TypeError('List or tuple expected.')
+        if not isinstance(self._items, (list, tuple)):
+            raise TypeError('List or tuple expected')
 
         self._append_none_item = kwargs.get('append_none_item', True)
+        self._exclude = kwargs.get('exclude', [])
 
     def _get_select_html_em(self) -> _html.Element:
         select = _html.Select(name=self.name, css='form-control', required=self._required)
@@ -76,6 +77,9 @@ class Select(_Abstract):
             select.append(_html.Option('--- ' + _lang.t('plugins.widget@select_none_item') + ' ---', value=''))
 
         for item in self._items:
+            if self._exclude and item[0] in self._exclude:
+                continue
+
             option = _html.Option(item[1], value=item[0])
             if item[0] == self._value:
                 option.set_attr('selected', True)
