@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.3.1 (2018-03-05)
+
+Missing `select.Select.enabled` argument support fixed.
+
+
 ### 1.3 (2018-02-27)
 
 - New widget `misc.TreeTable` added.
