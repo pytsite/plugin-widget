@@ -71,7 +71,10 @@ class Select(_Abstract):
         self._exclude = kwargs.get('exclude', [])
 
     def _get_select_html_em(self) -> _html.Element:
-        select = _html.Select(name=self.name, css='form-control', required=self._required, disabled=not self._enabled)
+        select = _html.Select(name=self.name, css='form-control', required=self._required)
+
+        if not self._enabled:
+            select.set_attr('disabled', 'disabled')
 
         if self._append_none_item:
             select.append(_html.Option('--- ' + _lang.t('plugins.widget@select_none_item') + ' ---', value=''))

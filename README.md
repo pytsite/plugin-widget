@@ -4,9 +4,14 @@
 ## Changelog
 
 
+### 1.3.2 (2018-03-05)
+
+Incorrect 'enabled' property usage in `select.Select` fixed.
+
+
 ### 1.3.1 (2018-03-05)
 
-Missing `select.Select.enabled` argument support fixed.
+Missing `select.Select`'s 'enabled' argument support fixed.
 
 
 ### 1.3 (2018-02-27)
