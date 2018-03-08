@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.4 (2018-03-08)
+
+Little support of Twitter Bootstrap 4 added.
+
+
 ### 1.3.3 (2018-03-08)
 
 Number input widgets slightly refactored.

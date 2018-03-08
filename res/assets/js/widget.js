@@ -25,7 +25,7 @@ define(['jquery'], function ($) {
          *
          * @type {jQuery.data}
          */
-        self.data = function(key) {
+        self.data = function (key) {
             return self.em.data(key);
         };
 
@@ -39,6 +39,12 @@ define(['jquery'], function ($) {
             self.em.removeClass('has-warning');
             self.em.removeClass('has-error');
 
+            // Twitter Bootstrap 4
+            self.em.find('.form-control').each(function () {
+                $(this).removeClass('is-valid');
+                $(this).removeClass('is-invalid');
+            });
+
             return self;
         };
 
@@ -51,6 +57,12 @@ define(['jquery'], function ($) {
         self.setState = function (type) {
             self.clearState();
             self.em.addClass('has-' + type);
+
+            // Twitter Bootstrap 4
+            if (type === 'success')
+                self.em.find('.form-control').addClass('is-valid');
+            if (type === 'error')
+                self.em.find('.form-control').addClass('is-invalid');
 
             return self;
         };
@@ -71,11 +83,22 @@ define(['jquery'], function ($) {
          * Add a message to the widget
          *
          * @param msg
+         * @param color
          * @returns {Widget}
          */
-        self.addMessage = function (msg) {
-            if (self.messagesEm.length)
-                self.messagesEm.append('<span class="help-block">' + msg + '</span>');
+        self.addMessage = function (msg, color) {
+            if (!color)
+                color = 'muted';
+
+            if (self.messagesEm.length) {
+                var msgEm = $('<small class="help-block">' + msg + '</small>');
+
+                // Twitter Bootstrap 4
+                msgEm.addClass('form-text');
+                msgEm.addClass('text-' + color);
+
+                self.messagesEm.append(msgEm);
+            }
 
             return self;
         };

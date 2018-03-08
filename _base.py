@@ -514,7 +514,7 @@ class Abstract(_ABC):
 
         # Append help block
         if self._help:
-            wrap.append(_html.Span(self._help, css='help-block'))
+            wrap.append(_html.Small(self._help, css='help-block form-text text-muted'))
 
         # Append messages placeholder
         wrap.append(_html.Div(css='widget-messages'))
