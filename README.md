@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.3.3 (2018-03-08)
+
+Number input widgets slightly refactored.
+
+
 ### 1.3.2 (2018-03-05)
 
 Incorrect 'enabled' property usage in `select.Select` fixed.

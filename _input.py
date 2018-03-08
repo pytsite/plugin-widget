@@ -42,6 +42,7 @@ class Text(_Abstract):
         """
         super().__init__(uid, **kwargs)
 
+        self._min_length = kwargs.get('min_length')
         self._max_length = kwargs.get('max_length')
         self._prepend = kwargs.get('prepend')
         self._append = kwargs.get('append')
@@ -76,6 +77,9 @@ class Text(_Abstract):
 
         if not self._enabled:
             inp.set_attr('disabled', True)
+
+        if self._min_length:
+            inp.set_attr('minlength', self._min_length)
 
         if self._max_length:
             inp.set_attr('maxlength', self._max_length)
@@ -190,18 +194,33 @@ class Number(Text):
 
         self._type = 'tel'
         self._allow_minus = kwargs.get('allow_minus', False)
+        self._right_align = kwargs.get('right_align', False)
         self._min = kwargs.get('min')
         self._max = kwargs.get('max')
-        self._css = ' '.join((self._css, 'widget-input-number'))
+        self._js_module = 'widget-input-number'
 
         if self._allow_minus:
             self._data['allow_minus'] = 'true'
+        if self._right_align:
+            self._data['right_align'] = 'true'
 
         # Validation rules
         if self._min is not None:
             self.add_rule(_validation.rule.GreaterOrEqual(than=self._min))
         if self._max is not None:
             self.add_rule(_validation.rule.LessOrEqual(than=self._max))
+
+    def set_val(self, value, **kwargs):
+        """Set value of the widget.
+        """
+        if isinstance(value, str):
+            value = value.strip()
+            if not value:
+                value = self._default
+        elif value is None:
+            value = self._default
+
+        return super().set_val(value, **kwargs)
 
 
 class Integer(Number):
@@ -211,26 +230,9 @@ class Integer(Number):
     def __init__(self, uid: str, **kwargs):
         """Init.
         """
-        if 'default' not in kwargs:
-            kwargs['default'] = 0
-
         super().__init__(uid, **kwargs)
 
-        self._css = ' '.join((self._css, 'widget-input-integer'))
-        self._js_module = 'widget-input-integer'
         self.add_rule(_validation.rule.Integer())
-
-    def set_val(self, value, **kwargs):
-        """Set value of the widget.
-        """
-        if isinstance(value, str):
-            value = value.strip()
-            if not value:
-                value = self._default
-        elif value is None:
-            value = self._default
-
-        return super().set_val(int(value), **kwargs)
 
 
 class Decimal(Number):
@@ -240,26 +242,9 @@ class Decimal(Number):
     def __init__(self, uid: str, **kwargs):
         """Init.
         """
-        if 'default' not in kwargs:
-            kwargs['default'] = 0
-
         super().__init__(uid, **kwargs)
 
-        self._css = ' '.join((self._css, 'widget-input-decimal'))
         self.add_rule(_validation.rule.Decimal())
-        self._js_module = 'widget-input-decimal'
-
-    def set_val(self, value, **kwargs):
-        """Set value of the widget.
-        """
-        if isinstance(value, str):
-            value = value.strip()
-            if not value:
-                value = self._default
-        elif value is None:
-            value = self._default
-
-        return super().set_val(float(value), **kwargs)
 
 
 class StringList(_Abstract):
