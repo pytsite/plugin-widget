@@ -60,6 +60,7 @@ class Abstract(_ABC):
             if not isinstance(rule, _validation.rule.Rule):
                 raise TypeError('Instance of pytsite.validation.rule.Base expected.')
 
+        # Required
         if self.required:
             self.add_rule(_validation.rule.NonEmpty())
 
@@ -68,6 +69,11 @@ class Abstract(_ABC):
             self.set_val(kwargs.get('value'), mode='init')
         else:
             self.set_val(_deepcopy(self._default), mode='init')
+
+        # Process data-attributes
+        for k, v in kwargs.items():
+            if k.startswith('data_'):
+                self._data[k.replace('data_', '')] = v
 
     def _get_element(self, **kwargs) -> _Optional[_html.Element]:
         """Hook.
