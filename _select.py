@@ -71,7 +71,12 @@ class Select(_Abstract):
         self._exclude = kwargs.get('exclude', [])
 
     def _get_select_html_em(self) -> _html.Element:
-        select = _html.Select(name=self.name, css='form-control', required=self._required)
+        select = _html.Select(
+            uid=self._uid,
+            name=self.name,
+            css='form-control',
+            required=self._required
+        )
 
         if not self._enabled:
             select.set_attr('disabled', 'disabled')

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.5.1 (2018-03-09)
+
+Missing 'id' attribute in `select.Select`''s HTML element fixed.
+
+
 ### 1.5 (2018-03-09)
 
 Processing of arbitrary data-attributes added.
