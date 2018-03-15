@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 1.6 (2018-03-15)
+
+- New hook method: `widget.Abstract.form_submit()`.
+- `kwargs` removed from `widget.Abstract.set_val()` arguments.
+
+
 ### 1.5.1 (2018-03-09)
 
 Missing 'id' attribute in `select.Select`''s HTML element fixed.

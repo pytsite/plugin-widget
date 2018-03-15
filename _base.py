@@ -66,17 +66,21 @@ class Abstract(_ABC):
 
         # It is important to filter value through the setter-method
         if 'value' in kwargs:
-            self.set_val(kwargs.get('value'), mode='init')
+            self.set_val(kwargs.get('value'))
         else:
-            self.set_val(_deepcopy(self._default), mode='init')
+            self.set_val(_deepcopy(self._default))
 
         # Process data-attributes
         for k, v in kwargs.items():
             if k.startswith('data_'):
                 self._data[k.replace('data_', '')] = v
 
+    @_abstractmethod
     def _get_element(self, **kwargs) -> _Optional[_html.Element]:
-        """Hook.
+        pass
+
+    def form_submit(self, form_uid: str):
+        """Hook
         """
         pass
 
@@ -127,7 +131,7 @@ class Abstract(_ABC):
         return self._wrap_em
 
     def render(self, **kwargs) -> str:
-        """Render the widget into a string.
+        """Render the widget into a string
         """
         return self.get_element(**kwargs).render()
 
@@ -138,7 +142,7 @@ class Abstract(_ABC):
         return "{}.{}(uid='{}', name='{}')".format(__name__, self.__class__.__name__, self.uid, self.name)
 
     def get_val(self, **kwargs):
-        """Get value of the widget.
+        """Get value of the widget
         """
         return self._value
 
@@ -148,12 +152,12 @@ class Abstract(_ABC):
 
     @property
     def value(self):
-        """Shortcut for get_value().
+        """Shortcut for get_value()
         """
         return self.get_val()
 
-    def set_val(self, value, **kwargs):
-        """Set value of the widget.
+    def set_val(self, value):
+        """Set value of the widget
         """
         self._value = value if value is not None else _deepcopy(self._default)
 
@@ -161,7 +165,7 @@ class Abstract(_ABC):
 
     @value.setter
     def value(self, val):
-        """Shortcut for set_value().
+        """Shortcut for set_value()
         """
         self.set_val(val)
 
@@ -169,14 +173,14 @@ class Abstract(_ABC):
         self._value = _deepcopy(self._default)
 
     def hide(self):
-        """Hides the widget.
+        """Hides the widget
         """
         self._hidden = True
 
         return self
 
     def show(self):
-        """Shows the widget.
+        """Shows the widget
         """
         self._hidden = False
 
@@ -184,19 +188,19 @@ class Abstract(_ABC):
 
     @property
     def uid(self) -> str:
-        """Get UID of the widget.
+        """Get UID of the widget
         """
         return self._uid
 
     @uid.setter
     def uid(self, value):
-        """Set UID of the widget.
+        """Set UID of the widget
         """
         self._uid = value
 
     @property
     def name(self) -> str:
-        """Get name of the widget.
+        """Get name of the widget
         """
         return self._name
 
@@ -222,37 +226,37 @@ class Abstract(_ABC):
 
     @property
     def label(self) -> str:
-        """Get label of the widget.
+        """Get label of the widget
         """
         return self._label
 
     @label.setter
     def label(self, value: str):
-        """Set label of the widget.
+        """Set label of the widget
         """
         self._label = value
 
     @property
     def title(self) -> str:
-        """Get title of the widget.
+        """Get title of the widget
         """
         return self._title
 
     @title.setter
     def title(self, value: str):
-        """Set title of the widget.
+        """Set title of the widget
         """
         self._title = value
 
     @property
     def placeholder(self):
-        """Get placeholder of the widget.
+        """Get placeholder of the widget
         """
         return self._placeholder
 
     @property
     def css(self) -> str:
-        """Get CSS classes of the widget.
+        """Get CSS classes of the widget
         """
         return self._css
 
@@ -262,49 +266,49 @@ class Abstract(_ABC):
 
     @property
     def has_success(self):
-        """Get has_success property of the widget.
+        """Get has_success property of the widget
         """
         return self._has_success
 
     @has_success.setter
     def has_success(self, value: str):
-        """Set has_success property of the widget.
+        """Set has_success property of the widget
         """
         self._has_success = value
 
     @property
     def has_warning(self):
-        """Get has_warning property of the widget.
+        """Get has_warning property of the widget
         """
         return self._has_warning
 
     @has_warning.setter
     def has_warning(self, value: str):
-        """Set has_warning property of the widget.
+        """Set has_warning property of the widget
         """
         self._has_warning = value
 
     @property
     def has_error(self):
-        """Get has_error property of the widget.
+        """Get has_error property of the widget
         """
         return self._has_error
 
     @has_error.setter
     def has_error(self, value: str):
-        """Set has_error property of the widget.
+        """Set has_error property of the widget
         """
         self._has_error = value
 
     @property
     def help(self):
-        """Get help string of the widget.
+        """Get help string of the widget
         """
         return self._help
 
     @help.setter
     def help(self, value: str):
-        """Set help string of the widget.
+        """Set help string of the widget
         """
         self._help = value
 
@@ -391,12 +395,12 @@ class Abstract(_ABC):
         self._group_wrap = value
 
     def has_child(self, uid: str) -> bool:
-        """Check if the widget has a child.
+        """Check if the widget has a child
         """
         return uid in self._children_uids
 
     def has_descendant(self, uid: str) -> bool:
-        """Check if the widget has a child.
+        """Check if the widget has a child
         """
         for w in self._children:
             if w.uid == uid:
@@ -407,7 +411,7 @@ class Abstract(_ABC):
         return False
 
     def append_child(self, widget):
-        """Append a child widget.
+        """Append a child widget
 
         :type widget: Abstract
         :rtype: Abstract
@@ -425,7 +429,7 @@ class Abstract(_ABC):
         return widget
 
     def get_child(self, uid: str):
-        """Get child widget by uid.
+        """Get child widget by uid
 
         :rtype: Abstract
         """
@@ -437,7 +441,7 @@ class Abstract(_ABC):
                 return w
 
     def remove_child(self, uid: str):
-        """Remove child widget.
+        """Remove child widget
         """
         if not self.has_child(uid):
             raise RuntimeError("Widget '{}' doesn't contain child '{}'.".format(self.uid, uid))
@@ -447,7 +451,7 @@ class Abstract(_ABC):
         return self
 
     def add_rule(self, rule: _validation.rule.Rule):
-        """Add single validation rule.
+        """Add single validation rule
         """
         self._rules.append(rule)
 
@@ -462,7 +466,7 @@ class Abstract(_ABC):
         return self
 
     def get_rules(self) -> _Tuple[_validation.rule.Rule, ...]:
-        """Get validation rules.
+        """Get validation rules
         """
         return tuple(self._rules)
 
@@ -474,10 +478,10 @@ class Abstract(_ABC):
         return self
 
     def validate(self):
-        """Validate the widget's rules.
+        """Validate the widget's rules
         """
         for rule in self.get_rules():
-            rule.validate(self.get_val(mode='validation'))
+            rule.validate(self.get_val())
 
     def _wrap_into_group(self, content) -> _html.Element:
         """Wraps a widget, an HTML element or a string into 'form-group' container.
@@ -529,7 +533,7 @@ class Abstract(_ABC):
 
 
 class Container(Abstract):
-    """Simple Container Widget.
+    """Simple Container Widget
     """
 
     def __init__(self, uid: str, **kwargs):
@@ -543,7 +547,7 @@ class Container(Abstract):
         """
         for w in self.children:
             for rule in w.get_rules():
-                rule.validate(w.get_val(mode='validation'))
+                rule.validate(w.get_val())
 
     def _get_element(self, **kwargs) -> _html.Element:
         cont = _html.TagLessElement(child_sep=self._child_sep)
@@ -555,7 +559,7 @@ class Container(Abstract):
 
 
 class MultiRow(Abstract):
-    """Multi Row Widget.
+    """Multi Row Widget
     """
 
     def __init__(self, uid: str, **kwargs):
@@ -573,7 +577,7 @@ class MultiRow(Abstract):
     def children(self):
         raise NotImplementedError('This widget can not contain children')
 
-    def set_val(self, value: list, **kwargs):
+    def set_val(self, value: list):
         if value is None:
             value = []
 
@@ -622,7 +626,7 @@ class MultiRow(Abstract):
         super().set_val(value)
 
     def validate(self):
-        """Validate widget's rules.
+        """Validate widget's rules
         """
         row_i = 0
         for row in self._children:
@@ -630,7 +634,7 @@ class MultiRow(Abstract):
             for w in row:
                 for rule in w.get_rules():
                     try:
-                        rule.validate(w.get_val(mode='validation'))
+                        rule.validate(w.get_val())
                     except _validation.error.RuleError as e:
                         msg_id = 'plugins.widget@multi_row_validation_error'
                         msg_args = {
@@ -647,13 +651,13 @@ class MultiRow(Abstract):
 
     @_abstractmethod
     def _get_headers_row(self) -> list:
-        """Hook.
+        """Hook
         """
         pass
 
     @_abstractmethod
     def _get_widgets_row(self) -> list:
-        """Hook.
+        """Hook
         """
         pass
 

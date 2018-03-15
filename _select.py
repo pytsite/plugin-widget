@@ -24,13 +24,13 @@ class Checkbox(_Abstract):
         kwargs.setdefault('label_disabled', True)
         super().__init__(uid, **kwargs)
 
-    def set_val(self, value, **kwargs):
+    def set_val(self, value):
         # If checkbox is checked on client side, we get list of 2 two items: ['', 'True'],
         # or empty string otherwise
         if isinstance(value, list):
             value = value[-1] if value else False
 
-        super().set_val(True if value in (True, 'True', 'true') else False, **kwargs)
+        super().set_val(True if value in (True, 'True', 'true') else False)
 
     @property
     def checked(self) -> bool:
@@ -141,7 +141,7 @@ class Checkboxes(Select):
 
         super().__init__(uid, **kwargs)
 
-    def set_val(self, value: _Union[_List, _Tuple], **kwargs):
+    def set_val(self, value: _Union[_List, _Tuple]):
         """Set value of the widget.
         """
         super().set_val(_util.cleanup_list(value, self._unique))
@@ -271,7 +271,7 @@ class DateTime(_Text):
         self._css = self._css.replace('widget-input-text', 'widget-select-datetime')
         self.add_rule(_validation.rule.DateTime())
 
-    def set_val(self, value, **kwargs):
+    def set_val(self, value):
         """Set value of the widget.
         """
         if isinstance(value, str):
@@ -281,7 +281,7 @@ class DateTime(_Text):
             else:
                 value = _datetime.now()
 
-        return super().set_val(value, **kwargs)
+        return super().set_val(value)
 
     def get_val(self, **kwargs) -> _datetime:
         """Get value of the widget.

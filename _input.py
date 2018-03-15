@@ -220,7 +220,7 @@ class Number(Text):
         elif value is None:
             value = self._default
 
-        return super().set_val(value, **kwargs)
+        return super().set_val(value)
 
 
 class Integer(Number):
@@ -273,7 +273,7 @@ class StringList(_Abstract):
     def add_btn_icon(self) -> str:
         return self._add_btn_icon
 
-    def set_val(self, value, **kwargs):
+    def set_val(self, value):
         """Set value of the widget.
         """
         if not value:
@@ -282,7 +282,7 @@ class StringList(_Abstract):
         if type(value) not in (list, tuple):
             raise ValueError('List or tuple expected.')
 
-        return super().set_val(_util.cleanup_list(value, self._unique), **kwargs)
+        return super().set_val(_util.cleanup_list(value, self._unique))
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget.
