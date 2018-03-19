@@ -352,9 +352,6 @@ class Pager(_Abstract):
         if self._total_pages == 0:
             return _html.TagLessElement()
 
-        if self._total_pages == 1:
-            self._hidden = True
-
         start_visible_num = self._current_page - _ceil((self._visible_numbers - 1) / 2)
         if start_visible_num < 1:
             start_visible_num = 1
@@ -406,6 +403,12 @@ class Pager(_Abstract):
         ul.append(li)
 
         return ul
+
+    def render(self):
+        if self._total_pages == 1:
+            self.hide()
+
+        return super().render()
 
     @property
     def skip(self):

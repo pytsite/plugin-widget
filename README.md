@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.6.1 (2018-03-19)
+
+`select.Pager` visibility issue fixed.
+
+
 ### 1.6 (2018-03-15)
 
 - New hook method: `widget.Abstract.form_submit()`.
