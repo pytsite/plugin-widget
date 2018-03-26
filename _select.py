@@ -558,7 +558,7 @@ class Breadcrumb(_Abstract):
         self._css += ' widget-select-breadcrumb'
         self._group_wrap = False
 
-        self._items = kwargs.get('items', [])
+        self._items = list(kwargs.get('items', []))
 
     def _get_element(self) -> _html.Element:
         nav = _html.Nav(aria_label=self.label, role='navigation')
@@ -570,12 +570,14 @@ class Breadcrumb(_Abstract):
                 item_len = len(item)
 
                 if item_len > 1 and item[1]:
-                    ol.append(_html.Li(_html.A(item[0], href=item[1]), css='breadcrumb-item'))
+                    ol.append(_html.Li(_html.A(_util.escape_html(item[0]), href=item[1]), css='breadcrumb-item'))
                 elif item_len == 1 or (item_len > 1 and not item[1]):
-                    ol.append(_html.Li(item[0], css='breadcrumb-item active'))
+                    ol.append(_html.Li(_util.escape_html(item[0]), css='breadcrumb-item active'))
                     break
 
         return nav
 
     def append_item(self, title: str, link: str = None):
         self._items.append((title, link))
+
+        return self

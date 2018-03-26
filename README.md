@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.7.1 (2018-03-26)
+
+HTML escaping and argument checking fixed in `select.Breadcrumb`.
+
+
 ### 1.7 (2018-03-26)
 
 - New method: `select.Breadcrumb.append_item()`.
