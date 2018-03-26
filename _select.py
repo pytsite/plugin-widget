@@ -15,11 +15,11 @@ from ._input import Text as _Text
 
 
 class Checkbox(_Abstract):
-    """Single Checkbox Widget.
+    """Single Checkbox Widget
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         kwargs.setdefault('label_disabled', True)
         super().__init__(uid, **kwargs)
@@ -41,8 +41,6 @@ class Checkbox(_Abstract):
         self.set_val(value)
 
     def _get_element(self, **kwargs) -> _html.Element:
-        """Render the widget.
-        """
         div = _html.Div(css='checkbox')
         div.append(_html.Input(type='hidden', name=self._name))
         label = _html.Label(self._label, label_for=self._uid)
@@ -59,7 +57,7 @@ class Select(_Abstract):
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         super().__init__(uid, **kwargs)
 
@@ -96,15 +94,12 @@ class Select(_Abstract):
         return select
 
     def _get_element(self, **kwargs):
-        """Render the widget.
-        :param **kwargs:
-        """
         return self._get_select_html_em()
 
 
 class Select2(Select):
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         super().__init__(uid, **kwargs)
 
@@ -129,11 +124,11 @@ class Select2(Select):
 
 
 class Checkboxes(Select):
-    """Group of Checkboxes Widget.
+    """Group of Checkboxes Widget
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         kwargs.setdefault('default', ())
 
@@ -168,7 +163,7 @@ class Language(Select):
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         super().__init__(uid, **kwargs)
         self._items = kwargs.get('items', [])
@@ -178,11 +173,11 @@ class Language(Select):
 
 
 class LanguageNav(_Abstract):
-    """Language Nav Widget.
+    """Language Nav Widget
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         super().__init__(uid, **kwargs)
 
@@ -257,11 +252,11 @@ class LanguageNav(_Abstract):
 
 
 class DateTime(_Text):
-    """Date/Time Select Widget.
+    """Date/Time Select Widget
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         kwargs['default'] = kwargs.get('default', _datetime.now())
 
@@ -429,11 +424,11 @@ class Pager(_Abstract):
 
 
 class Tabs(_Abstract):
-    """Tabs Widget.
+    """Tabs Widget
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         super().__init__(uid, **kwargs)
 
@@ -492,6 +487,8 @@ class Tabs(_Abstract):
 
 class Score(_Abstract):
     def __init__(self, uid: str, **kwargs):
+        """Init
+        """
         kwargs['default'] = kwargs.get('default', 3)
 
         super().__init__(uid, **kwargs)
@@ -527,7 +524,7 @@ class Score(_Abstract):
 
 class TrafficLightScore(Score):
     def __init__(self, uid: str, **kwargs):
-        """Hook.
+        """Init
         """
         kwargs['default'] = kwargs.get('default', 2)
 
@@ -539,7 +536,7 @@ class TrafficLightScore(Score):
 
 class ColorPicker(_Text):
     def __init__(self, uid: str, **kwargs):
-        """Hook.
+        """Init
         """
         super().__init__(uid, **kwargs)
 
@@ -554,14 +551,14 @@ class ColorPicker(_Text):
 
 class Breadcrumb(_Abstract):
     def __init__(self, uid: str, **kwargs):
-        """Hook.
+        """Init
         """
         super().__init__(uid, **kwargs)
 
         self._css += ' widget-select-breadcrumb'
         self._group_wrap = False
 
-        self._items = kwargs.get('items', ())
+        self._items = kwargs.get('items', [])
 
     def _get_element(self) -> _html.Element:
         nav = _html.Nav(aria_label=self.label, role='navigation')
@@ -570,12 +567,15 @@ class Breadcrumb(_Abstract):
             ol = nav.append(_html.Ol(css='breadcrumb'))
 
             for item in self._items:
-                if len(item) != 2:
-                    continue
+                item_len = len(item)
 
-                if item[1]:
+                if item_len > 1 and item[1]:
                     ol.append(_html.Li(_html.A(item[0], href=item[1]), css='breadcrumb-item'))
-                else:
+                elif item_len == 1 or (item_len > 1 and not item[1]):
                     ol.append(_html.Li(item[0], css='breadcrumb-item active'))
+                    break
 
         return nav
+
+    def append_item(self, title: str, link: str = None):
+        self._items.append((title, link))

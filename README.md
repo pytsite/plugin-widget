@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 1.7 (2018-03-26)
+
+- New method: `select.Breadcrumb.append_item()`.
+- Small improvement of `select.Breadcrumb`'s rendering code.
+
+
 ### 1.6.1 (2018-03-19)
 
 `select.Pager` visibility issue fixed.
