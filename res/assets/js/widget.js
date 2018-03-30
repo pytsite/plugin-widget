@@ -8,7 +8,6 @@ define(['jquery'], function ($) {
     function Widget(em) {
         var self = this;
         self.em = em = $(em);
-        self.data = em.data;
         self.cid = em.data('cid');
         self.uid = em.data('uid');
         self.replaces = em.data('replaces');
@@ -126,21 +125,24 @@ define(['jquery'], function ($) {
             return self;
         };
 
-        /*
-         * Add a child widget.
+        /**
          *
+         * Add a child widget
+         *
+         * @param {Widget} child
          * @returns {Widget}
          */
-        self.addChild = function (child) {
+        self.appendChild = function (child) {
             if (self.children.hasOwnProperty(child.uid))
                 throw 'Widget ' + self.uid + ' already has child widget ' + child.uid;
 
             self.children[child.uid] = child;
+            self.em.append(child.em);
 
             return self
         };
 
-        // Load widget's assets
+        // Load and execute widget's JS module
         if (self.jsModule.length) {
             require([self.jsModule], function (initCallback) {
                 if ($.isFunction(initCallback)) {
@@ -156,11 +158,6 @@ define(['jquery'], function ($) {
         // Mark widget as initialized
         self.em.addClass('initialized');
         $(self).trigger('ready', [self]);
-
-        // Create children widgets
-        self.em.find(".pytsite-widget[data-parent-uid='" + self.uid + "']:not(.initialized)").each(function () {
-            self.addChild(new Widget(this));
-        });
     }
 
     /**

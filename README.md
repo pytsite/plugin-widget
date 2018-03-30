@@ -4,6 +4,13 @@
 ## Changelog
 
 
+### 1.8 (2018-03-30)
+
+- Children support moved from `Abstract` to `Container` widget.
+- `Abstract._get_element` is not abstract anymore and can return
+  `Container` widget now.
+
+
 ### 1.7.1 (2018-03-26)
 
 HTML escaping and argument checking fixed in `select.Breadcrumb`.
