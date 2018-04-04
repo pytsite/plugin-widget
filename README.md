@@ -4,6 +4,13 @@
 ## Changelog
 
 
+### 1.9 (2018-04-04)
+
+- Placing label instead of placeholder behaviour removed.
+- Horizontal sizer issue fixed.
+- `select.Tabs.append_child()` fixed and renamed to `add_child()`.
+
+
 ### 1.8 (2018-03-30)
 
 - Children support moved from `Abstract` to `Container` widget.

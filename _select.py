@@ -445,7 +445,7 @@ class Tabs(_Abstract):
 
         return self
 
-    def append_child(self, widget: _Abstract, tab_id: str = None) -> _Abstract:
+    def add_widget(self, widget: _Abstract, tab_id: str = None) -> _Abstract:
         """Add a child widget.
         """
         if not self._tabs:
@@ -453,8 +453,6 @@ class Tabs(_Abstract):
 
         if not tab_id:
             tab_id = list(self._tabs.keys())[0]
-
-        super().append_child(widget)
 
         self._tabs[tab_id]['widgets'].append(widget)
 
@@ -477,8 +475,8 @@ class Tabs(_Abstract):
             tab_content_div = _html.Div('', css=tab_content_css, uid='tab-uid-' + tab_id)
             tabs_content.append(tab_content_div)
 
-            for widget in sorted(tab['widgets'], key=lambda x: x.weight):
-                tab_content_div.append(_html.TagLessElement(widget.render()))
+            for widget in sorted(tab['widgets'], key=lambda x: x.weight):  # type: _Abstract
+                tab_content_div.append(widget.get_element())
 
             tab_count += 1
 

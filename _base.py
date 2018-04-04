@@ -4,7 +4,7 @@ __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Tuple as _Tuple, List as _List, Union as _Union
+from typing import Tuple as _Tuple, List as _List
 from abc import ABC as _ABC, abstractmethod as _abstractmethod
 from copy import deepcopy as _deepcopy
 from pytsite import html as _html, validation as _validation, lang as _lang
@@ -443,13 +443,9 @@ class Abstract(_ABC):
             wrap_css += ' has-error'
         wrap = _html.Div(css=wrap_css)
 
-        # Place placeholder instead of label
-        if not self._label and self._placeholder:
-            self._label = self.placeholder
-
         # Append label element
-        if self.label and not self._label_disabled:
-            label = _html.Label(self.label, label_for=self.uid)
+        if self._label and not self._label_disabled:
+            label = _html.Label(self._label, label_for=self.uid)
             if self._h_size and self._h_size_label:
                 label = label.wrap(_html.Div(css='h-sizer ' + self._h_size))
                 label = label.wrap(_html.Div(css='row ' + self._h_size_row_css))
@@ -458,8 +454,10 @@ class Abstract(_ABC):
             wrap.append(label)
 
         # Wrap into size container
+        h_sizer = None
         if self._h_size:
-            content = content.wrap(_html.Div(css='h-sizer ' + self._h_size))
+            h_sizer = _html.Div(css='h-sizer ' + self._h_size)
+            content = content.wrap(h_sizer)
             content = content.wrap(_html.Div(css='row ' + self._h_size_row_css))
 
         # Append widget's content
@@ -470,7 +468,11 @@ class Abstract(_ABC):
             wrap.append(_html.Small(self._help, css='help-block form-text text-muted'))
 
         # Append messages placeholder
-        wrap.append(_html.Div(css='widget-messages'))
+        messages = _html.Div(css='widget-messages')
+        if h_sizer:
+            h_sizer.append(messages)
+        else:
+            wrap.append(messages)
 
         return wrap
 
