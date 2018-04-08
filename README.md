@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.9.1 (2018-04-08)
+
+Small fix of `select.Pager`.
+
+
 ### 1.9 (2018-04-04)
 
 - Placing label instead of placeholder behaviour removed.

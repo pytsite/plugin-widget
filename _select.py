@@ -341,8 +341,7 @@ class Pager(_Abstract):
         self._js_module = 'widget-select-pager'
 
     def _get_element(self, **kwargs) -> _html.Element:
-        """Render the widget.
-        :param **kwargs:
+        """Get widget's HTML element
         """
         if self._total_pages == 0:
             return _html.TagLessElement()
@@ -360,18 +359,19 @@ class Pager(_Abstract):
         links_url = _router.current_url()
 
         # Link to the first page
-        li = _html.Li(css='first-page page-item')
-        a = _html.A('«', css='page-link', title=_lang.t('plugins.widget@first_page'),
-                    href=_router.url(links_url, query={'page': 1}))
-        li.append(a)
-        ul.append(li)
+        if start_visible_num > 1:
+            li = _html.Li(css='first-page page-item')
+            a = _html.A('«', css='page-link', title=_lang.t('plugins.widget@first_page'),
+                        href=_router.url(links_url, query={'page': 1}))
+            li.append(a)
+            ul.append(li)
 
-        # Link to the previous page
-        li = _html.Li(css='previous-page page-item')
-        a = _html.A('‹', css='page-link', title=_lang.t('plugins.widget@previous_page'),
-                    href=_router.url(links_url, query={'page': self._current_page - 1}))
-        li.append(a)
-        ul.append(li)
+            # Link to the previous page
+            li = _html.Li(css='previous-page page-item')
+            a = _html.A('‹', css='page-link', title=_lang.t('plugins.widget@previous_page'),
+                        href=_router.url(links_url, query={'page': self._current_page - 1}))
+            li.append(a)
+            ul.append(li)
 
         # Links to visible pages
         for num in range(start_visible_num, end_visible_num + 1):
@@ -383,19 +383,20 @@ class Pager(_Abstract):
             li.append(a)
             ul.append(li)
 
-        # Link to the next page
-        li = _html.Li(css='next-page page-item')
-        a = _html.A('›', css='page-link', title=_lang.t('plugins.widget@next_page'),
-                    href=_router.url(links_url, query={'page': self._current_page + 1}))
-        li.append(a)
-        ul.append(li)
+        if end_visible_num < self._total_pages:
+            # Link to the next page
+            li = _html.Li(css='next-page page-item')
+            a = _html.A('›', css='page-link', title=_lang.t('plugins.widget@next_page'),
+                        href=_router.url(links_url, query={'page': self._current_page + 1}))
+            li.append(a)
+            ul.append(li)
 
-        # Link to the last page
-        li = _html.Li(css='last-page page-item')
-        a = _html.A('»', css='page-link', title=_lang.t('plugins.widget@page_num', {'num': self._total_pages}),
-                    href=_router.url(links_url, query={'page': self._total_pages}))
-        li.append(a)
-        ul.append(li)
+            # Link to the last page
+            li = _html.Li(css='last-page page-item')
+            a = _html.A('»', css='page-link', title=_lang.t('plugins.widget@page_num', {'num': self._total_pages}),
+                        href=_router.url(links_url, query={'page': self._total_pages}))
+            li.append(a)
+            ul.append(li)
 
         return ul
 
