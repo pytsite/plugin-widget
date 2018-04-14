@@ -15,11 +15,15 @@ class DataTable(_base.Abstract):
     def __init__(self, uid: str, **kwargs):
         super().__init__(uid, **kwargs)
 
+        self._rows_url = kwargs.get('rows_url')
+        if not self._rows_url:
+            raise RuntimeError("'rows_url' argument is not provided")
+
         self._data_fields = []  # type: _List[_Tuple[str, str, bool]]  # name, title, sortable
         self._default_sort_field = kwargs.get('default_sort_field')
         self._default_sort_order = kwargs.get('default_sort_order', 'asc')
         self._toolbar = _html.Div(uid='{}-toolbar'.format(uid), css='data-table-toolbar')
-        self._data_url = kwargs.get('data_url')
+
 
     @property
     def toolbar(self) -> _html.Div:
@@ -95,8 +99,7 @@ class DataTable(_base.Abstract):
 
 class BootstrapTable(DataTable):
     def __init__(self, uid: str, **kwargs):
-        super().__init__(uid, **kwargs)
-        self._js_module = 'widget-misc-bootstrap-table'
+        super().__init__(uid, js_module='widget-misc-bootstrap-table', **kwargs)
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Get table HTML skeleton
@@ -104,7 +107,7 @@ class BootstrapTable(DataTable):
         # Table skeleton
         table = _html.Table(
             css='hidden sr-only',
-            data_url=self._data_url,
+            data_url=self._rows_url,
             data_toolbar='#{}-toolbar'.format(self.uid),
             data_show_refresh='true',
             data_search='true',
@@ -148,20 +151,15 @@ class TreeTable(DataTable):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        super().__init__(uid, **kwargs)
-
-        self._js_module = 'widget-misc-bootstrap-table'
+        super().__init__(uid, js_module='widget-misc-tree-table', group_wrap=False, **kwargs)
 
     def render(self, **kwargs) -> str:
         """Render the widget
         """
-        self._data['data-url'] = self._data_url
-        self._data['data-fields'] = ','.join(['{}:{}'.format(v[0], v[1]) for v in self.data_fields])
+        self._data['rows_url'] = self._rows_url
+        self._data['fields'] = ','.join(['{}:{}'.format(v[0], v[1]) for v in self.data_fields])
         self._data['sort_field'] = self._default_sort_field
         self._data['sort_order'] = self._default_sort_order
-
-        self._group_wrap = False
-        self._js_module = 'widget-misc-tree-table'
 
         return super().render(**kwargs)
 

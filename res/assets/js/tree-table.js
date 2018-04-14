@@ -8,7 +8,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
 
         tHeadEm.append(tHeadRow);
 
-        $.each(widget.data('dataFields').split(','), function (k, v) {
+        $.each(widget.data('fields').split(','), function (k, v) {
             var df = v.split(':');
             var thEm = $('<th>');
 
@@ -95,7 +95,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
             order: widget.data('sortOrder')
         };
 
-        $.get(widget.data('dataUrl'), reqData).done(function (data) {
+        $.get(widget.data('rowsUrl'), reqData).done(function (data) {
             if (!data.hasOwnProperty('rows'))
                 throw "Server response does not contain 'rows' key";
 

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.9.2 (2018-04-14)
+
+Fix of `misc.TreeTable`.
+
+
 ### 1.9.1 (2018-04-08)
 
 Small fix of `select.Pager`.
