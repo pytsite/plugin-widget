@@ -24,6 +24,8 @@ class DataTable(_base.Abstract):
         self._default_sort_order = kwargs.get('default_sort_order', 'asc')
         self._toolbar = _html.Div(uid='{}-toolbar'.format(uid), css='data-table-toolbar')
 
+        # Pass data fields through setter
+        self.data_fields = kwargs.get('data_fields', [])
 
     @property
     def toolbar(self) -> _html.Div:

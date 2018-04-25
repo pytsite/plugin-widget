@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 1.9.3 (2018-04-25)
+
+Fix of `misc.DataTable`.
+
+
 ### 1.9.2 (2018-04-14)
 
 Fix of `misc.TreeTable`.
