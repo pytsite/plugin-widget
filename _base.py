@@ -31,6 +31,7 @@ class Abstract(_ABC):
         self._placeholder = kwargs.get('placeholder')
         self._css = kwargs.get('css', '')
         self._data = kwargs.get('data', {})
+        self._has_messages = kwargs.get('has_messages', True)
         self._has_success = kwargs.get('has_success', False)
         self._has_warning = kwargs.get('has_warning', False)
         self._has_error = kwargs.get('has_error', False)
@@ -41,13 +42,13 @@ class Abstract(_ABC):
         self._hidden = kwargs.get('hidden', False)
         self._rules = kwargs.get('rules', [])  # type: _List[_validation.rule.Rule]
         self._form_area = kwargs.get('form_area', 'body')
-        self._js_module = kwargs.get('js_module', '')
+        self._js_modules = kwargs.get('js_modules', [])
         self._replaces = kwargs.get('replaces')
         self._required = kwargs.get('required', False)
         self._enabled = kwargs.get('enabled', True)
         self._parent = kwargs.get('parent')
         self._child_sep = kwargs.get('child_sep', '')
-        self._group_wrap = True
+        self._form_group = True
 
         # Check validation rules
         if not isinstance(self._rules, (list, tuple)):
@@ -100,8 +101,8 @@ class Abstract(_ABC):
         self._wrap_em.set_attr('data_parent_uid', self._parent.uid if self._parent else None)
 
         # JS modules to load with widget initialization
-        if self._js_module:
-            self._wrap_em.set_attr('data_js_module', self._js_module)
+        if self._js_modules:
+            self._wrap_em.set_attr('data_js_modules', ','.join(self._js_modules))
 
         # Replaces
         if self._replaces:
@@ -109,8 +110,17 @@ class Abstract(_ABC):
 
         # Wrapper CSS
         wrap_css = 'pytsite-widget pytsite-widget-{} widget-uid-{} {}'.format(class_id_css, self._uid, self._css)
+        if self._form_group:
+            wrap_css += ' form-group'
         if self._hidden:
             wrap_css += ' hidden sr-only'
+        if self._has_messages:
+            if self._has_success:
+                wrap_css += ' has-success'
+            if self._has_warning:
+                wrap_css += ' has-warning'
+            if self._has_error:
+                wrap_css += ' has-error'
         self._wrap_em.set_attr('css', wrap_css)
 
         # Data attributes
@@ -120,22 +130,49 @@ class Abstract(_ABC):
 
         # Get widget's HTML element
         em = self._get_element(**kwargs)
-        if em:
-            if isinstance(em, Container):
-                new_em = em.get_element()
-                for c in em.children:
-                    new_em.append(c.get_element(**kwargs))
-                em = new_em
+        if not em:
+            return self._wrap_em
 
-            if not isinstance(em, _html.Element):
-                raise TypeError('{} expected, got {}'.format(_html.Element, type(em)))
+        if not isinstance(em, _html.Element):
+            raise TypeError('{} expected, got {}'.format(_html.Element, type(em)))
 
-            # Wrap into 'form-group' div
-            if self._group_wrap:
-                em = self._wrap_into_group(em)
+        if isinstance(em, Container):
+            new_em = em.get_element()
+            for c in em.children:
+                new_em.append(c.get_element(**kwargs))
+            em = new_em
 
-            # Wrap widget's HTML
-            self._wrap_em.append(em)
+        # Wrap into size container
+        h_sizer = None
+        if self._h_size:
+            h_sizer = _html.Div(css='h-sizer ' + self._h_size)
+            em = em.wrap(h_sizer)
+            em = em.wrap(_html.Div(css='row ' + self._h_size_row_css))
+
+        # Append label element
+        if self._label and not self._label_disabled:
+            label = _html.Label(self._label, label_for=self.uid)
+            if self._h_size and self._h_size_label:
+                label = label.wrap(_html.Div(css='h-sizer ' + self._h_size))
+                label = label.wrap(_html.Div(css='row ' + self._h_size_row_css))
+            if self._label_hidden:
+                label.set_attr('css', 'sr-only')
+            self._wrap_em.append(label)
+
+        # Append widget's element
+        self._wrap_em.append(em)
+
+        # Append help block
+        if self._help:
+            self._wrap_em.append(_html.Small(self._help, css='help-block form-text text-muted'))
+
+        # Append messages placeholder
+        if self._has_messages:
+            messages = _html.Div(css='widget-messages')
+            if h_sizer:
+                h_sizer.append(messages)
+            else:
+                self._wrap_em.append(messages)
 
         return self._wrap_em
 
@@ -274,37 +311,49 @@ class Abstract(_ABC):
         self._css = value
 
     @property
-    def has_success(self):
+    def has_messages(self) -> bool:
+        """Get has_messages property of the widget
+        """
+        return self._has_messages
+
+    @has_messages.setter
+    def has_messages(self, value: bool):
+        """Set has_messages property of the widget
+        """
+        self._has_messages = value
+
+    @property
+    def has_success(self) -> bool:
         """Get has_success property of the widget
         """
         return self._has_success
 
     @has_success.setter
-    def has_success(self, value: str):
+    def has_success(self, value: bool):
         """Set has_success property of the widget
         """
         self._has_success = value
 
     @property
-    def has_warning(self):
+    def has_warning(self) -> bool:
         """Get has_warning property of the widget
         """
         return self._has_warning
 
     @has_warning.setter
-    def has_warning(self, value: str):
+    def has_warning(self, value: bool):
         """Set has_warning property of the widget
         """
         self._has_warning = value
 
     @property
-    def has_error(self):
+    def has_error(self) -> bool:
         """Get has_error property of the widget
         """
         return self._has_error
 
     @has_error.setter
-    def has_error(self, value: str):
+    def has_error(self, value: bool):
         """Set has_error property of the widget
         """
         self._has_error = value
@@ -338,10 +387,10 @@ class Abstract(_ABC):
         self._h_size = value
 
     @property
-    def js_module(self) -> str:
-        """Get CSS files list.
+    def js_modules(self) -> list:
+        """Get JS modules list
         """
-        return self._js_module
+        return self._js_modules
 
     @property
     def replaces(self) -> str:
@@ -388,12 +437,12 @@ class Abstract(_ABC):
         self._enabled = value
 
     @property
-    def group_wrap(self) -> bool:
-        return self._group_wrap
+    def form_group(self) -> bool:
+        return self._form_group
 
-    @group_wrap.setter
-    def group_wrap(self, value: bool):
-        self._group_wrap = value
+    @form_group.setter
+    def form_group(self, value: bool):
+        self._form_group = value
 
     def add_rule(self, rule: _validation.rule.Rule):
         """Add single validation rule
@@ -428,54 +477,6 @@ class Abstract(_ABC):
         for rule in self.get_rules():
             rule.validate(self.get_val())
 
-    def _wrap_into_group(self, content) -> _html.Element:
-        """Wraps a widget, an HTML element or a string into 'form-group' container.
-
-        :type content: plugins.widget._base.Abstract | pytsite.html.Element | str
-        """
-
-        wrap_css = 'form-group'
-        if self._has_success:
-            wrap_css += ' has-success'
-        if self._has_warning:
-            wrap_css += ' has-warning'
-        if self._has_error:
-            wrap_css += ' has-error'
-        wrap = _html.Div(css=wrap_css)
-
-        # Append label element
-        if self._label and not self._label_disabled:
-            label = _html.Label(self._label, label_for=self.uid)
-            if self._h_size and self._h_size_label:
-                label = label.wrap(_html.Div(css='h-sizer ' + self._h_size))
-                label = label.wrap(_html.Div(css='row ' + self._h_size_row_css))
-            if self._label_hidden:
-                label.set_attr('css', 'sr-only')
-            wrap.append(label)
-
-        # Wrap into size container
-        h_sizer = None
-        if self._h_size:
-            h_sizer = _html.Div(css='h-sizer ' + self._h_size)
-            content = content.wrap(h_sizer)
-            content = content.wrap(_html.Div(css='row ' + self._h_size_row_css))
-
-        # Append widget's content
-        wrap.append(content)
-
-        # Append help block
-        if self._help:
-            wrap.append(_html.Small(self._help, css='help-block form-text text-muted'))
-
-        # Append messages placeholder
-        messages = _html.Div(css='widget-messages')
-        if h_sizer:
-            h_sizer.append(messages)
-        else:
-            wrap.append(messages)
-
-        return wrap
-
 
 class Container(Abstract):
     """Simple Container Widget
@@ -484,7 +485,8 @@ class Container(Abstract):
     def __init__(self, uid: str, **kwargs):
         super().__init__(uid, **kwargs)
 
-        self._group_wrap = False
+        self._form_group = False
+        self._has_messages = False
         self._children = []  # type: _List[Abstract]
         self._children_uids = []  # type: _List[str]
 
@@ -551,7 +553,7 @@ class MultiRow(Abstract):
 
         self._children = []
         self._css += ' widget-multi-row'
-        self._js_module = 'widget-multi-row'
+        self._js_modules.append('widget-multi-row')
 
     def set_val(self, value: list):
         if value is None:
@@ -645,7 +647,7 @@ class MultiRow(Abstract):
             # Widgets
             for w in widgets:
                 w.name = '{}[{}][]'.format(self.name, w.name)
-                w.group_wrap = False
+                w.form_group = False
                 w.css += ' widget-row-col'
 
                 w_td = _html.Td(css='widget-col')

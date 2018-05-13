@@ -15,7 +15,7 @@ define(['jquery'], function ($) {
         self.parentUid = em.data('parentUid');
         self.alwaysHidden = em.data('hidden') === 'True';
         self.weight = em.data('weight');
-        self.jsModule = em.data('jsModule') ? em.data('jsModule') : [];
+        self.jsModules = em.data('jsModules') ? em.data('jsModules').split(',') : [];
         self.messagesEm = em.find('.widget-messages').first();
         self.children = {};
 
@@ -143,17 +143,17 @@ define(['jquery'], function ($) {
         };
 
         // Load and execute widget's JS module
-        if (self.jsModule.length) {
-            require([self.jsModule], function (initCallback) {
+        $.each(self.jsModules, function (index, mod) {
+            require([mod], function (initCallback) {
                 if ($.isFunction(initCallback)) {
                     initCallback(self);
                 }
                 else {
-                    console.warn(self.jsModule + ' did not return a proper callback');
-                    console.warn(self.jsModule + ' returned ' + initCallback);
+                    console.error(mod + ' did not return a proper callback');
+                    console.error(mod + ' returned ' + initCallback);
                 }
             });
-        }
+        });
 
         // Mark widget as initialized
         self.em.addClass('initialized');

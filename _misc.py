@@ -101,7 +101,9 @@ class DataTable(_base.Abstract):
 
 class BootstrapTable(DataTable):
     def __init__(self, uid: str, **kwargs):
-        super().__init__(uid, js_module='widget-misc-bootstrap-table', **kwargs)
+        super().__init__(uid, **kwargs)
+
+        self._js_modules.append('widget-misc-bootstrap-table')
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Get table HTML skeleton
@@ -153,7 +155,10 @@ class TreeTable(DataTable):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        super().__init__(uid, js_module='widget-misc-tree-table', group_wrap=False, **kwargs)
+        super().__init__(uid, **kwargs)
+
+        self._form_group = False
+        self._js_modules.append('widget-misc-tree-table')
 
     def render(self, **kwargs) -> str:
         """Render the widget

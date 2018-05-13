@@ -4,6 +4,19 @@
 ## Changelog
 
 
+### 2.0 (2018-05-13)
+
+- New `Abstract.has_messages` property.
+- `Abstract.js_module` property renamed to `js_modules` and it's list
+  now.
+- `Abstract._group_wrap` private property removed.
+- `Abstract.form_group` property added.
+- `input.Select` fixed and got `multiple` new constructor argument.
+- New constructor's arguments in `select.DateTime`: `datepicker` and
+  `timepicker`
+- `select.Checkboxes` fixed.
+
+
 ### 1.9.3 (2018-04-25)
 
 Fix of `misc.DataTable`.

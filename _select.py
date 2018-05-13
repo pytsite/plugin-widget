@@ -59,14 +59,47 @@ class Select(_Abstract):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        super().__init__(uid, **kwargs)
+        self._multiple = kwargs.get('multiple')
+        if self._multiple:
+            kwargs.setdefault('default', [])
 
-        self._items = kwargs.get('items', [])
-        if not isinstance(self._items, (list, tuple)):
-            raise TypeError('List or tuple expected')
+        self._int_keys = kwargs.get('int_keys', False)
+
+        super().__init__(uid, **kwargs)
 
         self._append_none_item = kwargs.get('append_none_item', True)
         self._exclude = kwargs.get('exclude', [])
+
+        self._items = []
+        items = kwargs.get('items', [])
+        if not isinstance(items, (list, tuple)):
+            raise TypeError('List or tuple expected')
+        for item in items:
+            if not (isinstance(item, (list, tuple)) and len(item) == 2):
+                raise TypeError('Each item must be a list or tuple and have exactly 2 elements')
+            self._items.append((int(item[0]) if self._int_keys else item[0], item[1]))
+
+    def set_val(self, value: _Union[int, str, list, tuple]):
+        """Set value of the widget
+        """
+        if value is not None:
+            if self._multiple:
+                if isinstance(value, tuple):
+                    value = list(value)
+
+                if not isinstance(value, list):
+                    value = [value]
+
+                value = _util.cleanup_list(value, True)
+
+            if self._int_keys:
+                if self._multiple:
+                    for i in range(len(value)):
+                        value[i] = int(value[i])
+                else:
+                    value = int(value)
+
+        super().set_val(value)
 
     def _get_select_html_em(self) -> _html.Element:
         select = _html.Select(
@@ -75,6 +108,9 @@ class Select(_Abstract):
             css='form-control',
             required=self._required
         )
+
+        if self._multiple:
+            select.set_attr('multiple', 'multiple')
 
         if not self._enabled:
             select.set_attr('disabled', 'disabled')
@@ -87,8 +123,13 @@ class Select(_Abstract):
                 continue
 
             option = _html.Option(item[1], value=item[0])
-            if item[0] == self._value:
-                option.set_attr('selected', True)
+            if self._multiple:
+                if item[0] in self._value:
+                    option.set_attr('selected', True)
+            else:
+                if item[0] == self._value:
+                    option.set_attr('selected', True)
+
             select.append(option)
 
         return select
@@ -103,7 +144,7 @@ class Select2(Select):
         """
         super().__init__(uid, **kwargs)
 
-        self._js_module = 'widget-select-select2'
+        self._js_modules.append('widget-select-select2')
         self._theme = kwargs.get('theme', 'bootstrap')
         self._ajax_url = kwargs.get('ajax_url')
         self._ajax_delay = kwargs.get('ajax_delay', 750)
@@ -130,16 +171,10 @@ class Checkboxes(Select):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        kwargs.setdefault('default', ())
+        super().__init__(uid, multiple=True, **kwargs)
 
-        self._unique = kwargs.get('unique', False)
-
-        super().__init__(uid, **kwargs)
-
-    def set_val(self, value: _Union[_List, _Tuple]):
-        """Set value of the widget.
-        """
-        super().set_val(_util.cleanup_list(value, self._unique))
+        self._css += 'widget-checkboxes'
+        self._js_modules.append('widget-select-checkboxes')
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget.
@@ -182,7 +217,8 @@ class LanguageNav(_Abstract):
         super().__init__(uid, **kwargs)
 
         self._wrap_em = _html.Ul()
-        self._group_wrap = False
+        self._form_group = False
+        self._has_messages = False
         self._dropdown = kwargs.get('dropdown')
         self._dropup = kwargs.get('dropup')
         self._css += ' nav navbar-nav widget-select-language-nav'
@@ -258,12 +294,16 @@ class DateTime(_Text):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        kwargs['default'] = kwargs.get('default', _datetime.now())
+        kwargs.setdefault('default', _datetime.now())
 
-        super().__init__(uid, **kwargs)
+        self._datepicker = kwargs.get('datepicker', True)
+        self._timepicker = kwargs.get('timepicker', True)
 
-        self._js_module = 'widget-select-date-time'
+        super().__init__(uid, data_datepicker=self._datepicker, data_timepicker=self._timepicker, **kwargs)
+
+        self._js_modules.append('widget-select-date-time')
         self._css = self._css.replace('widget-input-text', 'widget-select-datetime')
+
         self.add_rule(_validation.rule.DateTime())
 
     def set_val(self, value):
@@ -272,7 +312,7 @@ class DateTime(_Text):
         if isinstance(value, str):
             value = value.strip()
             if value:
-                value = _datetime.strptime(value, '%d.%m.%Y %H:%M')
+                value = _util.parse_date_time(value)
             else:
                 value = _datetime.now()
 
@@ -287,11 +327,21 @@ class DateTime(_Text):
         """Render the widget
         :param **kwargs:
         """
+        value = self.get_val()
+        w_value = ''
+
+        if self._datepicker and self._timepicker:
+            w_value = value.strftime('%Y-%m-%d %H:%M')
+        elif self._datepicker:
+            w_value = value.strftime('%Y-%m-%d')
+        elif self._timepicker:
+            w_value = value.strftime('%H:%M')
+
         html_input = _html.Input(
             type='text',
             uid=self._uid,
             name=self._name,
-            value=self.get_val().strftime('%d.%m.%Y %H:%M'),
+            value=w_value,
             css=' '.join(('form-control', self._css)),
             required=self._required,
         )
@@ -309,7 +359,8 @@ class Pager(_Abstract):
         """
         super().__init__(uid, **kwargs)
 
-        self._group_wrap = False
+        self._form_group = False
+        self._has_messages = False
 
         self._total_items = total_items
         self._items_per_page = per_page
@@ -338,7 +389,7 @@ class Pager(_Abstract):
         self._data['per_page'] = self._items_per_page
         self._data['visible_numbers'] = self._visible_numbers
 
-        self._js_module = 'widget-select-pager'
+        self._js_modules.append('widget-select-pager')
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Get widget's HTML element
@@ -497,8 +548,7 @@ class Score(_Abstract):
         self._show_numbers = kwargs.get('show_numbers', True)
 
         self.css += ' widget-select-score'
-
-        self._js_module = 'widget-select-score'
+        self._js_modules.append('widget-select-score')
 
     def _get_element(self, **kwargs) -> _html.Element:
         cont = _html.Div(css='switches-wrap')
@@ -530,7 +580,7 @@ class TrafficLightScore(Score):
         super().__init__(uid, max=3, show_numbers=False, **kwargs)
 
         self._css += ' widget-select-traffic-light-score'
-        self._js_module = 'widget-select-traffic-light-score'
+        self._js_modules.append('widget-select-traffic-light-score')
 
 
 class ColorPicker(_Text):
@@ -540,7 +590,7 @@ class ColorPicker(_Text):
         super().__init__(uid, **kwargs)
 
         self._css += ' widget-select-color-picker'
-        self._js_module = 'widget-select-color-picker'
+        self._js_modules.append('widget-select-color-picker')
 
     def _get_element(self, **kwargs):
         self._data['color'] = self.value
@@ -555,7 +605,8 @@ class Breadcrumb(_Abstract):
         super().__init__(uid, **kwargs)
 
         self._css += ' widget-select-breadcrumb'
-        self._group_wrap = False
+        self._form_group = False
+        self._has_messages = False
 
         self._items = list(kwargs.get('items', []))
 

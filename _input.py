@@ -16,7 +16,8 @@ class Hidden(_Abstract):
         super().__init__(uid, **kwargs)
 
         self._hidden = True
-        self._group_wrap = False
+        self._form_group = False
+        self._has_messages = False
 
     def _get_element(self, **kwargs) -> _html.Input:
         inp = _html.Input(
@@ -48,7 +49,7 @@ class Text(_Abstract):
         self._append = kwargs.get('append')
         self._css = ' '.join((self._css, 'widget-input-text'))
         self._type = 'text'
-        self._js_module = 'widget-input-text'
+        self._js_modules.append('widget-input-text')
 
     @property
     def max_length(self, ) -> int:
@@ -175,7 +176,7 @@ class TypeaheadText(Text):
         if not source_url:
             raise ValueError('AJAX endpoint is not specified.')
 
-        self._js_module = 'widget-input-typeahead-text'
+        self._js_modules.append('widget-input-typeahead-text')
         self._css = ' '.join((self._css, 'widget-input-typeahead-text'))
         source_url_query_arg = kwargs.get('source_url_query_arg', self.uid)
         source_url_q = kwargs.get('source_url_args', {})
@@ -197,7 +198,7 @@ class Number(Text):
         self._right_align = kwargs.get('right_align', False)
         self._min = kwargs.get('min')
         self._max = kwargs.get('max')
-        self._js_module = 'widget-input-number'
+        self._js_modules.append('widget-input-number')
 
         if self._allow_minus:
             self._data['allow_minus'] = 'true'
@@ -217,8 +218,6 @@ class Number(Text):
             value = value.strip()
             if not value:
                 value = self._default
-        elif value is None:
-            value = self._default
 
         return super().set_val(value)
 
@@ -234,6 +233,12 @@ class Integer(Number):
 
         self.add_rule(_validation.rule.Integer())
 
+    def set_val(self, value, **kwargs):
+        if value is not None and not isinstance(value, int):
+            value = int(value)
+
+        return super().set_val(value, **kwargs)
+
 
 class Decimal(Number):
     """Decimal Input Widget
@@ -245,6 +250,12 @@ class Decimal(Number):
         super().__init__(uid, **kwargs)
 
         self.add_rule(_validation.rule.Decimal())
+
+    def set_val(self, value, **kwargs):
+        if value is not None and not isinstance(value, float):
+            value = float(value)
+
+        return super().set_val(value, **kwargs)
 
 
 class StringList(_Abstract):
@@ -263,7 +274,7 @@ class StringList(_Abstract):
 
         self._css = ' '.join((self._css, 'widget-string-list'))
         self._data['max_values'] = self._max_values
-        self._js_module = 'widget-input-string-list'
+        self._js_modules.append('widget-input-string-list')
 
     @property
     def add_btn_label(self) -> str:
@@ -300,7 +311,7 @@ class ListStringList(StringList):
 
         self._col_titles = kwargs.get('col_titles', ())
         self._css = self._css.replace('widget-string-list', 'widget-list-list')
-        self._js_module = 'widget-input-list-list'
+        self._js_modules.append('widget-input-list-list')
 
         if not self._col_titles:
             raise ValueError("'col_titles' is not specified")
@@ -361,7 +372,7 @@ class Tokens(Text):
         super().__init__(uid, **kwargs)
 
         self._css = ' '.join((self._css, 'widget-token-input'))
-        self._js_module = 'widget-input-tokens'
+        self._js_modules.append('widget-input-tokens')
         self._local_source = kwargs.get('local_source')
         self._remote_source = kwargs.get('remote_source')
         self._data = {
@@ -404,7 +415,7 @@ class File(_Abstract):
         self._upload_endpoint = kwargs.get('upload_endpoint')
 
         self._css = ' '.join((self._css, 'widget-file'))
-        self._js_module = 'widget-input-file'
+        self._js_modules.append('widget-input-file')
 
         self._data['max_files'] = self._max_files
 
