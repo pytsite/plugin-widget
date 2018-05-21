@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 2.1 (2018-05-21)
+
+Parameters added to `misc.BootstrapTable` widget: `search` and
+`checkbox`.
+
+
 ### 2.0 (2018-05-13)
 
 - New `Abstract.has_messages` property.

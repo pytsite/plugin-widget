@@ -105,6 +105,9 @@ class BootstrapTable(DataTable):
 
         self._js_modules.append('widget-misc-bootstrap-table')
 
+        self._search = kwargs.get('search', True)
+        self._checkbox = kwargs.get('checkbox', True)
+
     def _get_element(self, **kwargs) -> _html.Element:
         """Get table HTML skeleton
         """
@@ -114,11 +117,10 @@ class BootstrapTable(DataTable):
             data_url=self._rows_url,
             data_toolbar='#{}-toolbar'.format(self.uid),
             data_show_refresh='true',
-            data_search='true',
+            data_search=str(self._search).lower(),
             data_pagination='true',
             data_side_pagination='server',
             data_page_size='10',
-            data_click_to_select='false',
             data_striped='true',
             data_sort_name=self._default_sort_field,
             data_sort_order=self._default_sort_order,
@@ -138,7 +140,8 @@ class BootstrapTable(DataTable):
         t_head.append(t_head_row)
 
         # Checkbox column
-        t_head_row.append(_html.Th(data_field='__state', data_checkbox='true'))
+        if self._checkbox:
+            t_head_row.append(_html.Th(data_field='__state', data_checkbox='true'))
 
         # Head row's cells
         for f in self._data_fields:
