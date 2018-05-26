@@ -64,7 +64,7 @@ class DataTable(_base.Abstract):
         """
         title = _lang.t(title) if title else _lang.t(name)
 
-        if not pos:
+        if pos is None:
             pos = len(self._data_fields)
 
         self._data_fields.insert(pos, (name, title, sortable))

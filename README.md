@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 2.1.2 (2018-05-26)
+
+Position calculation issue fixed in
+`misc.DataTable.insert_data_field()`.
+
+
 ### 2.1.1 (2018-05-26)
 
 Hook call order fixed.
