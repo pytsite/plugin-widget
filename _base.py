@@ -123,13 +123,15 @@ class Abstract(_ABC):
                 wrap_css += ' has-error'
         self._wrap_em.set_attr('css', wrap_css)
 
-        # Data attributes
+        # Get widget's HTML element
+        em = self._get_element(**kwargs)
+
+        # Set widget's data attributes
         if isinstance(self._data, dict):
             for k, v in self._data.items():
                 self._wrap_em.set_attr('data_' + k, v)
 
-        # Get widget's HTML element
-        em = self._get_element(**kwargs)
+        # Ifno widget content, return just wrapper
         if not em:
             return self._wrap_em
 

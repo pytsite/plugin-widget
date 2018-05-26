@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.1.1 (2018-05-26)
+
+Hook call order fixed.
+
+
 ### 2.1 (2018-05-21)
 
 Parameters added to `misc.BootstrapTable` widget: `search` and
