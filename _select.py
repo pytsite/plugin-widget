@@ -4,7 +4,7 @@ __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Union as _Union, List as _List, Tuple as _Tuple
+from typing import Union as _Union
 from collections import OrderedDict as _OrderedDict
 from math import ceil as _ceil
 from datetime import datetime as _datetime
@@ -79,7 +79,7 @@ class Select(_Abstract):
                 raise TypeError('Each item must be a list or tuple and have exactly 2 elements')
             self._items.append((int(item[0]) if self._int_keys else item[0], item[1]))
 
-    def set_val(self, value: _Union[int, str, list, tuple]):
+    def set_val(self, value: _Union[int, str, list, tuple, None]):
         """Set value of the widget
         """
         if value is not None:
@@ -147,6 +147,7 @@ class Select2(Select):
         self._js_modules.append('widget-select-select2')
         self._theme = kwargs.get('theme', 'bootstrap')
         self._ajax_url = kwargs.get('ajax_url')
+        self._ajax_url_query = kwargs.get('ajax_url_query', {})
         self._ajax_delay = kwargs.get('ajax_delay', 750)
         self._ajax_data_type = kwargs.get('ajax_data_type', 'json')
         self._css += ' widget-select-select2'
@@ -155,11 +156,14 @@ class Select2(Select):
         select = self._get_select_html_em()
         select.set_attr('style', 'width: 100%;')
 
+        self._data['theme'] = self._theme
+
         if self._ajax_url:
-            select.set_attr('data_theme', self._theme)
-            select.set_attr('data_ajax_url', self._ajax_url)
-            select.set_attr('data_ajax_delay', self._ajax_delay)
-            select.set_attr('data_ajax_data_type', self._ajax_data_type)
+            self._data.update({
+                'ajax_url': _router.url(self._ajax_url, query=self._ajax_url_query),
+                'ajax_delay': self._ajax_delay,
+                'ajax_data_type': self._ajax_data_type,
+            })
 
         return select
 

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.2 (2018-05-30)
+
+`select.Select2` refactored and fixed.
+
+
 ### 2.1.2 (2018-05-26)
 
 Position calculation issue fixed in
