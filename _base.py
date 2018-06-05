@@ -43,6 +43,7 @@ class Abstract(_ABC):
         self._rules = kwargs.get('rules', [])  # type: _List[_validation.rule.Rule]
         self._form_area = kwargs.get('form_area', 'body')
         self._js_modules = kwargs.get('js_modules', [])
+        self._assets = kwargs.get('assets', [])
         self._replaces = kwargs.get('replaces')
         self._required = kwargs.get('required', False)
         self._enabled = kwargs.get('enabled', True)
@@ -99,6 +100,10 @@ class Abstract(_ABC):
         self._wrap_em.set_attr('data_hidden', self._hidden)
         self._wrap_em.set_attr('data_enabled', self._enabled)
         self._wrap_em.set_attr('data_parent_uid', self._parent.uid if self._parent else None)
+
+        # Assets to load with widget initialization
+        if self._assets:
+            self._wrap_em.set_attr('data_assets', ','.join(self._assets))
 
         # JS modules to load with widget initialization
         if self._js_modules:
@@ -387,6 +392,12 @@ class Abstract(_ABC):
     @h_size.setter
     def h_size(self, value: str):
         self._h_size = value
+
+    @property
+    def assets(self) -> list:
+        """Get assets list
+        """
+        return self._assets
 
     @property
     def js_modules(self) -> list:

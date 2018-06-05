@@ -4,6 +4,7 @@ __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
+import json as _json
 from pytsite import html as _html, util as _util, tpl as _tpl, validation as _validation, router as _router
 from ._base import Abstract as _Abstract
 
@@ -43,10 +44,12 @@ class Text(_Abstract):
         """
         super().__init__(uid, **kwargs)
 
+        self._autocomplete = kwargs.get('autocomplete', 'on')
         self._min_length = kwargs.get('min_length')
         self._max_length = kwargs.get('max_length')
         self._prepend = kwargs.get('prepend')
         self._append = kwargs.get('append')
+        self._inputmask = kwargs.get('inputmask')
         self._css = ' '.join((self._css, 'widget-input-text'))
         self._type = 'text'
         self._js_modules.append('widget-input-text')
@@ -59,7 +62,7 @@ class Text(_Abstract):
     def max_length(self, value: int):
         self._max_length = value
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> _html.Input:
         """Render the widget
         :param **kwargs:
         """
@@ -67,14 +70,15 @@ class Text(_Abstract):
             type=self._type,
             uid=self._uid,
             name=self._name,
-            value=self.get_val(),
             css='form-control',
-            placeholder=self.placeholder,
+            autocomplete=self._autocomplete,
+            placeholder=self._placeholder,
             required=self._required
         )
 
-        for k, v in self._data.items():
-            inp.set_attr('data_' + k, v)
+        value = self.get_val()
+        if value:
+            inp.set_attr('value', value)
 
         if not self._enabled:
             inp.set_attr('disabled', True)
@@ -93,6 +97,9 @@ class Text(_Abstract):
             if self._append:
                 group.append(_html.Div(self._append, css='input-group-addon'))
             inp = group
+
+        if self._inputmask:
+            inp.set_attr('data_inputmask', ','.join(["'{}': '{}'".format(k, v) for k, v in self._inputmask.items()]))
 
         return inp
 
@@ -344,7 +351,7 @@ class ListStringList(StringList):
                 if not isinstance(item, str):
                     raise ValueError('str expected')
 
-        return super().set_val(value, **kwargs)
+        return super().set_val(value)
 
     def _set_value_from_string_list(self, value: list, **kwargs):
         new_value = []
@@ -354,7 +361,7 @@ class ListStringList(StringList):
             if _util.cleanup_list(value_to_append):
                 new_value.append(value_to_append)
 
-        return super().set_val(new_value, **kwargs)
+        return super().set_val(new_value)
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget

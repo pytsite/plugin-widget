@@ -4,6 +4,14 @@
 ## Changelog
 
 
+### 2.3 (2018-06-05)
+
+- New `assets` property added to `Abstract`.
+- Support for `autocomplete` option added to `input.Text` based widgets.
+- Support of input masks fixed in `input.Text` based widgets.
+- `select.DateTime` fixed.
+
+
 ### 2.2 (2018-05-30)
 
 `select.Select2` refactored and fixed.

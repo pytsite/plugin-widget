@@ -298,27 +298,31 @@ class DateTime(_Text):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        kwargs.setdefault('default', _datetime.now())
+        super().__init__(uid, **kwargs)
 
         self._datepicker = kwargs.get('datepicker', True)
         self._timepicker = kwargs.get('timepicker', True)
-
-        super().__init__(uid, data_datepicker=self._datepicker, data_timepicker=self._timepicker, **kwargs)
-
+        self._format = kwargs.get('format')
+        self._mask = kwargs.get('mask', True)
         self._js_modules.append('widget-select-date-time')
-        self._css = self._css.replace('widget-input-text', 'widget-select-datetime')
 
-        self.add_rule(_validation.rule.DateTime())
+        if not self._format:
+            if self._datepicker and self._timepicker:
+                self._format = '%Y-%m-%d %H:%M'
+            elif self._datepicker:
+                self._format = '%Y-%m-%d'
+            elif self._timepicker:
+                self._format = '%H-%M'
+
+        self._css += ' widget-select-datetime'
+
+        self.add_rule(_validation.rule.DateTime(formats=[self._format]))
 
     def set_val(self, value):
         """Set value of the widget.
         """
-        if isinstance(value, str):
-            value = value.strip()
-            if value:
-                value = _util.parse_date_time(value)
-            else:
-                value = _datetime.now()
+        if isinstance(value, str) and value:
+            value = _util.parse_date_time(value, [self._format])
 
         return super().set_val(value)
 
@@ -327,30 +331,20 @@ class DateTime(_Text):
         """
         return super().get_val(**kwargs)
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> _html.Input:
         """Render the widget
         :param **kwargs:
         """
         value = self.get_val()
-        w_value = ''
 
-        if self._datepicker and self._timepicker:
-            w_value = value.strftime('%Y-%m-%d %H:%M')
-        elif self._datepicker:
-            w_value = value.strftime('%Y-%m-%d')
-        elif self._timepicker:
-            w_value = value.strftime('%H:%M')
+        self._data.update({
+            'datepicker': self._datepicker,
+            'timepicker': self._timepicker,
+            'format': self._format.replace('%M', 'i').replace('%', ''),
+            'mask': self._mask,
+        })
 
-        html_input = _html.Input(
-            type='text',
-            uid=self._uid,
-            name=self._name,
-            value=w_value,
-            css=' '.join(('form-control', self._css)),
-            required=self._required,
-        )
-
-        return html_input
+        return super()._get_element(**kwargs).set_attr('value', value.strftime(self._format) if value else '')
 
 
 class Pager(_Abstract):

@@ -1,6 +1,10 @@
-define(function () {
+define(['jquery-inputmask'], function () {
     return function (widget) {
-        widget.em.find('input').focus(function () {
+        var input = widget.em.find('input');
+
+        input.inputmask();
+
+        input.focus(function () {
             this.select();
         });
     }

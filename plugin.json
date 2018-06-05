@@ -1,6 +1,6 @@
 {
   "name": "widget",
-  "version": "2.2",
+  "version": "2.3",
   "description": {
     "en": "Widget",
     "ru": "Widget",
@@ -13,7 +13,7 @@
     "url": "https://shepetko.com"
   },
   "requires": {
-    "pytsite": ">=7.11.6",
+    "pytsite": ">=7.28",
     "plugins": [
       "assetman",
       "font_awesome",
@@ -21,8 +21,8 @@
       "jquery",
       "jquery_ui",
       "jquery_colorpicker",
-      "jquery_datetimepicker",
-      "jquery_inputmask",
+      "jquery_datetimepicker>=1.2",
+      "jquery_inputmask>=1.2",
       "js_select2",
       "js_typeahead",
       "twitter_bootstrap_table",

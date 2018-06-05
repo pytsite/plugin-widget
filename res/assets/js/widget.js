@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', 'assetman'], function ($, assetman) {
     /**
      * Widget constructor.
      *
@@ -15,6 +15,7 @@ define(['jquery'], function ($) {
         self.parentUid = em.data('parentUid');
         self.alwaysHidden = em.data('hidden') === 'True';
         self.weight = em.data('weight');
+        self.assets = em.data('assets') ? em.data('assets').split(',') : [];
         self.jsModules = em.data('jsModules') ? em.data('jsModules').split(',') : [];
         self.messagesEm = em.find('.widget-messages').first();
         self.children = {};
@@ -141,6 +142,11 @@ define(['jquery'], function ($) {
 
             return self
         };
+
+        // Load assets
+        $.each(self.assets, function (index, asset) {
+            assetman.load(asset);
+        });
 
         // Load and execute widget's JS module
         $.each(self.jsModules, function (index, mod) {

@@ -1,25 +1,16 @@
-define(['lang', 'jquery-datetimepicker'], function (lang) {
+define(['lang', 'widget-input-text', 'jquery-datetimepicker'], function (lang, inputText) {
     return function (widget) {
-        var datepicker = widget.data('datepicker') === 'True';
-        var timepicker = widget.data('timepicker') === 'True';
+        // Call parent initializer
+        inputText(widget);
+
+        $.datetimepicker.setLocale(lang.current());
 
         var opts = {
-            lang: lang.current()
+            format: widget.data('format'),
+            datepicker: widget.data('datepicker') === 'True',
+            timepicker: widget.data('timepicker') === 'True',
+            mask: widget.data('mask') === 'True'
         };
-
-        if (datepicker && timepicker) {
-            opts.format = 'Y-m-d H:i';
-            opts.defaultDate = new Date();
-        }
-        else if (datepicker) {
-            opts.format = 'Y-m-d';
-            opts.defaultDate = new Date();
-            opts.timepicker = false;
-        }
-        else if (timepicker) {
-            opts.format = 'H:i';
-            opts.datepicker = false;
-        }
 
         widget.em.find('input').datetimepicker(opts);
     }
