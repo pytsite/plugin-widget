@@ -298,31 +298,30 @@ class DateTime(_Text):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        super().__init__(uid, **kwargs)
-
         self._datepicker = kwargs.get('datepicker', True)
         self._timepicker = kwargs.get('timepicker', True)
-        self._format = kwargs.get('format')
         self._mask = kwargs.get('mask', True)
-        self._js_modules.append('widget-select-date-time')
 
+        self._format = kwargs.get('format')
         if not self._format:
             if self._datepicker and self._timepicker:
                 self._format = '%Y-%m-%d %H:%M'
             elif self._datepicker:
                 self._format = '%Y-%m-%d'
             elif self._timepicker:
-                self._format = '%H-%M'
+                self._format = '%H:%M'
 
+        super().__init__(uid, **kwargs)
+
+        self._js_modules.append('widget-select-date-time')
         self._css += ' widget-select-datetime'
-
         self.add_rule(_validation.rule.DateTime(formats=[self._format]))
 
     def set_val(self, value):
         """Set value of the widget.
         """
         if isinstance(value, str) and value:
-            value = _util.parse_date_time(value, [self._format])
+            value = _util.parse_date_time(value, [self._format] if self._format else None)
 
         return super().set_val(value)
 

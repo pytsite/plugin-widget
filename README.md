@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.3.1 (2018-06-12)
+
+`select.DateTime`'s bug fixed.
+
+
 ### 2.3 (2018-06-05)
 
 - New `assets` property added to `Abstract`.
