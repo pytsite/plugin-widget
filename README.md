@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.3.2 (2018-06-14)
+
+`input.Number` fixed.
+
+
 ### 2.3.1 (2018-06-12)
 
 `select.DateTime`'s bug fixed.

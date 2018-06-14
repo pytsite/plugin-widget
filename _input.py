@@ -196,8 +196,11 @@ class TypeaheadText(Text):
 
 class Number(Text):
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
+        # This must be set BEFORE calling parent init because it takes part in set_val()
+        self._convert_type = kwargs.get('convert_type', int)
+
         super().__init__(uid, **kwargs)
 
         self._type = 'tel'
@@ -206,6 +209,7 @@ class Number(Text):
         self._min = kwargs.get('min')
         self._max = kwargs.get('max')
         self._js_modules.append('widget-input-number')
+
 
         if self._allow_minus:
             self._data['allow_minus'] = 'true'
@@ -219,12 +223,15 @@ class Number(Text):
             self.add_rule(_validation.rule.LessOrEqual(than=self._max))
 
     def set_val(self, value, **kwargs):
-        """Set value of the widget.
+        """Set value of the widget
         """
         if isinstance(value, str):
             value = value.strip()
             if not value:
-                value = self._default
+                value = None
+
+        if value is not None and not isinstance(value, self._convert_type):
+            value = self._convert_type(value)
 
         return super().set_val(value)
 
@@ -236,15 +243,9 @@ class Integer(Number):
     def __init__(self, uid: str, **kwargs):
         """Init.
         """
-        super().__init__(uid, **kwargs)
+        super().__init__(uid, convert_type=int, **kwargs)
 
         self.add_rule(_validation.rule.Integer())
-
-    def set_val(self, value, **kwargs):
-        if value is not None and not isinstance(value, int):
-            value = int(value)
-
-        return super().set_val(value, **kwargs)
 
 
 class Decimal(Number):
@@ -254,15 +255,9 @@ class Decimal(Number):
     def __init__(self, uid: str, **kwargs):
         """Init.
         """
-        super().__init__(uid, **kwargs)
+        super().__init__(uid, convert_type=float, **kwargs)
 
         self.add_rule(_validation.rule.Decimal())
-
-    def set_val(self, value, **kwargs):
-        if value is not None and not isinstance(value, float):
-            value = float(value)
-
-        return super().set_val(value, **kwargs)
 
 
 class StringList(_Abstract):
