@@ -92,10 +92,12 @@ class Text(_Abstract):
         if self._prepend or self._append:
             group = _html.Div(css='input-group')
             if self._prepend:
-                group.append(_html.Div(self._prepend, css='input-group-addon'))
+                prepend = group.append(_html.Div(css='input-group-addon input-group-prepend'))
+                prepend.append(_html.Div(self._prepend, css='input-group-text'))
             group.append(inp)
             if self._append:
-                group.append(_html.Div(self._append, css='input-group-addon'))
+                append = group.append(_html.Div(css='input-group-addon input-group-append'))
+                append.append(_html.Div(css='input-group-text'))
             inp = group
 
         if self._inputmask:
