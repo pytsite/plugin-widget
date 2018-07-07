@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.3.4 (2018-07-07)
+
+Containers support fixed.
+
+
 ### 2.3.3 (2018-06-22)
 
 Support of Twitters Bootstrap version 4 fixed in `input.Text`.

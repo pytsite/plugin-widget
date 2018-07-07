@@ -136,12 +136,12 @@ class Abstract(_ABC):
             for k, v in self._data.items():
                 self._wrap_em.set_attr('data_' + k, v)
 
-        # Ifno widget content, return just wrapper
+        # If no widget content, return just wrapper
         if not em:
             return self._wrap_em
 
-        if not isinstance(em, _html.Element):
-            raise TypeError('{} expected, got {}'.format(_html.Element, type(em)))
+        if not isinstance(em, (_html.Element, Container)):
+            raise TypeError('{} expected, got {}'.format((_html.Element, Container), type(em)))
 
         if isinstance(em, Container):
             new_em = em.get_element()
