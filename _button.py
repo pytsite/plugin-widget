@@ -24,7 +24,7 @@ class Button(_base.Abstract):
         self._form_group = False
         self._has_messages = False
 
-        self._html_em = _html.Button(uid=self._uid, type='button')
+        self._html_em = _html.Button(type='button')
 
         if self._dismiss:
             self._html_em.set_attr('data_dismiss', self._dismiss)
@@ -49,6 +49,7 @@ class Button(_base.Abstract):
         """Render the widget.
         :param **kwargs:
         """
+        self._html_em.set_attr('uid', self._uid)
         self._html_em.set_attr('css', 'btn btn-' + self._color)
 
         self._html_em.content = self.get_val()
@@ -70,7 +71,7 @@ class Submit(Button):
         """
         super().__init__(uid, **kwargs)
 
-        self._html_em = _html.Button(uid=self._uid, type='submit')
+        self._html_em = _html.Button(type='submit')
 
         if self._dismiss:
             self._html_em.set_attr('data_dismiss', self._dismiss)
@@ -85,7 +86,7 @@ class Link(Button):
         """
         super().__init__(uid, **kwargs)
 
-        self._html_em = _html.A(uid=self._uid, href=kwargs.get('href', '#'))
+        self._html_em = _html.A(href=kwargs.get('href', '#'))
 
         if self._dismiss:
             self._html_em.set_attr('data_dismiss', self._dismiss)

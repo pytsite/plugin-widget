@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.3.5 (2018-07-08)
+
+HTML element ID of `button.*` widgets fixed.
+
+
 ### 2.3.4 (2018-07-07)
 
 Containers support fixed.
