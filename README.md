@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 2.3.6 (2018-07-09)
+
+Support of Twitter Bootstrap 4 in `select.Checkbox` and
+`select.Checkboxes` fixed.
+
+
 ### 2.3.5 (2018-07-08)
 
 HTML element ID of `button.*` widgets fixed.

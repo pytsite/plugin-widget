@@ -21,8 +21,14 @@ class Checkbox(_Abstract):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
+        # Widget's label is disabled because it will be created in _get_element()
         kwargs.setdefault('label_disabled', True)
+
         super().__init__(uid, **kwargs)
+
+        self._bootstrap_version = kwargs.get('bootstrap_version', 3)
+        if self._bootstrap_version not in (3, 4):
+            self._bootstrap_version = 3
 
     def set_val(self, value):
         # If checkbox is checked on client side, we get list of 2 two items: ['', 'True'],
@@ -41,13 +47,20 @@ class Checkbox(_Abstract):
         self.set_val(value)
 
     def _get_element(self, **kwargs) -> _html.Element:
-        div = _html.Div(css='checkbox')
+        div = _html.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
         div.append(_html.Input(type='hidden', name=self._name))
+
+        inp = _html.Input(uid=self._uid, name=self._name, type='checkbox', value='True', checked=self.checked)
         label = _html.Label(self._label, label_for=self._uid)
-        label.append(_html.Input(
-            uid=self._uid, name=self._name, type='checkbox', value='True', checked=self.checked
-        ))
-        div.append(label)
+
+        if self._bootstrap_version == 3:
+            label.append(inp)
+            div.append(label)
+        elif self._bootstrap_version == 4:
+            inp.set_attr('css', 'form-check-input')
+            label.set_attr('css', 'form-check-label')
+            div.append(inp)
+            div.append(label)
 
         return div
 
@@ -180,6 +193,10 @@ class Checkboxes(Select):
         self._css += 'widget-checkboxes'
         self._js_modules.append('widget-select-checkboxes')
 
+        self._bootstrap_version = kwargs.get('bootstrap_version', 3)
+        if self._bootstrap_version not in (3, 4):
+            self._bootstrap_version = 3
+
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget.
         :param **kwargs:
@@ -188,11 +205,20 @@ class Checkboxes(Select):
         container.append(_html.Input(type='hidden', name=self.name + '[]'))
         for item in self._items:
             checked = True if item[0] in self.value else False
+            div = _html.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
+            inp = _html.Input(type='checkbox', name=self.name + '[]', value=item[0], checked=checked)
             label = _html.Label(item[1])
-            label.append(_html.Input(type='checkbox', name=self.name + '[]', value=item[0], checked=checked))
-            chkbox = _html.Div(css='checkbox')
-            chkbox.append(label)
-            container.append(chkbox)
+
+            if self._bootstrap_version == 3:
+                label.append(inp)
+                div.append(label)
+            elif self._bootstrap_version == 4:
+                inp.set_attr('css', 'form-check-input')
+                label.set_attr('css', 'form-check-label')
+                div.append(inp)
+                div.append(label)
+
+            container.append(div)
 
         return container
 
