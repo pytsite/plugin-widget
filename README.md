@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 2.3.7 (2018-07-09)
+
+`required` argument support fixed in `select.Checkbox` and
+`select.Checkboxes`.
+
+
 ### 2.3.6 (2018-07-09)
 
 Support of Twitter Bootstrap 4 in `select.Checkbox` and
