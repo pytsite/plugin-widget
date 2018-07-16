@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.3.8 (2018-07-16)
+
+`show()` and `hide()` JS methods fixed.
+
+
 ### 2.3.7 (2018-07-09)
 
 `required` argument support fixed in `select.Checkbox` and

@@ -109,7 +109,8 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * @returns {Widget}
          */
         self.hide = function () {
-            self.em.addClass('hidden');
+            const s = (self.em.attr('style') || '').trim();
+            self.em.attr('style', s.length ? ';display: none;' : 'display: none;');
 
             return self;
         };
@@ -120,8 +121,10 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * @returns {Widget}
          */
         self.show = function () {
-            if (!self.alwaysHidden)
-                self.em.removeClass('hidden');
+            if (!self.alwaysHidden) {
+                const s = (self.em.attr('style') || '').trim();
+                self.em.attr('style', s.replace('display: none;', ''));
+            }
 
             return self;
         };
