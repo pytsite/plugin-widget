@@ -43,7 +43,7 @@ class Abstract(_ABC):
         self._rules = kwargs.get('rules', [])  # type: _List[_validation.rule.Rule]
         self._form_area = kwargs.get('form_area', 'body')
         self._js_modules = kwargs.get('js_modules', [])
-        self._assets = kwargs.get('assets', [])
+        self._assets = kwargs.get('assets', ['widget@css/widget.css'])
         self._replaces = kwargs.get('replaces')
         self._required = kwargs.get('required', False)
         self._enabled = kwargs.get('enabled', True)
@@ -670,8 +670,8 @@ class MultiRow(Abstract):
 
             # Actions
             actions_td = _html.Td(css='actions-col')
-            remove_btn = _html.A(href='#', css='button-remove-slot btn btn-xs btn-danger')
-            remove_btn.append(_html.I(css='fa fa-icon fa-remove'))
+            remove_btn = _html.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
+            remove_btn.append(_html.I(css='fa fas fa-icon fa-remove fa-times'))
             actions_td.append(remove_btn)
             slot_tr.append(actions_td)
 
@@ -705,8 +705,8 @@ class MultiRow(Abstract):
         tfoot = _html.TFoot()
         tr = _html.Tr()
         td = _html.Td(colspan=len(self._get_widgets_row()) + 2)
-        add_btn = _html.A(self._add_btn_title or '', href='#', css='button-add-slot btn btn-default btn-xs')
-        add_btn.append(_html.I(css='fa fa-plus'))
+        add_btn = _html.A(self._add_btn_title or '', href='#', css='button-add-slot btn btn-default btn-light btn-sm')
+        add_btn.append(_html.I(css='fa fas fa-plus'))
         td.append(add_btn)
         tr.append(td)
         tfoot.append(tr)

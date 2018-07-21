@@ -270,7 +270,7 @@ class StringList(_Abstract):
         """Init.
         """
         self._add_btn_label = kwargs.get('add_btn_label', '')
-        self._add_btn_icon = kwargs.get('add_btn_icon', 'fa fa-fw fa-plus')
+        self._add_btn_icon = kwargs.get('add_btn_icon', 'fa fa-fw fas fa-plus')
         self._max_values = kwargs.get('max_values', 10)
         self._unique = kwargs.get('unique', False)
 

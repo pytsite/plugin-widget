@@ -8,7 +8,7 @@
             {% endfor %}
         </td>
         <td class="delete-btn"><a href="#" class="btn btn-danger" title="{{ t('plugins.widget@delete') }}"><i
-                class="fa fa-remove"></i></a></td>
+                class="fa fas fa-remove fa-times"></i></a></td>
     </tr>
 {% endmacro %}
 
@@ -34,5 +34,7 @@
 </table>
 
 <div class="add-btn">
-    <a href="#" class="btn btn-default btn-xs"><i class="{{ widget.add_btn_icon }}"></i> {{ widget.add_btn_label }}</a>
+    <a href="#" class="btn btn-default btn-light btn-sm">
+        <i class="{{ widget.add_btn_icon }}"></i> {{ widget.add_btn_label }}
+    </a>
 </div>
