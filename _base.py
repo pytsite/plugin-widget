@@ -7,6 +7,7 @@ __license__ = 'MIT'
 from typing import Tuple as _Tuple, List as _List
 from abc import ABC as _ABC, abstractmethod as _abstractmethod
 from copy import deepcopy as _deepcopy
+from math import ceil as _ceil
 from pytsite import html as _html, validation as _validation, lang as _lang
 
 
@@ -48,7 +49,10 @@ class Abstract(_ABC):
         self._required = kwargs.get('required', False)
         self._enabled = kwargs.get('enabled', True)
         self._parent = kwargs.get('parent')
-        self._child_sep = kwargs.get('child_sep', '')
+        self._children = []  # type: _List[Abstract]
+        self._children_uids = []  # type: _List[str]
+        self._children_sep = kwargs.get('children_sep', '')
+        self._last_children_weight = 0
         self._form_group = True
 
         # Check validation rules
@@ -75,18 +79,23 @@ class Abstract(_ABC):
             if k.startswith('data_'):
                 self._data[k.replace('data_', '')] = v
 
-    def _get_element(self, **kwargs):
-        """
-        :rtype: _Union[_html.Element, Container]
-        """
-        return _html.TagLessElement()
-
-    def form_submit(self, form_uid: str):
+    @_abstractmethod
+    def _get_element(self, **kwargs) -> _html.Element:
         """Hook
         """
         pass
 
-    def get_element(self, **kwargs) -> _html.Element:
+    def _on_form_submit(self, form_uid: str):
+        """Hook
+        """
+        pass
+
+    def form_submit(self, form_uid: str):
+        """Called by form while it submitting
+        """
+        self._on_form_submit(form_uid)
+
+    def renderable(self, **kwargs) -> _html.Element:
         """Get an HTML element representation of the widget
         """
         class_id = self.__module__ + '.' + self.__class__.__name__
@@ -138,16 +147,10 @@ class Abstract(_ABC):
 
         # If no widget content, return just wrapper
         if not em:
-            return self._wrap_em
+            raise ValueError('{}._get_widget() does not return anything'.format(self.__class__))
 
-        if not isinstance(em, (_html.Element, Container)):
-            raise TypeError('{} expected, got {}'.format((_html.Element, Container), type(em)))
-
-        if isinstance(em, Container):
-            new_em = em.get_element()
-            for c in em.children:
-                new_em.append(c.get_element(**kwargs))
-            em = new_em
+        if not isinstance(em, _html.Element):
+            raise TypeError('{} expected, got {}'.format(_html.Element, type(em)))
 
         # Wrap into size container
         h_sizer = None
@@ -186,13 +189,13 @@ class Abstract(_ABC):
     def render(self, **kwargs) -> str:
         """Render the widget into a string
         """
-        return self.get_element(**kwargs).render()
+        return self.renderable(**kwargs).render()
 
     def __str__(self) -> str:
         return self.render()
 
     def __repr__(self) -> str:
-        return "{}.{}(uid='{}', name='{}')".format(__name__, self.__class__.__name__, self.uid, self.name)
+        return "{}.{}(uid='{}', parent={})".format(__name__, self.__class__.__name__, self.uid, repr(self.parent))
 
     def get_val(self, **kwargs):
         """Get value of the widget
@@ -205,9 +208,15 @@ class Abstract(_ABC):
 
     @property
     def value(self):
-        """Shortcut for get_value()
+        """Shortcut for get_val()
         """
         return self.get_val()
+
+    @value.setter
+    def value(self, val):
+        """Shortcut for set_val()
+        """
+        self.set_val(val)
 
     def set_val(self, value):
         """Set value of the widget
@@ -215,12 +224,6 @@ class Abstract(_ABC):
         self._value = value if value is not None else _deepcopy(self._default)
 
         return self
-
-    @value.setter
-    def value(self, val):
-        """Shortcut for set_value()
-        """
-        self.set_val(val)
 
     def clr_val(self):
         self._value = _deepcopy(self._default)
@@ -430,14 +433,14 @@ class Abstract(_ABC):
     @property
     def parent(self):
         """
-        :rtype: plugins.widget.Container
+        :rtype: Abstract
         """
         return self._parent
 
     @parent.setter
     def parent(self, value):
         """
-        :type value: plugins.widget.Container
+        :param value: Abstract
         """
         self._parent = value
 
@@ -456,6 +459,94 @@ class Abstract(_ABC):
     @form_group.setter
     def form_group(self, value: bool):
         self._form_group = value
+
+    @property
+    def children(self):
+        """Get children widgets.
+
+        :return: _List[Abstract]
+        """
+        return self._children.copy()
+
+    @property
+    def descendants(self):
+        """Get descendants of the widget
+        """
+        r = []
+
+        for child in self.children:
+            r.append(child)
+            r += child.descendants
+
+        return r
+
+    def append_child(self, child):
+        """Append a child widget
+
+        :type child: Abstract
+        :rtype: Abstract
+        """
+        # Child UID must not be the same as parent's UID
+        if self.uid == child.uid:
+            raise RuntimeError("Cannot add child widget '{}' because it has same UID as its parent".format(child.uid))
+
+        # Each widget is responsible to control only its direct children, not all descendants
+        if self.has_child(child.uid):
+            raise RuntimeError("Widget '{}' already contains descendant '{}'".format(self.uid, child.uid))
+
+        child.parent = self
+
+        if not child.weight:
+            self._last_children_weight += 100
+            child.weight = self._last_children_weight
+        elif child.weight > self._last_children_weight:
+            self._last_children_weight = _ceil(child.weight / 100) * 100
+
+        # Obviously, child must be placed in the same form's area as its parent
+        child.form_area = self.form_area
+
+        self._children.append(child)
+        self._children_uids.append(child.uid)
+        self._children.sort(key=lambda x: x.weight)
+
+        return child
+
+    def has_child(self, uid: str) -> bool:
+        """Check if the widget has a child
+        """
+        return uid in self._children_uids
+
+    def get_child(self, uid: str):
+        """Get child widget by uid
+
+        :rtype: Abstract
+        """
+        if not self.has_child(uid):
+            raise RuntimeError("Widget '{}' doesn't contain child '{}'.".format(self.uid, uid))
+
+        for w in self._children:
+            if w.uid == uid:
+                return w
+
+    def remove_child(self, uid: str):
+        """Remove child widget
+        """
+        if not self.has_child(uid):
+            raise RuntimeError("Widget '{}' doesn't contain child '{}'.".format(self.uid, uid))
+
+        self._children = [w for w in self._children if w.uid != uid]
+
+    def has_descendant(self, uid: str) -> bool:
+        """Check if the widget contains descendant
+        """
+        if self.has_child(uid):
+            return True
+
+        for child in self._children:
+            if child.has_descendant(uid):
+                return True
+
+        return False
 
     def add_rule(self, rule: _validation.rule.Rule):
         """Add single validation rule
@@ -489,227 +580,3 @@ class Abstract(_ABC):
         """
         for rule in self.get_rules():
             rule.validate(self.get_val())
-
-
-class Container(Abstract):
-    """Simple Container Widget
-    """
-
-    def __init__(self, uid: str, **kwargs):
-        super().__init__(uid, **kwargs)
-
-        self._form_group = False
-        self._has_messages = False
-        self._children = []  # type: _List[Abstract]
-        self._children_uids = []  # type: _List[str]
-
-    @property
-    def children(self):
-        """Get children widgets.
-
-        :rtype: _List[Abstract]
-        """
-        return self._children
-
-    def append_child(self, widget):
-        """Append a child widget
-
-        :type widget: Abstract
-        :rtype: Abstract
-        """
-        if self.has_child(widget.uid):
-            raise RuntimeError("Widget '{}' already contains child '{}'".format(self.uid, widget.uid))
-
-        widget.form_area = self.form_area
-        widget.parent = self
-
-        self._children.append(widget)
-        self._children_uids.append(widget.uid)
-        self._children.sort(key=lambda x: x.weight)
-
-        return widget
-
-    def has_child(self, uid: str) -> bool:
-        """Check if the widget has a child
-        """
-        return uid in self._children_uids
-
-    def get_child(self, uid: str):
-        """Get child widget by uid
-
-        :rtype: Abstract
-        """
-        if not self.has_child(uid):
-            raise RuntimeError("Widget '{}' doesn't contain child '{}'.".format(self.uid, uid))
-
-        for w in self._children:
-            if w.uid == uid:
-                return w
-
-    def remove_child(self, uid: str):
-        """Remove child widget
-        """
-        if not self.has_child(uid):
-            raise RuntimeError("Widget '{}' doesn't contain child '{}'.".format(self.uid, uid))
-
-        self._children = [w for w in self._children if w.uid != uid]
-
-
-class MultiRow(Abstract):
-    """Multi Row Widget
-    """
-
-    def __init__(self, uid: str, **kwargs):
-        self._add_btn_title = kwargs.get('add_btn_title', _lang.t('plugins.widget@append'))
-
-        super().__init__(uid, **kwargs)
-
-        self._children = []
-        self._css += ' widget-multi-row'
-        self._js_modules.append('widget-multi-row')
-
-    def set_val(self, value: list):
-        if value is None:
-            value = []
-
-        # If value comes from HTTP input, it usually would be a dict, and it should be converted to a list
-        if isinstance(value, dict):
-            new_val = []
-            keys = list(value.keys())
-            val_len = len(value[keys[0]])
-            for n in range(0, val_len):
-                new_val_item = {}
-                for k in keys:
-                    new_val_item[k] = value[k][n]
-                new_val.append(new_val_item)
-
-            value = new_val
-
-        # Check type of the entire value
-        if not isinstance(value, list):
-            raise TypeError('List expected, {} given'.format(type(value)))
-
-        # Cleanup value
-        clean_value = []
-        for v in value:
-            if not isinstance(v, dict):
-                raise TypeError('Dict expected, {} given'.format(type(v)))
-
-            # Check that all values of the dict is not empty
-            clean_v_values = [v_value for v_value in v.values() if v_value]
-            if clean_v_values:
-                clean_value.append(v)
-        value = clean_value
-
-        # Create child widgets based on value
-        self._children = []
-        for value_item in value:
-            children_row = []
-            for w in self._get_widgets_row():
-                if not isinstance(w, Abstract):
-                    raise TypeError('Widget expected, {} given'.format(type(w)))
-
-                w.value = value_item[w.name] if w.name in value_item else None
-                children_row.append(w)
-
-            self._children.append(children_row)
-
-        super().set_val(value)
-
-    def validate(self):
-        """Validate widget's rules
-        """
-        row_i = 0
-        for row in self._children:
-            widget_i = 0
-            for w in row:
-                for rule in w.get_rules():
-                    try:
-                        rule.validate(w.get_val())
-                    except _validation.error.RuleError as e:
-                        msg_id = 'plugins.widget@multi_row_validation_error'
-                        msg_args = {
-                            'row_index': row_i + 1,
-                            'widget_title': self._get_headers_row()[widget_i],
-                            'orig_msg': str(e)
-                        }
-
-                        raise _validation.error.RuleError(msg_id, msg_args)
-
-                widget_i += 1
-
-            row_i += 1
-
-    @_abstractmethod
-    def _get_headers_row(self) -> list:
-        """Hook
-        """
-        pass
-
-    @_abstractmethod
-    def _get_widgets_row(self) -> list:
-        """Hook
-        """
-        pass
-
-    def _get_element(self, **kwargs) -> _html.Element:
-        def _build_row(widgets: _List[Abstract], k: int = 0, add_css: str = '') -> _html.Tr:
-            slot_tr = _html.Tr(css='slot ' + add_css)
-            slot_tr.append(_html.Td('[{}]'.format(k + 1), css='order-col'))
-
-            # Widgets
-            for w in widgets:
-                w.name = '{}[{}][]'.format(self.name, w.name)
-                w.form_group = False
-                w.css += ' widget-row-col'
-
-                w_td = _html.Td(css='widget-col')
-                w_td.append(w.get_element())
-
-                slot_tr.append(w_td)
-
-            # Actions
-            actions_td = _html.Td(css='actions-col')
-            remove_btn = _html.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
-            remove_btn.append(_html.I(css='fa fas fa-icon fa-remove fa-times'))
-            actions_td.append(remove_btn)
-            slot_tr.append(actions_td)
-
-            return slot_tr
-
-        table = _html.Table(css='content-table')
-
-        # Header
-        thead = _html.THead(css='hidden sr-only slots-header')
-        table.append(thead)
-        row = _html.Tr()
-        thead.append(row)
-        row.append(_html.Th('#', css='order-col'))
-        for v in self._get_headers_row():
-            row.append(_html.Th(v, css='widget-col'))
-        row.append(_html.Th(css='widget-col'))
-
-        # Table body
-        tbody = _html.TBody(css='slots')
-        table.append(tbody)
-
-        # Sample slot
-        sample_row = self._get_widgets_row()
-        tbody.append(_build_row(sample_row, add_css='sample hidden sr-only'))
-
-        # Rows
-        for i in range(0, len(self._children)):
-            tbody.append(_build_row(self._children[i], i))
-
-        # Footer
-        tfoot = _html.TFoot()
-        tr = _html.Tr()
-        td = _html.Td(colspan=len(self._get_widgets_row()) + 2)
-        add_btn = _html.A(self._add_btn_title or '', href='#', css='button-add-slot btn btn-default btn-light btn-sm')
-        add_btn.append(_html.I(css='fa fas fa-plus'))
-        td.append(add_btn)
-        tr.append(td)
-        tfoot.append(tr)
-        table.append(tfoot)
-
-        return table

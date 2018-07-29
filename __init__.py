@@ -5,8 +5,9 @@ __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
 # Public API
-from . import _button as button, _input as input, _select as select, _static as static, _misc as misc
-from ._base import Abstract, Container, MultiRow
+from . import _container as container, _button as button, _input as input, _select as select, _static as static, \
+    _misc as misc
+from ._base import Abstract
 
 
 def plugin_load():
@@ -18,7 +19,7 @@ def plugin_load():
     assetman.register_package(__name__)
 
     assetman.t_less(__name__)
-    assetman.t_js(__name__)
+    assetman.t_js(__name__, babelify=True)
 
     assetman.js_module('widget', __name__ + '@js/widget')
     assetman.js_module('widget-multi-row', __name__ + '@js/multi-row')

@@ -278,7 +278,9 @@ class StringList(_Abstract):
 
         self._css = ' '.join((self._css, 'widget-string-list'))
         self._data['max_values'] = self._max_values
+
         self._js_modules.append('widget-input-string-list')
+        self._assets.append('widget@css/string-list.css')
 
     @property
     def add_btn_label(self) -> str:

@@ -5,28 +5,52 @@ define(['jquery', 'assetman'], function ($, assetman) {
      * @param em
      * @constructor
      */
-    function Widget(em) {
-        var self = this;
-        self.em = em = $(em);
-        self.cid = em.data('cid');
-        self.uid = em.data('uid');
-        self.replaces = em.data('replaces');
-        self.formArea = em.data('formArea');
-        self.parentUid = em.data('parentUid');
-        self.alwaysHidden = em.data('hidden') === 'True';
-        self.weight = em.data('weight');
-        self.assets = em.data('assets') ? em.data('assets').split(',') : [];
-        self.jsModules = em.data('jsModules') ? em.data('jsModules').split(',') : [];
-        self.messagesEm = em.find('.widget-messages').first();
-        self.children = {};
+    class Widget {
+        constructor(em) {
+            this.em = em = $(em);
+            this.cid = em.data('cid');
+            this.uid = em.data('uid');
+            this.replaces = em.data('replaces');
+            this.formArea = em.data('formArea');
+            this.parentUid = em.data('parentUid');
+            this.alwaysHidden = em.data('hidden') === 'True';
+            this.weight = em.data('weight');
+            this.assets = em.data('assets') ? em.data('assets').split(',') : [];
+            this.jsModules = em.data('jsModules') ? em.data('jsModules').split(',') : [];
+            this.messagesEm = em.find('.widget-messages').first();
+            this.children = {};
+
+            // Load assets
+            $.each(this.assets, function (index, asset) {
+                assetman.load(asset, false);
+            });
+
+            // Load and execute widget's JS module
+            const self = this;
+            $.each(this.jsModules, function (index, mod) {
+                require([mod], function (initCallback) {
+                    if ($.isFunction(initCallback)) {
+                        initCallback(self);
+                    }
+                    else {
+                        console.error(mod + ' did not return a proper callback');
+                        console.error(mod + ' returned ' + initCallback);
+                    }
+                });
+            });
+
+            // Mark widget as initialized
+            this.em.addClass('initialized');
+            $(this).trigger('ready', [this]);
+        }
 
         /**
          * Get widget's data attribute value.
          *
          * @type {jQuery.data}
          */
-        self.data = function (key) {
-            return self.em.data(key);
+        data(key) {
+            return this.em.data(key);
         };
 
         /**
@@ -34,18 +58,18 @@ define(['jquery', 'assetman'], function ($, assetman) {
          *
          * @returns {Widget}
          */
-        self.clearState = function () {
-            self.em.removeClass('has-success');
-            self.em.removeClass('has-warning');
-            self.em.removeClass('has-error');
+        clearState() {
+            this.em.removeClass('has-success');
+            this.em.removeClass('has-warning');
+            this.em.removeClass('has-error');
 
             // Twitter Bootstrap 4
-            self.em.find('.form-control').each(function () {
+            this.em.find('.form-control').each(function () {
                 $(this).removeClass('is-valid');
                 $(this).removeClass('is-invalid');
             });
 
-            return self;
+            return this;
         };
 
         /**
@@ -54,17 +78,17 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * @param type
          * @returns {Widget}
          */
-        self.setState = function (type) {
-            self.clearState();
-            self.em.addClass('has-' + type);
+        setState(type) {
+            this.clearState();
+            this.em.addClass('has-' + type);
 
             // Twitter Bootstrap 4
             if (type === 'success')
-                self.em.find('.form-control').addClass('is-valid');
+                this.em.find('.form-control').addClass('is-valid');
             if (type === 'error')
-                self.em.find('.form-control').addClass('is-invalid');
+                this.em.find('.form-control').addClass('is-invalid');
 
-            return self;
+            return this;
         };
 
         /**
@@ -72,11 +96,11 @@ define(['jquery', 'assetman'], function ($, assetman) {
          *
          * @returns {Widget}
          */
-        self.clearMessages = function () {
-            if (self.messagesEm.length)
-                self.messagesEm.html('');
+        clearMessages() {
+            if (this.messagesEm.length)
+                this.messagesEm.html('');
 
-            return self;
+            return this;
         };
 
         /**
@@ -86,21 +110,21 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * @param color
          * @returns {Widget}
          */
-        self.addMessage = function (msg, color) {
+        addMessage(msg, color) {
             if (!color)
                 color = 'muted';
 
-            if (self.messagesEm.length) {
-                var msgEm = $('<small class="help-block">' + msg + '</small>');
+            if (this.messagesEm.length) {
+                let msgEm = $('<small class="help-block">' + msg + '</small>');
 
                 // Twitter Bootstrap 4
                 msgEm.addClass('form-text');
                 msgEm.addClass('text-' + color);
 
-                self.messagesEm.append(msgEm);
+                this.messagesEm.append(msgEm);
             }
 
-            return self;
+            return this;
         };
 
         /**
@@ -108,11 +132,12 @@ define(['jquery', 'assetman'], function ($, assetman) {
          *
          * @returns {Widget}
          */
-        self.hide = function () {
-            const s = (self.em.attr('style') || '').trim();
-            self.em.attr('style', s.length ? ';display: none;' : 'display: none;');
+        hide() {
+            const s = (this.em.attr('style') || '').trim();
 
-            return self;
+            this.em.attr('style', s.length ? ';display: none;' : 'display: none;');
+
+            return this;
         };
 
         /**
@@ -120,13 +145,13 @@ define(['jquery', 'assetman'], function ($, assetman) {
          *
          * @returns {Widget}
          */
-        self.show = function () {
-            if (!self.alwaysHidden) {
-                const s = (self.em.attr('style') || '').trim();
-                self.em.attr('style', s.replace('display: none;', ''));
+        show() {
+            if (!this.alwaysHidden) {
+                const s = (this.em.attr('style') || '').trim();
+                this.em.attr('style', s.replace('display: none;', ''));
             }
 
-            return self;
+            return this;
         };
 
         /**
@@ -136,37 +161,15 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * @param {Widget} child
          * @returns {Widget}
          */
-        self.appendChild = function (child) {
-            if (self.children.hasOwnProperty(child.uid))
-                throw 'Widget ' + self.uid + ' already has child widget ' + child.uid;
+        appendChild(child) {
+            if (this.children.hasOwnProperty(child.uid))
+                throw 'Widget ' + this.uid + ' already has child widget ' + child.uid;
 
-            self.children[child.uid] = child;
-            self.em.append(child.em);
+            this.children[child.uid] = child;
+            this.em.find('.children').first().append(child.em);
 
-            return self
+            return this
         };
-
-        // Load assets
-        $.each(self.assets, function (index, asset) {
-            assetman.load(asset);
-        });
-
-        // Load and execute widget's JS module
-        $.each(self.jsModules, function (index, mod) {
-            require([mod], function (initCallback) {
-                if ($.isFunction(initCallback)) {
-                    initCallback(self);
-                }
-                else {
-                    console.error(mod + ' did not return a proper callback');
-                    console.error(mod + ' returned ' + initCallback);
-                }
-            });
-        });
-
-        // Mark widget as initialized
-        self.em.addClass('initialized');
-        $(self).trigger('ready', [self]);
     }
 
     /**

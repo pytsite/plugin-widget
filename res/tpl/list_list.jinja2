@@ -7,8 +7,11 @@
                        value="{{ value[loop.index0] }}"/>
             {% endfor %}
         </td>
-        <td class="delete-btn"><a href="#" class="btn btn-danger" title="{{ t('plugins.widget@delete') }}"><i
-                class="fa fas fa-remove fa-times"></i></a></td>
+        <td class="delete-btn">
+            <a href="#" class="btn btn-danger" title="{{ t('plugins.widget@delete') }}">
+                <i class="fa fas fa-remove fa-times"></i>
+            </a>
+        </td>
     </tr>
 {% endmacro %}
 

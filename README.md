@@ -3,6 +3,17 @@
 
 ## Changelog
 
+
+### 2.4 (2018-07-29)
+
+- Containers reworked.
+- Automatic weights calculation added.
+- New hook `_on_form_submit()` added.
+- `Container` moved to `container.Container`, `MultiRow` moved to
+  `container.MultiRow`.
+- Couple of little bugs fixed.
+
+
 ### 2.3.9 (2018-07-21)
 
 Support of Twitter Bootstrap 4 fixed.

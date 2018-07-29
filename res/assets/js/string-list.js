@@ -1,4 +1,4 @@
-define(['jquery', 'assetman'], function ($, assetman) {
+define(['jquery'], function ($) {
     return function (widget) {
         function countSlots(w) {
             var n = 0;
@@ -10,6 +10,10 @@ define(['jquery', 'assetman'], function ($, assetman) {
         }
 
         function setupSlot(w, slot, maxSlots) {
+            slot.find('input').focus(function() {
+                this.select();
+            });
+
             slot.find('.delete-btn a').click(function (e) {
                 e.preventDefault();
 
@@ -26,8 +30,6 @@ define(['jquery', 'assetman'], function ($, assetman) {
         var maxValues = parseInt(widget.em.data('maxValues'));
         var slots = widget.em.find('.slots');
         var addBtn = widget.em.find('.add-btn a');
-
-        assetman.loadCSS('plugins.widget@css/string-list.css');
 
         if (countSlots(widget) >= maxValues)
             addBtn.hide();

@@ -191,7 +191,7 @@ class Checkboxes(Select):
         """
         super().__init__(uid, multiple=True, **kwargs)
 
-        self._css += 'widget-checkboxes'
+        self._css += ' widget-checkboxes'
         self._js_modules.append('widget-select-checkboxes')
 
         self._bootstrap_version = kwargs.get('bootstrap_version', 3)
@@ -553,7 +553,7 @@ class Tabs(_Abstract):
             tabs_content.append(tab_content_div)
 
             for widget in sorted(tab['widgets'], key=lambda x: x.weight):  # type: _Abstract
-                tab_content_div.append(widget.get_element())
+                tab_content_div.append(widget.renderable())
 
             tab_count += 1
 
