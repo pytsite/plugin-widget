@@ -17,7 +17,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
             this.weight = em.data('weight');
             this.assets = em.data('assets') ? em.data('assets').split(',') : [];
             this.jsModules = em.data('jsModules') ? em.data('jsModules').split(',') : [];
-            this.messagesEm = em.find('.widget-messages').first();
+            this.messagesEm = em.find('>.widget-messages').first();
             this.children = {};
 
             // Load assets
@@ -120,6 +120,9 @@ define(['jquery', 'assetman'], function ($, assetman) {
                 // Twitter Bootstrap 4
                 msgEm.addClass('form-text');
                 msgEm.addClass('text-' + color);
+
+                console.log([msg, color]);
+                console.log(this.messagesEm);
 
                 this.messagesEm.append(msgEm);
             }

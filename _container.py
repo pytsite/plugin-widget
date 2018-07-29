@@ -29,12 +29,14 @@ class MultiRow(_base.Abstract):
     """
 
     def __init__(self, uid: str, **kwargs):
-        self._add_btn_title = kwargs.get('add_btn_title', _lang.t('plugins.widget@append'))
-
         super().__init__(uid, **kwargs)
 
         self._css += ' widget-multi-row'
         self._js_modules.append('widget-multi-row')
+        self._assets.append('widget@css/multi-row.css')
+
+        self._rows = []
+        self._add_btn_title = kwargs.get('add_btn_title', _lang.t('plugins.widget@append'))
 
     def set_val(self, value: list):
         if value is None:
@@ -70,7 +72,7 @@ class MultiRow(_base.Abstract):
         value = clean_value
 
         # Create child widgets based on value
-        self._children = []
+        self._rows = []
         for value_item in value:
             children_row = []
             for w in self._get_widgets_row():
@@ -80,7 +82,7 @@ class MultiRow(_base.Abstract):
                 w.value = value_item[w.name] if w.name in value_item else None
                 children_row.append(w)
 
-            self._children.append(children_row)
+            self._rows.append(children_row)
 
         super().set_val(value)
 
@@ -88,7 +90,7 @@ class MultiRow(_base.Abstract):
         """Validate widget's rules
         """
         row_i = 0
-        for row in self._children:
+        for row in self._rows:
             widget_i = 0
             for w in row:
                 for rule in w.get_rules():
@@ -166,8 +168,8 @@ class MultiRow(_base.Abstract):
         tbody.append(_build_row(sample_row, add_css='sample hidden sr-only'))
 
         # Rows
-        for i in range(0, len(self._children)):
-            tbody.append(_build_row(self._children[i], i))
+        for i in range(len(self._rows)):
+            tbody.append(_build_row(self._rows[i], i))
 
         # Footer
         tfoot = _html.TFoot()
