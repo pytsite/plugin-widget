@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.6 (2018-08-02)
+
+New methods in `Abstract`: `t()` and `t_plural()`.
+
+
 ### 2.5.1 (2018-08-02)
 
 Calling of widgets' JS modules fixed.

@@ -580,3 +580,32 @@ class Abstract(_ABC):
         """
         for rule in self.get_rules():
             rule.validate(self.get_val())
+
+    @classmethod
+    def get_package_name(cls) -> str:
+        """Get instance's package name.
+        """
+        return '.'.join(cls.__module__.split('.')[:-1])
+
+    @classmethod
+    def resolve_msg_id(cls, partly_msg_id: str) -> str:
+        # Searching for translation up in hierarchy
+        for super_cls in cls.__mro__:
+            if issubclass(super_cls, Abstract):
+                full_msg_id = super_cls.get_package_name() + '@' + partly_msg_id
+                if _lang.is_translation_defined(full_msg_id):
+                    return full_msg_id
+
+        return cls.get_package_name() + '@' + partly_msg_id
+
+    @classmethod
+    def t(cls, partial_msg_id: str, args: dict = None) -> str:
+        """Translate a string in model context
+        """
+        return _lang.t(cls.resolve_msg_id(partial_msg_id), args)
+
+    @classmethod
+    def t_plural(cls, partial_msg_id: str, num: int = 2) -> str:
+        """Translate a string into plural form.
+        """
+        return _lang.t_plural(cls.resolve_msg_id(partial_msg_id), num)
