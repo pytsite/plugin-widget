@@ -30,9 +30,11 @@ define(['jquery', 'assetman'], function ($, assetman) {
                 const self = this;
                 let loadedModulesCount = 0;
 
-                require(this.jsModules, function (initCallback) {
-                    if ($.isFunction(initCallback))
-                        initCallback(self);
+                require(this.jsModules, function (...initCallbacks) {
+                    $.each(initCallbacks, function (index, initCallback) {
+                        if ($.isFunction(initCallback))
+                            initCallback(self);
+                    });
 
                     loadedModulesCount += 1;
                     if (loadedModulesCount === self.jsModules.length && $.isFunction(readyCallback))

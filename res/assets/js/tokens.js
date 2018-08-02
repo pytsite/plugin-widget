@@ -1,6 +1,4 @@
-define(['jquery', 'assetman', 'twitter-bootstrap-tokenfield'], function ($, assetman) {
-    assetman.loadCSS('plugins.widget@css/tokens.css');
-
+define(['jquery', 'twitter-bootstrap-tokenfield'], function ($) {
     return function (widget) {
         var widgetInput = widget.em.find('input');
         var localSource = widget.em.data('localSource');

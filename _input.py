@@ -306,8 +306,9 @@ class Tokens(Text):
         """
         super().__init__(uid, **kwargs)
 
-        self._css = ' '.join((self._css, 'widget-token-input'))
         self._js_modules.append('widget-input-tokens')
+        self._assets.append('widget@css/tokens.css')
+        self._css = ' '.join((self._css, 'widget-token-input'))
         self._local_source = kwargs.get('local_source')
         self._remote_source = kwargs.get('remote_source')
         self._data = {

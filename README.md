@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.5.1 (2018-08-02)
+
+Calling of widgets' JS modules fixed.
+
+
 ### 2.5 (2018-08-02)
 
 - New widget `container.MultiRowList` added.
