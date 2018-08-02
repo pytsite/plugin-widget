@@ -11,11 +11,10 @@ from ._base import Abstract
 
 
 def plugin_load():
-    from pytsite import tpl, lang
+    from pytsite import lang
     from plugins import assetman
 
     lang.register_package(__name__)
-    tpl.register_package(__name__)
     assetman.register_package(__name__)
 
     assetman.t_less(__name__)

@@ -4,6 +4,14 @@
 ## Changelog
 
 
+### 2.5 (2018-08-02)
+
+- New widget `container.MultiRowList` added.
+- Widget `container.MultiRow` refactored.
+- Widget `input.StringList` refactored.
+- Widget `input.ListStringList` removed.
+
+
 ### 2.4.1 (2018-07-29)
 
 `container.MultiRow` fixed.

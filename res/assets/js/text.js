@@ -1,6 +1,10 @@
 define(['jquery-inputmask'], function () {
     return function (widget) {
-        var input = widget.em.find('input');
+        let input = widget.em.find('input');
+
+        widget.em.on('changed.uid', function(e, uid) {
+            input.prop('id', uid)
+        });
 
         input.inputmask();
 

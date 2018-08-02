@@ -4,9 +4,10 @@ __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-import json as _json
-from pytsite import html as _html, util as _util, tpl as _tpl, validation as _validation, router as _router
+from typing import List as _List
+from pytsite import html as _html, validation as _validation, router as _router
 from ._base import Abstract as _Abstract
+from ._container import MultiRowList as _MultiRowAsList
 
 
 class Hidden(_Abstract):
@@ -212,7 +213,6 @@ class Number(Text):
         self._max = kwargs.get('max')
         self._js_modules.append('widget-input-number')
 
-
         if self._allow_minus:
             self._data['allow_minus'] = 'true'
         if self._right_align:
@@ -262,110 +262,39 @@ class Decimal(Number):
         self.add_rule(_validation.rule.Decimal())
 
 
-class StringList(_Abstract):
+class StringList(_MultiRowAsList):
     """List of strings widget.
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
-        self._add_btn_label = kwargs.get('add_btn_label', '')
-        self._add_btn_icon = kwargs.get('add_btn_icon', 'fa fa-fw fas fa-plus')
-        self._max_values = kwargs.get('max_values', 10)
-        self._unique = kwargs.get('unique', False)
-
+        kwargs.setdefault('header_hidden', True)
         super().__init__(uid, **kwargs)
 
-        self._css = ' '.join((self._css, 'widget-string-list'))
-        self._data['max_values'] = self._max_values
+        self._autocomplete = kwargs.get('autocomplete', 'on')
+        self._min_length = kwargs.get('min_length')
+        self._max_length = kwargs.get('max_length')
+        self._prepend = kwargs.get('prepend')
+        self._append = kwargs.get('append')
+        self._inputmask = kwargs.get('inputmask')
+        self._css += ' widget-string-list'
 
-        self._js_modules.append('widget-input-string-list')
-        self._assets.append('widget@css/string-list.css')
-
-    @property
-    def add_btn_label(self) -> str:
-        return self._add_btn_label
-
-    @property
-    def add_btn_icon(self) -> str:
-        return self._add_btn_icon
-
-    def set_val(self, value):
-        """Set value of the widget.
+    def _get_widgets(self) -> _List[_Abstract]:
+        """Hook
         """
-        if not value:
-            value = []
-
-        if type(value) not in (list, tuple):
-            raise ValueError('List or tuple expected.')
-
-        return super().set_val(_util.cleanup_list(value, self._unique))
-
-    def _get_element(self, **kwargs) -> _html.Element:
-        """Render the widget.
-        :param **kwargs:
-        """
-        return _html.Div(_tpl.render('plugins.widget@string_list', {'widget': self}))
-
-
-class ListStringList(StringList):
-    """List of lists of strings widget
-    """
-
-    def __init__(self, uid: str, **kwargs):
-        super().__init__(uid, **kwargs)
-
-        self._col_titles = kwargs.get('col_titles', ())
-        self._css = self._css.replace('widget-string-list', 'widget-list-list')
-        self._js_modules.append('widget-input-list-list')
-
-        if not self._col_titles:
-            raise ValueError("'col_titles' is not specified")
-
-    @property
-    def col_titles(self) -> tuple:
-        return self._col_titles
-
-    def set_val(self, value, **kwargs):
-        """Set value of the widget.
-        """
-        if value is None:
-            value = []
-
-        if value:
-            if isinstance(value[0], list):
-                return self._set_value_from_list_list(value, **kwargs)
-            elif isinstance(value[0], str):
-                return self._set_value_from_string_list(value, **kwargs)
-            else:
-                raise ValueError('List of strings or list of lists of strings expected')
-
-        return self
-
-    def _set_value_from_list_list(self, value: list, **kwargs):
-        for sub in value:
-            if not isinstance(sub, list):
-                raise ValueError('List expected')
-            for item in sub:
-                if not isinstance(item, str):
-                    raise ValueError('str expected')
-
-        return super().set_val(value)
-
-    def _set_value_from_string_list(self, value: list, **kwargs):
-        new_value = []
-        step = len(self._col_titles)
-        for i in range(0, len(value), step):
-            value_to_append = value[i:(i + step)]
-            if _util.cleanup_list(value_to_append):
-                new_value.append(value_to_append)
-
-        return super().set_val(new_value)
-
-    def _get_element(self, **kwargs) -> _html.Element:
-        """Render the widget
-        """
-        return _html.Div(_tpl.render('plugins.widget@list_list', {'widget': self}))
+        return [Text(
+            uid=self.uid + '_item',
+            label=self.label,
+            label_hidden=True,
+            rules=self.get_rules(),
+            autocomplete=self._autocomplete,
+            min_length=self._min_length,
+            max_length=self._max_length,
+            prepend=self._prepend,
+            append=self._append,
+            inputmask=self._inputmask,
+        )]
 
 
 class Tokens(Text):

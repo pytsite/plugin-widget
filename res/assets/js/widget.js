@@ -1,12 +1,12 @@
 define(['jquery', 'assetman'], function ($, assetman) {
-    /**
-     * Widget constructor.
-     *
-     * @param em
-     * @constructor
-     */
     class Widget {
-        constructor(em) {
+        /**
+         * Constructor
+         *
+         * @param {jquery} em
+         * @param {function} readyCallback
+         */
+        constructor(em, readyCallback) {
             this.em = em = $(em);
             this.cid = em.data('cid');
             this.uid = em.data('uid');
@@ -25,29 +25,51 @@ define(['jquery', 'assetman'], function ($, assetman) {
                 assetman.load(asset, false);
             });
 
-            // Load and execute widget's JS module
-            const self = this;
-            $.each(this.jsModules, function (index, mod) {
-                require([mod], function (initCallback) {
-                    if ($.isFunction(initCallback)) {
-                        initCallback(self);
-                    }
-                    else {
-                        console.error(mod + ' did not return a proper callback');
-                        console.error(mod + ' returned ' + initCallback);
-                    }
-                });
-            });
+            // Load and execute widget's JS modules
+            if (this.jsModules) {
+                const self = this;
+                let loadedModulesCount = 0;
 
-            // Mark widget as initialized
+                require(this.jsModules, function (initCallback) {
+                    if ($.isFunction(initCallback))
+                        initCallback(self);
+
+                    loadedModulesCount += 1;
+                    if (loadedModulesCount === self.jsModules.length && $.isFunction(readyCallback))
+                        readyCallback();
+                });
+            }
+            else if ($.isFunction(readyCallback)) {
+                readyCallback();
+            }
+
             this.em.addClass('initialized');
-            $(this).trigger('ready', [this]);
+        }
+
+        /**
+         * UID getter
+         *
+         * @return {String}
+         */
+        get uid() {
+            return this._uid;
+        }
+
+        /**
+         * UID setter
+         *
+         * @param {String} uid
+         */
+        set uid(uid) {
+            this._uid = uid;
+            this.em.attr('data-uid', uid);
+            this.em.trigger('changed.uid', [uid]);
         }
 
         /**
          * Get widget's data attribute value.
          *
-         * @type {jQuery.data}
+         * @param {String} key
          */
         data(key) {
             return this.em.data(key);
@@ -56,7 +78,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * Clear state of the widget.
          *
-         * @returns {Widget}
+         * @return {Widget}
          */
         clearState() {
             this.em.removeClass('has-success');
@@ -75,8 +97,8 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * Set state of the widget.
          *
-         * @param type
-         * @returns {Widget}
+         * @param {String} type
+         * @return {Widget}
          */
         setState(type) {
             this.clearState();
@@ -94,7 +116,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * Clear messages of the widget.
          *
-         * @returns {Widget}
+         * @return {Widget}
          */
         clearMessages() {
             if (this.messagesEm.length)
@@ -106,9 +128,9 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * Add a message to the widget
          *
-         * @param msg
-         * @param color
-         * @returns {Widget}
+         * @param {String} msg
+         * @param {String} color
+         * @return {Widget}
          */
         addMessage(msg, color) {
             if (!color)
@@ -121,9 +143,6 @@ define(['jquery', 'assetman'], function ($, assetman) {
                 msgEm.addClass('form-text');
                 msgEm.addClass('text-' + color);
 
-                console.log([msg, color]);
-                console.log(this.messagesEm);
-
                 this.messagesEm.append(msgEm);
             }
 
@@ -133,7 +152,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * Hide the widget.
          *
-         * @returns {Widget}
+         * @return {Widget}
          */
         hide() {
             const s = (this.em.attr('style') || '').trim();
@@ -146,7 +165,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * Show the widget.
          *
-         * @returns {Widget}
+         * @return {Widget}
          */
         show() {
             if (!this.alwaysHidden) {
@@ -162,7 +181,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * Add a child widget
          *
          * @param {Widget} child
-         * @returns {Widget}
+         * @return {Widget}
          */
         appendChild(child) {
             if (this.children.hasOwnProperty(child.uid))

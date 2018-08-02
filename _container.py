@@ -4,13 +4,13 @@ __author__ = 'Alexander Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import List as _List
+from typing import List as _List, Dict as _Dict
 from abc import abstractmethod as _abstractmethod
-from pytsite import lang as _lang, validation as _validation, html as _html
-from . import _base
+from pytsite import lang as _lang, validation as _validation, html as _html, util as _util
+from ._base import Abstract as _Abstract
 
 
-class Container(_base.Abstract):
+class Container(_Abstract):
     def __init__(self, uid: str, **kwargs):
         super().__init__(uid, **kwargs)
 
@@ -24,7 +24,7 @@ class Container(_base.Abstract):
         return _html.Div(css='children ' + self._body_css)
 
 
-class MultiRow(_base.Abstract):
+class MultiRow(_Abstract):
     """Multi Row Widget
     """
 
@@ -35,14 +35,24 @@ class MultiRow(_base.Abstract):
         self._js_modules.append('widget-multi-row')
         self._assets.append('widget@css/multi-row.css')
 
-        self._rows = []
-        self._add_btn_title = kwargs.get('add_btn_title', _lang.t('plugins.widget@append'))
+        self._max_rows = kwargs.get('max_rows')
+        self._header_hidden = kwargs.get('header_hidden', False)
+        self._add_btn_label = kwargs.get('add_btn_label', _lang.t('plugins.widget@append'))
+        self._add_btn_icon = kwargs.get('add_btn_icon', 'fa fa-fw fas fa-plus')
 
-    def set_val(self, value: list):
+    @property
+    def add_btn_label(self) -> str:
+        return self._add_btn_label
+
+    @property
+    def add_btn_icon(self) -> str:
+        return self._add_btn_icon
+
+    def set_val(self, value: _List[dict]):
         if value is None:
             value = []
 
-        # If value comes from HTTP input, it usually would be a dict, and it should be converted to a list
+        # If value comes from HTTP input, it usually is a dict, and it must be converted to a list
         if isinstance(value, dict):
             new_val = []
             keys = list(value.keys())
@@ -56,8 +66,8 @@ class MultiRow(_base.Abstract):
             value = new_val
 
         # Check type of the entire value
-        if not isinstance(value, list):
-            raise TypeError('List expected, {} given'.format(type(value)))
+        if not isinstance(value, (list, tuple)):
+            raise TypeError('List or tuple expected, {} given'.format(type(value)))
 
         # Cleanup value
         clean_value = []
@@ -69,84 +79,86 @@ class MultiRow(_base.Abstract):
             clean_v_values = [v_value for v_value in v.values() if v_value]
             if clean_v_values:
                 clean_value.append(v)
-        value = clean_value
 
-        # Create child widgets based on value
-        self._rows = []
-        for value_item in value:
-            children_row = []
-            for w in self._get_widgets_row():
-                if not isinstance(w, _base.Abstract):
-                    raise TypeError('{} expected, {} given'.format(_base.Abstract, type(w)))
-
-                w.value = value_item[w.name] if w.name in value_item else None
-                children_row.append(w)
-
-            self._rows.append(children_row)
-
-        super().set_val(value)
+        super().set_val(clean_value)
 
     def validate(self):
         """Validate widget's rules
         """
-        row_i = 0
-        for row in self._rows:
-            widget_i = 0
-            for w in row:
-                for rule in w.get_rules():
-                    try:
-                        rule.validate(w.get_val())
-                    except _validation.error.RuleError as e:
-                        msg_id = 'plugins.widget@multi_row_validation_error'
-                        msg_args = {
-                            'row_index': row_i + 1,
-                            'widget_title': self._get_headers_row()[widget_i],
-                            'orig_msg': str(e)
-                        }
+        for i in range(len(self.value)):
+            row_widgets = {w.uid: w for w in self._get_widgets()}  # type: _Dict[str, _Abstract]
+            for w_name, w_value in self.value[i].items():
+                widget = row_widgets[w_name]  # type: _Abstract
+                widget.value = w_value
+                try:
+                    widget.validate()
+                except _validation.error.RuleError as e:
+                    msg_id = 'plugins.widget@multi_row_validation_error'
+                    msg_args = {
+                        'row_index': i + 1,
+                        'widget_label': widget.label,
+                        'orig_msg': str(e)
+                    }
 
-                        raise _validation.error.RuleError(msg_id, msg_args)
-
-                widget_i += 1
-
-            row_i += 1
+                    raise _validation.error.RuleError(msg_id, msg_args)
 
     @_abstractmethod
-    def _get_headers_row(self) -> list:
+    def _get_widgets(self) -> _List[_Abstract]:
         """Hook
         """
         pass
 
-    @_abstractmethod
-    def _get_widgets_row(self) -> list:
-        """Hook
+    def _get_row_widget_name(self, widget: _Abstract):
+        return '{}[{}][]'.format(self.name, widget.name)
+
+    def _get_row(self, widgets: _List[_Abstract], row_num: int = 0, add_css: str = '') -> _html.Tr:
+        """Build single row
         """
-        pass
+        slot_tr = _html.Tr(css='slot ' + add_css)
+        slot_tr.append(_html.Td('[{}]'.format(row_num + 1), css='order-col'))
+
+        # Widgets
+        for w in widgets:
+            w.name = self._get_row_widget_name(w)
+            w.form_group = False
+
+            w_td = _html.Td(css='widget-col widget-col-' + w.uid)
+            w_td.append(w.renderable())
+
+            slot_tr.append(w_td)
+
+        # Actions
+        actions_td = _html.Td(css='actions-col')
+        remove_btn = _html.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
+        remove_btn.append(_html.I(css='fa fas fa-icon fa-remove fa-times'))
+        actions_td.append(remove_btn)
+        slot_tr.append(actions_td)
+
+        return slot_tr
+
+    def _get_rows(self) -> _List[_html.Tr]:
+        """Build table body rows
+        """
+        r = []
+
+        for i in range(len(self.value)):
+            row_widgets = {w.uid: w for w in self._get_widgets()}  # type: _Dict[str, _Abstract]
+            for w_name, w_value in self.value[i].items():
+                row_widgets[w_name].value = w_value
+
+            r.append(self._get_row(list(row_widgets.values()), i))
+
+        return r
 
     def _get_element(self, **kwargs) -> _html.Element:
-        def _build_row(widgets: _List[_base.Abstract], k: int = 0, add_css: str = '') -> _html.Tr:
-            slot_tr = _html.Tr(css='slot ' + add_css)
-            slot_tr.append(_html.Td('[{}]'.format(k + 1), css='order-col'))
+        """Hook
+        """
+        self._data['header-hidden'] = self._header_hidden
 
-            # Widgets
-            for w in widgets:
-                w.name = '{}[{}][]'.format(self.name, w.name)
-                w.form_group = False
-                w.css += ' widget-row-col'
+        if self._max_rows:
+            self._data['max-rows'] = self._max_rows
 
-                w_td = _html.Td(css='widget-col')
-                w_td.append(w.renderable())
-
-                slot_tr.append(w_td)
-
-            # Actions
-            actions_td = _html.Td(css='actions-col')
-            remove_btn = _html.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
-            remove_btn.append(_html.I(css='fa fas fa-icon fa-remove fa-times'))
-            actions_td.append(remove_btn)
-            slot_tr.append(actions_td)
-
-            return slot_tr
-
+        base_row = self._get_widgets()
         table = _html.Table(css='content-table')
 
         # Header
@@ -154,35 +166,89 @@ class MultiRow(_base.Abstract):
         table.append(thead)
         row = _html.Tr()
         thead.append(row)
-        row.append(_html.Th('#', css='order-col'))
-        for v in self._get_headers_row():
-            row.append(_html.Th(v, css='widget-col'))
+        row.append(_html.Th('&nbsp;', css='order-col'))
+        for w in self._get_widgets():
+            row.append(_html.Th(w.label, css='widget-col'))
         row.append(_html.Th(css='widget-col'))
 
         # Table body
         tbody = _html.TBody(css='slots')
         table.append(tbody)
 
-        # Sample slot
-        sample_row = self._get_widgets_row()
-        tbody.append(_build_row(sample_row, add_css='sample hidden sr-only'))
+        # Base slot
+        tbody.append(self._get_row(base_row, add_css='base hidden sr-only'))
 
         # Rows
-        for i in range(len(self._rows)):
-            tbody.append(_build_row(self._rows[i], i))
+        for em in self._get_rows():
+            tbody.append(em)
 
         # Footer
         tfoot = _html.TFoot()
         tr = _html.Tr()
-        td = _html.Td(colspan=len(self._get_widgets_row()) + 2)
-        add_btn = _html.A(self._add_btn_title or '', href='#', css='button-add-slot btn btn-default btn-light btn-sm')
-        add_btn.append(_html.I(css='fa fas fa-plus'))
+        td = _html.Td(colspan=len(self._get_widgets()) + 2)
+        add_btn = _html.A(self._add_btn_label or '', href='#', css='button-add-slot btn btn-default btn-light btn-sm')
+        add_btn.append(_html.I(css=self._add_btn_icon))
         td.append(add_btn)
         tr.append(td)
         tfoot.append(tr)
         table.append(tfoot)
 
         return table
+
+
+class MultiRowList(MultiRow):
+    """Works like a MultiRow, but stores value as a flat list, not as a list of dicts
+    """
+
+    def __init__(self, uid: str, **kwargs):
+        self._unique = kwargs.get('unique', False)
+        super().__init__(uid, **kwargs)
+
+    def _get_row_widget_name(self, widget: _Abstract):
+        return '{}[]'.format(self.name, widget.name)
+
+    def _get_rows(self) -> _List[_html.Tr]:
+        """Build table body rows
+        """
+        r = []
+
+        widgets_per_row = len(self._get_widgets())
+        for row_num in range(0, len(self.value), widgets_per_row):
+            row_widgets = self._get_widgets()
+            for col_num in range(len(row_widgets)):
+                row_widgets[col_num].value = self.value[row_num + col_num]
+            r.append(self._get_row(row_widgets, row_num))
+
+        return r
+
+    def set_val(self, value: _List[str]):
+        if value is None:
+            value = []
+
+        # If value comes from HTTP input, it usually is a dict, and it must be converted to a list
+        if isinstance(value, dict):
+            value = [v for v in value.values()]
+
+        self._value = _util.cleanup_list(value, self._unique)
+
+    def validate(self):
+        row_widgets = self._get_widgets()
+        widgets_per_row = len(row_widgets)
+        for row_num in range(0, len(self.value), widgets_per_row):
+            for col_num in range(len(row_widgets)):
+                widget = row_widgets[col_num]
+                try:
+                    widget.value = self.value[row_num + col_num]
+                    widget.validate()
+                except _validation.error.RuleError as e:
+                    msg_id = 'plugins.widget@multi_row_validation_error'
+                    msg_args = {
+                        'row_index': row_num + 1,
+                        'widget_label': widget.label,
+                        'orig_msg': str(e)
+                    }
+
+                    raise _validation.error.RuleError(msg_id, msg_args)
 
 
 class Card(Container):

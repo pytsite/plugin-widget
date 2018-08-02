@@ -1,61 +1,72 @@
-define(['jquery'], function ($) {
-    function setupSlot(i, em, slotsHeader, slotsContainer) {
-        em.find('.order-col').html('[' + (i + 1) + ']');
+define(['jquery', 'widget'], function ($, widget) {
+    return function (w) {
+        const headerHidden = w.data('headerHidden') === 'True';
+        const maxRows = parseInt(w.data('maxRows'));
+        let slotsHeader = w.em.find('.slots-header');
+        let slotsContainer = w.em.find('.slots');
+        let addBtn = w.em.find('.button-add-slot');
 
-        // Show/hide slots header
-        if (slotsContainer.find('.slot').length === 1)
-            slotsHeader.addClass('hidden sr-only');
-        else
-            slotsHeader.removeClass('hidden sr-only');
+        function refresh() {
+            const slots = slotsContainer.find('.slot:not(.base)');
 
-        // Set unique ID for each input
-        em.find('input,select,textarea').each(function () {
-            var origId = $(this).attr('id');
-            if (origId) {
-                $(this).attr('id', origId + '-' + i);
-            }
-        });
-
-        em.find('.button-remove-slot').click(function (e) {
-            e.preventDefault();
-
-            em.remove();
-
-            if (slotsContainer.find('.slot').length === 1)
+            if (!slots.length) {
                 slotsHeader.addClass('hidden sr-only');
+            }
+            else {
+                if (!headerHidden)
+                    slotsHeader.removeClass('hidden sr-only');
+
+                slots.each(function (i, em) {
+                    $(em).find('.order-col').html('[' + (i + 1) + ']');
+                });
+            }
+
+            if (slots.length >= maxRows)
+                addBtn.addClass('hidden sr-only');
             else
-                slotsHeader.removeClass('hidden sr-only');
+                addBtn.removeClass('hidden sr-only');
+        }
 
-            // Renumber slots
-            slotsContainer.find('.slot:not(.sample)').each(function (i, em) {
-                $(em).find('.order-col').html('[' + (i + 1) + ']');
+        function setupSlot(i, em) {
+            em.find('.order-col').html('[' + (i + 1) + ']');
+
+            em.find('.pytsite-widget:not(.initialized)').each(function () {
+                let childWidget = new widget.Widget(this, function () {
+                    childWidget.uid += '_' + i;
+                });
             });
-        });
-    }
 
-    return function (widget) {
-        var slotsHeader = widget.em.find('.slots-header');
-        var slotsContainer = widget.em.find('.slots');
-        var slots = widget.em.find('.slot');
-        var addBtn = widget.em.find('.button-add-slot');
+            refresh();
 
-        widget.messagesEm.insertBefore(addBtn);
+            em.find('.button-remove-slot').click(function (e) {
+                e.preventDefault();
+                em.remove();
+                refresh();
+            });
+        }
 
-        // Clone and setup sample slot
-        var baseSlot = slots.filter('.sample').clone();
-        baseSlot.removeClass('sample hidden sr-only');
+        w.messagesEm.insertBefore(addBtn);
 
-        // Setup each existing slot
-        slots.filter(':not(.sample)').each(function (i, em) {
-            setupSlot(i, $(em), slotsHeader, slotsContainer);
+        // Setup base slot
+        let baseSlot = w.em.find('.slot.base');
+        let baseSlotClone = baseSlot.clone();
+
+        // To let empty form perform submit
+        baseSlot.find('[required]').attr('required', false);
+
+        baseSlotClone.removeClass('base hidden sr-only');
+
+        // Setup existing slots
+        w.em.find('.slot:not(.base)').each(function (i, em) {
+            setupSlot(i, $(em));
         });
 
         addBtn.click(function (e) {
             e.preventDefault();
 
-            var newSlot = baseSlot.clone();
+            let newSlot = baseSlotClone.clone();
             slotsContainer.append(newSlot);
-            setupSlot(slotsContainer.find('.slot').length - 2, newSlot, slotsHeader, slotsContainer)
+            setupSlot(slotsContainer.find('.slot').length - 2, newSlot)
         });
     }
 });
