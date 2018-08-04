@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.6.1 (2018-08-04)
+
+Errors in `container.MultiRow` fixed.
+
+
 ### 2.6 (2018-08-02)
 
 New methods in `Abstract`: `t()` and `t_plural()`.

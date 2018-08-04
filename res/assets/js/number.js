@@ -1,8 +1,5 @@
-define(['widget-input-text', 'jquery-inputmask'], function (textWidget) {
+define(['jquery-inputmask'], function () {
     return function (widget) {
-        // Call parent's constructor
-        textWidget(widget);
-
         var options = {
             allowMinus: Boolean(widget.data('allowMinus')),
             rightAlign: Boolean(widget.data('rightAlign'))

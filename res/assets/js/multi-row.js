@@ -31,7 +31,7 @@ define(['jquery', 'widget'], function ($, widget) {
             em.find('.order-col').html('[' + (i + 1) + ']');
 
             em.find('.pytsite-widget:not(.initialized)').each(function () {
-                let childWidget = new widget.Widget(this, function () {
+                new widget.Widget(this, function (childWidget) {
                     childWidget.uid += '_' + i;
                 });
             });

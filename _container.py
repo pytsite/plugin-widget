@@ -169,7 +169,7 @@ class MultiRow(_Abstract):
         row.append(_html.Th('&nbsp;', css='order-col'))
         for w in self._get_widgets():
             row.append(_html.Th(w.label, css='widget-col'))
-        row.append(_html.Th(css='widget-col'))
+        row.append(_html.Th(css='actions-col'))
 
         # Table body
         tbody = _html.TBody(css='slots')

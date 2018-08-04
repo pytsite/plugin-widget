@@ -28,7 +28,6 @@ define(['jquery', 'assetman'], function ($, assetman) {
             // Load and execute widget's JS modules
             if (this.jsModules) {
                 const self = this;
-                let loadedModulesCount = 0;
 
                 require(this.jsModules, function (...initCallbacks) {
                     $.each(initCallbacks, function (index, initCallback) {
@@ -36,13 +35,12 @@ define(['jquery', 'assetman'], function ($, assetman) {
                             initCallback(self);
                     });
 
-                    loadedModulesCount += 1;
-                    if (loadedModulesCount === self.jsModules.length && $.isFunction(readyCallback))
-                        readyCallback();
+                    if ($.isFunction(readyCallback))
+                        readyCallback(self);
                 });
             }
             else if ($.isFunction(readyCallback)) {
-                readyCallback();
+                readyCallback(this);
             }
 
             this.em.addClass('initialized');
