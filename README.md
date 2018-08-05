@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.7.1 (2018-08-05)
+
+HTML elements IDs duplication fixed.
+
+
 ### 2.7 (2018-08-05)
 
 Refactored.

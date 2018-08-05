@@ -66,19 +66,21 @@ define(['jquery', 'assetman'], function ($, assetman) {
             self.em.attr('data-uid', uid);
 
             // Update widgets elements which have ID
-            self.em.find('[id][id!=""]').each(function () {
+            const elementsWithId = self.em.find('[id][id!=""]');
+            elementsWithId.each(function (i) {
                 const prevId = $(this).attr('id');
+                const newId = elementsWithId.length === 1 ? self.uid : `${self.uid}_${i}`;
 
-                $(this).attr('id', self.uid);
+                $(this).attr('id', newId);
 
                 // Update labels
                 self.em.find(`label[for="${prevId}"]`).each(function () {
-                    $(this).attr('for', self.uid);
+                    $(this).attr('for', newId);
                 });
 
                 // Update links to element (global)
-                $(`[href="#${prevId}]"`).each(function () {
-                    $(this).attr('href', `#${self.uid}`);
+                $(`[href="#${prevId}"]`).each(function () {
+                    $(this).attr('href', `#${newId}`);
                 });
             });
 
