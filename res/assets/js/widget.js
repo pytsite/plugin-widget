@@ -10,9 +10,9 @@ define(['jquery', 'assetman'], function ($, assetman) {
             this.em = em = $(em);
             this.cid = em.data('cid');
             this.uid = em.data('uid');
+            this.parentUid = em.data('parentUid');
             this.replaces = em.data('replaces');
             this.formArea = em.data('formArea');
-            this.parentUid = em.data('parentUid');
             this.alwaysHidden = em.data('hidden') === 'True';
             this.weight = em.data('weight');
             this.assets = em.data('assets') ? em.data('assets').split(',') : [];
@@ -49,7 +49,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * UID getter
          *
-         * @return {String}
+         * @return {string}
          */
         get uid() {
             return this._uid;
@@ -58,12 +58,54 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * UID setter
          *
-         * @param {String} uid
+         * @param {string} uid
          */
         set uid(uid) {
-            this._uid = uid;
-            this.em.attr('data-uid', uid);
-            this.em.trigger('changed.uid', [uid]);
+            const self = this;
+            self._uid = uid;
+            self.em.attr('data-uid', uid);
+
+            // Update widgets elements which have ID
+            self.em.find('[id][id!=""]').each(function () {
+                const prevId = $(this).attr('id');
+
+                $(this).attr('id', self.uid);
+
+                // Update labels
+                self.em.find(`label[for="${prevId}"]`).each(function () {
+                    $(this).attr('for', self.uid);
+                });
+
+                // Update links to element (global)
+                $(`[href="#${prevId}]"`).each(function () {
+                    $(this).attr('href', `#${self.uid}`);
+                });
+            });
+
+            self.em.trigger('changed.uid', [uid]);
+        }
+
+        /**
+         * Parent UID getter
+         *
+         * @return {string}
+         */
+        get parentUid() {
+            return this._parentUid;
+        }
+
+        /**
+         * Parent UID setter
+         *
+         * @param {string} uid
+         */
+        set parentUid(uid) {
+            this._parentUid = uid;
+
+            if (uid) {
+                this.em.attr('data-parent-uid', uid);
+                this.em.trigger('changed.parentUid', [uid]);
+            }
         }
 
         /**

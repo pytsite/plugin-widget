@@ -32,7 +32,7 @@ define(['jquery', 'widget'], function ($, widget) {
 
             em.find('.pytsite-widget:not(.initialized)').each(function () {
                 new widget.Widget(this, function (childWidget) {
-                    childWidget.uid += '_' + i;
+                    childWidget.uid = w.uid + '_' + childWidget.uid + '_' + i;
                 });
             });
 

@@ -161,6 +161,7 @@ class TreeTable(DataTable):
         super().__init__(uid, **kwargs)
 
         self._form_group = False
+        self._assets.append('widget@css/tree-table.css')
         self._js_modules.append('widget-misc-tree-table')
 
     def render(self, **kwargs) -> str:

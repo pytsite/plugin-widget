@@ -1,5 +1,5 @@
 define(['jquery', 'twitter-bootstrap-table'], function ($) {
-    function init(widget) {
+    return function (widget) {
         var massActionButtons = widget.em.find('.mass-action-button');
         var form = widget.em.closest('form');
         var table = widget.em.find('table').first();
@@ -58,6 +58,4 @@ define(['jquery', 'twitter-bootstrap-table'], function ($) {
         table.on('check-all.bs.table', updateMassActionButtons);
         table.on('uncheck-all.bs.table', updateMassActionButtons);
     }
-
-    return init;
 });

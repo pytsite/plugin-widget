@@ -1,6 +1,4 @@
-define(['jquery', 'assetman'], function ($, assetman) {
-    assetman.loadCSS('plugins.widget@css/tree-table.css');
-
+define(['jquery'], function ($) {
     return function (widget) {
         var tHeadEm = widget.em.find('thead');
         var tHeadRow = $('<tr>');

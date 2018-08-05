@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.7 (2018-08-05)
+
+Refactored.
+
+
 ### 2.6.1 (2018-08-04)
 
 Errors in `container.MultiRow` fixed.

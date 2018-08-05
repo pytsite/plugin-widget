@@ -1,6 +1,6 @@
 define(['lang', 'jquery-color-picker'], function (lang) {
     return function (widget) {
-        var input = widget.em.find('input');
+        const input = widget.em.find('input');
 
         input.css('background-color', '#' + widget.em.data('color'));
 

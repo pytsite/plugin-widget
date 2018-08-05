@@ -192,7 +192,7 @@ class Checkboxes(Select):
         super().__init__(uid, multiple=True, **kwargs)
 
         self._css += ' widget-checkboxes'
-        self._js_modules.append('widget-select-checkboxes')
+        self._assets.append('widget@css/checkboxes.css')
 
         self._bootstrap_version = kwargs.get('bootstrap_version', 3)
         if self._bootstrap_version not in (3, 4):
@@ -572,7 +572,8 @@ class Score(_Abstract):
         self._max = kwargs.get('max', 5)
         self._show_numbers = kwargs.get('show_numbers', True)
 
-        self.css += ' widget-select-score'
+        self._css += ' widget-select-score'
+        self._assets.append('widget@css/score.css')
         self._js_modules.append('widget-select-score')
 
     def _get_element(self, **kwargs) -> _html.Element:
@@ -605,7 +606,8 @@ class TrafficLightScore(Score):
         super().__init__(uid, max=3, show_numbers=False, **kwargs)
 
         self._css += ' widget-select-traffic-light-score'
-        self._js_modules.append('widget-select-traffic-light-score')
+        self._assets.append('widget@css/traffic-light-score.css')
+        self._js_modules.append('font-awesome')
 
 
 class ColorPicker(_Text):

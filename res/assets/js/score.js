@@ -1,6 +1,4 @@
-define(['jquery', 'assetman'], function ($, assetman) {
-    assetman.loadCSS('plugins.widget@css/score.css');
-
+define(['jquery'], function ($) {
     return function (widget) {
         var switches = widget.em.find('.switch');
         var input = widget.em.find('input');

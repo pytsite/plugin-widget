@@ -1,6 +1,4 @@
-define(['assetman', 'http-api'], function (assetman, httpApi) {
-    assetman.loadCSS('plugins.widget@css/file.css');
-
+define(['http-api'], function (httpApi) {
     function appendSlot(cont, num, name, msg) {
         var slot = $('<div class="slot num-' + num + '"></div>');
 

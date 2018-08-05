@@ -284,7 +284,7 @@ class StringList(_MultiRowAsList):
         """Hook
         """
         return [Text(
-            uid=self.uid + '_item',
+            uid='item',
             label=self.label,
             label_hidden=True,
             rules=self.get_rules(),
@@ -351,6 +351,7 @@ class File(_Abstract):
         self._upload_endpoint = kwargs.get('upload_endpoint')
 
         self._css = ' '.join((self._css, 'widget-file'))
+        self._assets.append('widget@css/file.css')
         self._js_modules.append('widget-input-file')
 
         self._data['max_files'] = self._max_files
