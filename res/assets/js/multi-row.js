@@ -31,8 +31,9 @@ define(['jquery', 'widget'], function ($, widget) {
             em.find('.order-col').html('[' + (i + 1) + ']');
 
             em.find('.pytsite-widget:not(.initialized)').each(function () {
-                new widget.Widget(this, function (childWidget) {
-                    childWidget.uid = w.uid + '_' + childWidget.uid + '_' + i;
+                new widget.Widget(this, (childWidget) => {
+                    childWidget.uid = `${childWidget.uid}_${i}`;
+                    w.appendChild(childWidget, null); // CAUTION: skip appending childWidget to the DOM of the parent!
                 });
             });
 
@@ -40,7 +41,13 @@ define(['jquery', 'widget'], function ($, widget) {
 
             em.find('.button-remove-slot').click(function (e) {
                 e.preventDefault();
+
+                $(this).closest('.slot').find('.pytsite-widget').each(function() {
+                    w.removeChild($(this).attr('data-uid'));
+                });
+
                 em.remove();
+                
                 refresh();
             });
         }

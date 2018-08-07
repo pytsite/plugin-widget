@@ -17,7 +17,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
             this.weight = em.data('weight');
             this.assets = em.data('assets') ? em.data('assets').split(',') : [];
             this.jsModules = em.data('jsModules') ? em.data('jsModules').split(',') : [];
-            this.messagesEm = em.find('>.widget-messages').first();
+            this.messagesEm = em.find('.widget-messages').first();
             this.children = {};
 
             // Load assets
@@ -49,7 +49,7 @@ define(['jquery', 'assetman'], function ($, assetman) {
         /**
          * UID getter
          *
-         * @return {string}
+         * @returns {string}
          */
         get uid() {
             return this._uid;
@@ -61,53 +61,47 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * @param {string} uid
          */
         set uid(uid) {
-            const self = this;
-            self._uid = uid;
-            self.em.attr('data-uid', uid);
-
-            // Update widgets elements which have ID
-            const elementsWithId = self.em.find('[id][id!=""]');
-            elementsWithId.each(function (i) {
-                const prevId = $(this).attr('id');
-                const newId = elementsWithId.length === 1 ? self.uid : `${self.uid}_${i}`;
-
-                $(this).attr('id', newId);
-
-                // Update labels
-                self.em.find(`label[for="${prevId}"]`).each(function () {
-                    $(this).attr('for', newId);
-                });
-
-                // Update links to element (global)
-                $(`[href="#${prevId}"]`).each(function () {
-                    $(this).attr('href', `#${newId}`);
-                });
-            });
-
-            self.em.trigger('changed.uid', [uid]);
+            this.em.attr('data-uid', uid);
+            this._uid = uid;
         }
 
         /**
-         * Parent UID getter
+         * ParentUid getter
          *
-         * @return {string}
+         * @returns {string}
          */
         get parentUid() {
             return this._parentUid;
         }
 
         /**
-         * Parent UID setter
+         * ParentUid setter
          *
-         * @param {string} uid
+         * @param {string} parentUid
          */
-        set parentUid(uid) {
-            this._parentUid = uid;
+        set parentUid(parentUid) {
+            this.em.attr('data-parent-uid', parentUid);
+            this._parentUid = parentUid;
+        }
 
-            if (uid) {
-                this.em.attr('data-parent-uid', uid);
-                this.em.trigger('changed.parentUid', [uid]);
-            }
+        /**
+         * Get parent widget
+         *
+         * @returns {Widget}
+         */
+        get parent() {
+            return this._parent;
+        }
+
+        /**
+         * Set parent widget
+         *
+         * @param {Widget} parent
+         */
+        set parent(parent) {
+            this.parentUid = parent.uid;
+            this._parent = parent;
+            this.trigger('setParent:widget:pytsite');
         }
 
         /**
@@ -221,21 +215,63 @@ define(['jquery', 'assetman'], function ($, assetman) {
         };
 
         /**
-         *
-         * Add a child widget
+         * Append a child widget
          *
          * @param {Widget} child
+         * @param {string} childrenContainerSelector
          * @return {Widget}
          */
-        appendChild(child) {
+        appendChild(child, childrenContainerSelector = '.children') {
             if (this.children.hasOwnProperty(child.uid))
-                throw 'Widget ' + this.uid + ' already has child widget ' + child.uid;
+                throw `Widget ${this.uid} already has child widget ${child.uid}`;
 
+            child.parent = this;
             this.children[child.uid] = child;
-            this.em.find('.children').first().append(child.em);
 
-            return this
+            if (childrenContainerSelector)
+                this.em.find(childrenContainerSelector).first().append(child.em);
+
+            return this;
         };
+
+        removeChild(childUid) {
+            if (!this.children.hasOwnProperty(childUid))
+                throw `Widget ${this.uid} does not have child widget ${childUid}`;
+
+            this.find(`[data-uid="${childUid}"]`).remove();
+
+            delete this.children[childUid];
+        }
+
+        /**
+         * Shortcut
+         *
+         * @param {string} selector
+         * @returns {jquery}
+         */
+        find(selector) {
+            return this.em.find(selector);
+        }
+
+        /**
+         * Shortcut
+         *
+         * @param {string} event
+         * @param {array} args
+         */
+        trigger(event, args = []) {
+            this.em.trigger(event, args);
+        }
+
+        /**
+         * Shortcut
+         *
+         * @param {string} event
+         * @param {function} handler
+         */
+        on(event, handler) {
+            this.em.on(event, handler);
+        }
     }
 
     /**

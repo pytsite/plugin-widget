@@ -205,7 +205,7 @@ class MultiRowList(MultiRow):
         super().__init__(uid, **kwargs)
 
     def _get_row_widget_name(self, widget: _Abstract):
-        return '{}[]'.format(self.name, widget.name)
+        return '{}[]'.format(self.name)
 
     def _get_rows(self) -> _List[_html.Tr]:
         """Build table body rows

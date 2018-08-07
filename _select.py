@@ -93,6 +93,8 @@ class Select(_Abstract):
                 raise TypeError('Each item must be a list or tuple and have exactly 2 elements')
             self._items.append((int(item[0]) if self._int_keys else item[0], item[1]))
 
+        self._js_modules.append('widget-input')
+
     def set_val(self, value: _Union[int, str, list, tuple, None]):
         """Set value of the widget
         """
@@ -193,6 +195,7 @@ class Checkboxes(Select):
 
         self._css += ' widget-checkboxes'
         self._assets.append('widget@css/checkboxes.css')
+        self._js_modules.remove('widget-input')
 
         self._bootstrap_version = kwargs.get('bootstrap_version', 3)
         if self._bootstrap_version not in (3, 4):
@@ -341,6 +344,7 @@ class DateTime(_Text):
 
         super().__init__(uid, **kwargs)
 
+        self._autocomplete = 'off'
         self._js_modules.append('widget-select-date-time')
         self._css += ' widget-select-datetime'
         self.add_rule(_validation.rule.DateTime(formats=[self._format]))

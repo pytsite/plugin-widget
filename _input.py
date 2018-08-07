@@ -20,6 +20,7 @@ class Hidden(_Abstract):
         self._hidden = True
         self._form_group = False
         self._has_messages = False
+        self._js_modules.append('widget-input')
 
     def _get_element(self, **kwargs) -> _html.Input:
         inp = _html.Input(
@@ -53,7 +54,7 @@ class Text(_Abstract):
         self._inputmask = kwargs.get('inputmask')
         self._css = ' '.join((self._css, 'widget-input-text'))
         self._type = 'text'
-        self._js_modules.append('widget-input-text')
+        self._js_modules += ['widget-input', 'widget-input-text']
 
     @property
     def max_length(self, ) -> int:
@@ -152,6 +153,7 @@ class TextArea(_Abstract):
         self._required = kwargs.get('required', False)
         self._max_length = kwargs.get('max_length')
         self._css = ' '.join((self._css, 'widget-textarea-input'))
+        self._js_modules.append('widget-input')
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget.

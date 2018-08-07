@@ -21,6 +21,7 @@ def plugin_load():
     assetman.t_js(__name__, babelify=True)
 
     assetman.js_module('widget', __name__ + '@js/widget')
+    assetman.js_module('widget-input', __name__ + '@js/input')
     assetman.js_module('widget-multi-row', __name__ + '@js/multi-row')
     assetman.js_module('widget-input-text', __name__ + '@js/text')
     assetman.js_module('widget-input-typeahead-text', __name__ + '@js/typeahead-text')
