@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.8.3 (2018-08-08)
+
+Missing setters and getters added to the `input.Text`.
+
+
 ### 2.8.2 (2018-08-08)
 
 `container.MultiRow`'s JS code fixed.

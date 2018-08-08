@@ -1,6 +1,6 @@
 """PytSite Input Widgets
 """
-__author__ = 'Alexander Shepetko'
+__author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
@@ -57,12 +57,52 @@ class Text(_Abstract):
         self._js_modules += ['widget-input', 'widget-input-text']
 
     @property
+    def autocomplete(self, ) -> int:
+        return self._autocomplete
+
+    @autocomplete.setter
+    def autocomplete(self, value: int):
+        self._autocomplete = value
+
+    @property
+    def min_length(self, ) -> int:
+        return self._min_length
+
+    @min_length.setter
+    def min_length(self, value: int):
+        self._min_length = value
+
+    @property
     def max_length(self, ) -> int:
         return self._max_length
 
     @max_length.setter
     def max_length(self, value: int):
         self._max_length = value
+
+    @property
+    def prepend(self, ) -> int:
+        return self._prepend
+
+    @prepend.setter
+    def prepend(self, value: int):
+        self._prepend = value
+
+    @property
+    def append(self, ) -> int:
+        return self._append
+
+    @append.setter
+    def append(self, value: int):
+        self._append = value
+
+    @property
+    def inputmask(self, ) -> int:
+        return self._inputmask
+
+    @inputmask.setter
+    def inputmask(self, value: int):
+        self._inputmask = value
 
     def _get_element(self, **kwargs) -> _html.Input:
         """Render the widget
