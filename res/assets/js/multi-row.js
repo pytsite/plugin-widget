@@ -56,14 +56,16 @@ define(['jquery', 'widget'], function ($, widget) {
 
         // Setup base slot
         let baseSlot = w.em.find('.slot.base');
+
+        // Create base slot's clone in the memory, not in DOM
+        let baseSlotClone = baseSlot.clone();
+        baseSlotClone.removeClass('base hidden sr-only');
+
+        // Setup base slot's widgets
         setupSlot('base', baseSlot);
 
         // To let empty form perform submit
         baseSlot.find('[required]').attr('required', false);
-
-        // Create base slot clone in the memory, not in DOM
-        let baseSlotClone = baseSlot.clone();
-        baseSlotClone.removeClass('base hidden sr-only');
 
         // Setup existing slots
         w.em.find('.slot:not(.base)').each(function (i, em) {

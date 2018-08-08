@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.8.2 (2018-08-08)
+
+`container.MultiRow`'s JS code fixed.
+
+
 ### 2.8.1 (2018-08-08)
 
 `container.MultiRow`'s JS code fixed.
