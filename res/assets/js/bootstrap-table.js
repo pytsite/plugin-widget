@@ -49,7 +49,18 @@ define(['jquery', 'twitter-bootstrap-table'], function ($) {
         });
 
         // Show and initialize table
-        table.removeClass('hidden').removeClass('sr-only').bootstrapTable();
+        table.removeClass('hidden').removeClass('sr-only').bootstrapTable({
+            iconsPrefix: 'fa fas',
+            icons: {
+                paginationSwitchDown: 'fa-arrow-circle-down icon-chevron-down',
+                paginationSwitchUp: 'fa-arrow-circle-up icon-chevron-up',
+                refresh: 'fa-refresh fa-sync icon-refresh',
+                toggle: 'fa-list-alt icon-list-alt',
+                columns: 'fa-th icon-th',
+                detailOpen: 'fa-plus icon-plus',
+                detailClose: 'fa-minus icon-minus'
+            }
+        });
 
         // Show/hide mass action buttons
         updateMassActionButtons();

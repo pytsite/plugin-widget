@@ -321,6 +321,16 @@ class Abstract(_ABC):
         self._css = value
 
     @property
+    def data(self) -> dict:
+        """Get data attributes of the widget
+        """
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data = value
+
+    @property
     def has_messages(self) -> bool:
         """Get has_messages property of the widget
         """

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.9 (2018-08-09)
+
+Bootstrap 4 compatibility of `misc.BootstrapTable` improved.
+
+
 ### 2.8.3 (2018-08-08)
 
 Missing setters and getters added to the `input.Text`.
