@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.10 (2018-08-16)
+
+Support of placeholder in `select.Select`.
+
+
 ### 2.9 (2018-08-09)
 
 Bootstrap 4 compatibility of `misc.BootstrapTable` improved.

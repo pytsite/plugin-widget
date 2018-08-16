@@ -131,6 +131,9 @@ class Select(_Abstract):
         if not self._enabled:
             select.set_attr('disabled', 'disabled')
 
+        if self._placeholder:
+            select.append(_html.Option(self._placeholder, disabled=True, selected=True, value=''))
+
         if self._append_none_item:
             select.append(_html.Option('--- ' + _lang.t('plugins.widget@select_none_item') + ' ---', value=''))
 
