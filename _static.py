@@ -32,10 +32,22 @@ class Text(_base.Abstract):
     """
 
     def __init__(self, uid: str, **kwargs):
-        """Init.
+        """Init
         """
         super().__init__(uid, **kwargs)
+
         self._css = ' '.join((self._css, 'widget-static-control'))
+        self._js_modules.append('widget-input')
+
+        self._text = kwargs.get('text', '')
+
+    @property
+    def text(self) -> str:
+        return self._text
+
+    @text.setter
+    def text(self, value: str):
+        self._text = value
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget.
@@ -43,7 +55,7 @@ class Text(_base.Abstract):
         """
         container = _html.TagLessElement()
         container.append(_html.Input(type='hidden', uid=self.uid, name=self.name, value=self.value))
-        container.append(_html.P(self.title, css='form-control-static'))
+        container.append(_html.P(self._text, css='form-control-static', title=self._title))
 
         return container
 

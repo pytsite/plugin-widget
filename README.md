@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 2.11 (2018-08-21)
+
+- New `form` property added in JavaScript's `Widget` class.
+- `static.Text.title` property replaced with `text` one.
+
+
 ### 2.10.2 (2018-08-21)
 
 IDs assignment JavaScript errors fixed.

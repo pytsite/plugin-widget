@@ -4,15 +4,17 @@ define(['jquery', 'assetman'], function ($, assetman) {
          * Constructor
          *
          * @param {jquery} em
+         * @param {Form} form
          * @param {function} readyCallback
          */
-        constructor(em, readyCallback) {
+        constructor(em, form, readyCallback) {
             this.em = em = $(em);
             this.cid = em.data('cid');
             this.uid = em.data('uid');
             this.parentUid = em.data('parentUid');
             this.replaces = em.data('replaces');
             this.formArea = em.data('formArea');
+            this.form = form;
             this.alwaysHidden = em.data('hidden') === 'True';
             this.weight = em.data('weight');
             this.assets = em.data('assets') ? em.data('assets').split(',') : [];
@@ -230,6 +232,8 @@ define(['jquery', 'assetman'], function ($, assetman) {
 
             if (childrenContainerSelector)
                 this.em.find(childrenContainerSelector).first().append(child.em);
+
+            child.form = this.form;
 
             return this;
         };
