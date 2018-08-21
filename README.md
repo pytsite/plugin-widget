@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.10.1 (2018-08-21)
+
+IDs assignment of buttons and inputs fixed.
+
+
 ### 2.10 (2018-08-16)
 
 Support of placeholder in `select.Select`.
