@@ -17,7 +17,7 @@ class Button(_base.Abstract):
         """
         super().__init__(uid, **kwargs)
 
-        self._js_modules.append('widget-button')
+        self._js_modules.append('widget-input')
         self._css += ' inline'
         self._icon = kwargs.get('icon')
         self._color = kwargs.get('color', 'default')

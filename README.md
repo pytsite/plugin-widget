@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.10.2 (2018-08-21)
+
+IDs assignment JavaScript errors fixed.
+
+
 ### 2.10.1 (2018-08-21)
 
 IDs assignment of buttons and inputs fixed.

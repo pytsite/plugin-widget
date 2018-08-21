@@ -28,7 +28,6 @@ def plugin_load():
     assetman.js_module('widget-input-number', __name__ + '@js/number')
     assetman.js_module('widget-input-tokens', __name__ + '@js/tokens')
     assetman.js_module('widget-input-file', __name__ + '@js/file')
-    assetman.js_module('widget-button', __name__ + '@js/button')
     assetman.js_module('widget-select-select2', __name__ + '@js/select2')
     assetman.js_module('widget-select-date-time', __name__ + '@js/date-time')
     assetman.js_module('widget-select-pager', __name__ + '@js/pager')
