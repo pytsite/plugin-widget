@@ -4,6 +4,7 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
+from typing import Union as _Union, List as _List
 from pytsite import html as _html
 from . import _base
 
@@ -20,7 +21,7 @@ class Button(_base.Abstract):
         self._js_modules.append('widget-input')
         self._css += ' inline'
         self._icon = kwargs.get('icon')
-        self._color = kwargs.get('color', 'default')
+        self._color = kwargs.get('color', ['default', 'secondary'])
         self._dismiss = kwargs.get('dismiss', None)
         self._form_group = False
         self._has_messages = False
@@ -39,11 +40,11 @@ class Button(_base.Abstract):
         self._icon = value
 
     @property
-    def color(self) -> str:
+    def color(self) -> _Union[str, _List[str]]:
         return self._color
 
     @color.setter
-    def color(self, value: str):
+    def color(self, value: _Union[str, _List[str]]):
         self._color = value
 
     def _get_element(self, **kwargs) -> _html.Element:
@@ -51,7 +52,11 @@ class Button(_base.Abstract):
         :param **kwargs:
         """
         self._html_em.set_attr('uid', self._uid)
-        self._html_em.set_attr('css', 'btn btn-' + self._color)
+
+        if isinstance(self._color, list):
+            self._html_em.set_attr('css', 'btn ' + ' '.join('btn-' + c for c in self._color))
+        else:
+            self._html_em.set_attr('css', 'btn btn-' + self._color)
 
         self._html_em.content = self.get_val()
         if self._icon and not self._html_em.children:

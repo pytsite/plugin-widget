@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.12 (2018-08-23)
+
+Support for multiple values of `button.Button.color` property.
+
+
 ### 2.11 (2018-08-21)
 
 - New `form` property added in JavaScript's `Widget` class.
