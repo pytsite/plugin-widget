@@ -255,7 +255,7 @@ class Number(Text):
         self._max = kwargs.get('max')
         self._js_modules.append('widget-input-number')
 
-        if self._allow_minus:
+        if self._allow_minus or (self._min is not None and self._min < 0):
             self._data['allow_minus'] = 'true'
         if self._right_align:
             self._data['right_align'] = 'true'

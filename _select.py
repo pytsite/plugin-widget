@@ -81,7 +81,7 @@ class Select(_Abstract):
 
         super().__init__(uid, **kwargs)
 
-        self._append_none_item = kwargs.get('append_none_item', True)
+        self._append_none_item = kwargs.get('append_none_item', True) and not self._required
         self._exclude = kwargs.get('exclude', [])
 
         self._items = []
@@ -167,22 +167,35 @@ class Select2(Select):
         self._theme = kwargs.get('theme', 'bootstrap')
         self._ajax_url = kwargs.get('ajax_url')
         self._ajax_url_query = kwargs.get('ajax_url_query', {})
-        self._ajax_delay = kwargs.get('ajax_delay', 750)
-        self._ajax_data_type = kwargs.get('ajax_data_type', 'json')
+        self._ajax_delay = kwargs.get('ajax_delay', 250)
+        self._ajax_cache = kwargs.get('ajax_cache', True)
+        self._tags = kwargs.get('tags', False)
         self._css += ' widget-select-select2'
+
+        self._linked_select = kwargs.get('linked_select')  # type: Select2
+        if self._linked_select and not isinstance(self._linked_select, Select2):
+            raise TypeError('Instance of {} expected, got {}'.format(Select2, type(self._linked_select)))
 
     def _get_element(self, **kwargs) -> _html.Element:
         select = self._get_select_html_em()
         select.set_attr('style', 'width: 100%;')
 
-        self._data['theme'] = self._theme
+        if self._linked_select:
+            self._data['linked_select'] = self._linked_select.uid
+
+        if self._append_none_item:
+            self._data['append_none_item'] = self._append_none_item
 
         if self._ajax_url:
-            self._data.update({
-                'ajax_url': _router.url(self._ajax_url, query=self._ajax_url_query),
-                'ajax_delay': self._ajax_delay,
-                'ajax_data_type': self._ajax_data_type,
-            })
+            self._data['ajax_url'] = self._ajax_url
+            self._data['ajax_delay'] = self._ajax_delay
+            self._data['ajax_cache'] = self._ajax_cache
+
+        select.set_attr('data_theme', self._theme)
+        if self._tags:
+            select.set_attr('data_tags', 'true')
+        if self._placeholder:
+            select.set_attr('data_placeholder', self._placeholder)
 
         return select
 

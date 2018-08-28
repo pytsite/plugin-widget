@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 2.13 (2018-08-28)
+
+- Linked selects support added in `select.Select2`.
+- Setting of `input.Number.allow_minus` property fixed.
+
+
 ### 2.12 (2018-08-23)
 
 Support for multiple values of `button.Button.color` property.
