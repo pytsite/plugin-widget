@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.13.1 (2018-08-29)
+
+- `select.Select` and `select.Select2` minor issues fixed.
+
+
 ### 2.13 (2018-08-28)
 
 - Linked selects support added in `select.Select2`.

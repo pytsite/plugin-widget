@@ -81,7 +81,7 @@ class Select(_Abstract):
 
         super().__init__(uid, **kwargs)
 
-        self._append_none_item = kwargs.get('append_none_item', True) and not self._required
+        self._append_none_item = kwargs.get('append_none_item', True)
         self._exclude = kwargs.get('exclude', [])
 
         self._items = []

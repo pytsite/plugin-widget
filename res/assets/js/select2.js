@@ -38,7 +38,7 @@ define(['lang', 'http-api', 'select2'], function (lang, httpApi) {
                 thisSelect.trigger('change');
 
                 let ajaxArgs = {};
-                ajaxArgs[linkedSelectUid] = linkedSelect.val();
+                ajaxArgs[linkedSelectWidget.data('model')] = linkedSelect.val();
 
                 const ajaxUrl = httpApi.url(`odm_ui/widget/entity_select_search/${model}`, ajaxArgs);
 
