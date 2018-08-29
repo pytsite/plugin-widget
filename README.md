@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.13.2 (2018-08-29)
+
+`select.Select2.append_none_item` set to `False` by default.
+
+
 ### 2.13.1 (2018-08-29)
 
 - `select.Select` and `select.Select2` minor issues fixed.

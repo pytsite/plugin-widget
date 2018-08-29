@@ -161,6 +161,8 @@ class Select2(Select):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
+        kwargs.setdefault('append_none_item', False)
+
         super().__init__(uid, **kwargs)
 
         self._js_modules.append('widget-select-select2')
