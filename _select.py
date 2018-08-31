@@ -174,8 +174,9 @@ class Select2(Select):
         self._ajax_cache = kwargs.get('ajax_cache', True)
         self._tags = kwargs.get('tags', False)
         self._css += ' widget-select-select2'
-
         self._linked_select = kwargs.get('linked_select')  # type: Select2
+        self._linked_select_ajax_query_attr = kwargs.get('linked_select_ajax_query_attr')
+
         if self._linked_select and not isinstance(self._linked_select, Select2):
             raise TypeError('Instance of {} expected, got {}'.format(Select2, type(self._linked_select)))
 
@@ -183,8 +184,11 @@ class Select2(Select):
         select = self._get_select_html_em()
         select.set_attr('style', 'width: 100%;')
 
+        self._data['linked_select_ajax_query_attr'] = self._linked_select_ajax_query_attr
+
         if self._linked_select:
             self._data['linked_select'] = self._linked_select.uid
+            self._data['linked_select_value'] = self._linked_select.value
 
         if self._append_none_item:
             self._data['append_none_item'] = self._append_none_item

@@ -23,28 +23,29 @@ define(['lang', 'assetman', 'http-api', 'select2'], function (lang, assetman, ht
         // Setup linked selects
         widget.form.em.on('forward:form:pytsite', function () {
             const thisSelect = widget.em.find('select');
+
+            // Search for linked select widget
             const linkedSelectUid = widget.data('linkedSelect');
             const linkedSelectWidget = linkedSelectUid ? widget.form.getWidget(linkedSelectUid) : null;
-
             if (!linkedSelectWidget)
                 return;
 
             const linkedSelect = linkedSelectWidget.em.find('select');
             linkedSelect.change(function () {
-                thisSelect.val(null);
-                thisSelect.select2('destroy');
-                thisSelect.prop('disabled', !linkedSelect.val());
-                thisSelect.trigger('change');
-
-
-                const ajaxArgs = {};
-                const linkedSelectWidgetData = linkedSelectWidget.data();
-                for (let k in linkedSelectWidgetData) {
-                    if (linkedSelectWidgetData.hasOwnProperty(k) && k.startsWith('linkedSelectAttr')) {
-                        ajaxArgs[linkedSelectWidgetData[k]] = linkedSelect.val();
-                    }
+                // If linked select's value was REALLY changed
+                if (widget.em.attr('data-linked-select-value') !== linkedSelect.val()) {
+                    widget.em.attr('data-linked-select-value', linkedSelect.val());
+                    thisSelect.val(null);
+                    thisSelect.prop('disabled', !linkedSelect.val());
+                    thisSelect.trigger('change');
                 }
 
+                // Build AJAX URL query args
+                const ajaxArgs = widget.data('ajaxUrlQuery');
+                ajaxArgs[linkedSelectWidget.data('linkedSelectAjaxQueryAttr')] = linkedSelect.val();
+
+                // Re-create select with new AJAX URL
+                thisSelect.select2('destroy');
                 thisSelect.select2({
                     ajax: {
                         url: httpApi.url(widget.data('ajaxUrl'), ajaxArgs),

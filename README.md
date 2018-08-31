@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.15 (2018-09-01)
+
+Improved support of linked selects in `select.Select2`.
+
+
 ### 2.14 (2018-08-31)
 
 - Support of `assetman-2.5` and `http_api-2.1`.
