@@ -1,6 +1,6 @@
 {
   "name": "widget",
-  "version": "2.13.2",
+  "version": "2.14",
   "description": {
     "en": "Widget",
     "ru": "Widget",
@@ -15,9 +15,10 @@
   "requires": {
     "pytsite": ">=7.28",
     "plugins": [
-      "assetman",
+      "assetman>=2.5",
       "font_awesome",
       "hreflang",
+      "http_api>=2.1",
       "jquery",
       "jquery_ui",
       "jquery_colorpicker",

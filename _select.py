@@ -8,6 +8,7 @@ from typing import Union as _Union
 from collections import OrderedDict as _OrderedDict
 from math import ceil as _ceil
 from datetime import datetime as _datetime
+from json import dumps as _json_dumps
 from pytsite import html as _html, lang as _lang, validation as _validation, util as _util, router as _router
 from plugins import hreflang as _hreflang
 from ._base import Abstract as _Abstract
@@ -190,6 +191,7 @@ class Select2(Select):
 
         if self._ajax_url:
             self._data['ajax_url'] = self._ajax_url
+            self._data['ajax_url_query'] = _json_dumps(self._ajax_url_query)
             self._data['ajax_delay'] = self._ajax_delay
             self._data['ajax_cache'] = self._ajax_cache
 

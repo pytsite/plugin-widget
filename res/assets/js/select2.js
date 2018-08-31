@@ -1,4 +1,4 @@
-define(['lang', 'http-api', 'select2'], function (lang, httpApi) {
+define(['lang', 'assetman', 'http-api', 'select2'], function (lang, assetman, httpApi) {
     return function (widget) {
         function processResults(data) {
             if (widget.data('appendNoneItem')) {
@@ -13,7 +13,7 @@ define(['lang', 'http-api', 'select2'], function (lang, httpApi) {
 
         widget.em.find('select').select2({
             ajax: {
-                url: widget.data('ajaxUrl'),
+                url: assetman.url(widget.data('ajaxUrl'), widget.data('ajaxUrlQuery')),
                 delay: widget.data('ajaxDelay'),
                 processResults: processResults,
                 cache: widget.data('ajaxCache') === 'True',
@@ -22,7 +22,6 @@ define(['lang', 'http-api', 'select2'], function (lang, httpApi) {
 
         // Setup linked selects
         widget.form.em.on('forward:form:pytsite', function () {
-            const model = widget.data('model');
             const thisSelect = widget.em.find('select');
             const linkedSelectUid = widget.data('linkedSelect');
             const linkedSelectWidget = linkedSelectUid ? widget.form.getWidget(linkedSelectUid) : null;
@@ -37,14 +36,18 @@ define(['lang', 'http-api', 'select2'], function (lang, httpApi) {
                 thisSelect.prop('disabled', !linkedSelect.val());
                 thisSelect.trigger('change');
 
-                let ajaxArgs = {};
-                ajaxArgs[linkedSelectWidget.data('model')] = linkedSelect.val();
 
-                const ajaxUrl = httpApi.url(`odm_ui/widget/entity_select_search/${model}`, ajaxArgs);
+                const ajaxArgs = {};
+                const linkedSelectWidgetData = linkedSelectWidget.data();
+                for (let k in linkedSelectWidgetData) {
+                    if (linkedSelectWidgetData.hasOwnProperty(k) && k.startsWith('linkedSelectAttr')) {
+                        ajaxArgs[linkedSelectWidgetData[k]] = linkedSelect.val();
+                    }
+                }
 
                 thisSelect.select2({
                     ajax: {
-                        url: ajaxUrl,
+                        url: httpApi.url(widget.data('ajaxUrl'), ajaxArgs),
                         delay: parseInt(widget.data('ajaxDelay')),
                         processResults: processResults,
                         cache: widget.data('ajaxCache') === 'True',

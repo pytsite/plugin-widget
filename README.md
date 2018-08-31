@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 2.14 (2018-08-31)
+
+- Support of `assetman-2.5` and `http_api-2.1`.
+- `select.Select2` issues fixed.
+
+
 ### 2.13.2 (2018-08-29)
 
 `select.Select2.append_none_item` set to `False` by default.
