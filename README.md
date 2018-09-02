@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.15.1 (2018-09-02)
+
+Init code order of `select.Select2` fixed.
+
+
 ### 2.15 (2018-09-01)
 
 Improved support of linked selects in `select.Select2`.

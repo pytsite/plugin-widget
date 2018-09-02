@@ -162,23 +162,23 @@ class Select2(Select):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        kwargs.setdefault('append_none_item', False)
-
-        super().__init__(uid, **kwargs)
-
-        self._js_modules.append('widget-select-select2')
         self._theme = kwargs.get('theme', 'bootstrap')
         self._ajax_url = kwargs.get('ajax_url')
         self._ajax_url_query = kwargs.get('ajax_url_query', {})
         self._ajax_delay = kwargs.get('ajax_delay', 250)
         self._ajax_cache = kwargs.get('ajax_cache', True)
         self._tags = kwargs.get('tags', False)
-        self._css += ' widget-select-select2'
         self._linked_select = kwargs.get('linked_select')  # type: Select2
         self._linked_select_ajax_query_attr = kwargs.get('linked_select_ajax_query_attr')
 
         if self._linked_select and not isinstance(self._linked_select, Select2):
             raise TypeError('Instance of {} expected, got {}'.format(Select2, type(self._linked_select)))
+
+        kwargs.setdefault('append_none_item', False)
+        super().__init__(uid, **kwargs)
+
+        self._js_modules.append('widget-select-select2')
+        self._css += ' widget-select-select2'
 
     def _get_element(self, **kwargs) -> _html.Element:
         select = self._get_select_html_em()
