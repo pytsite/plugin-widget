@@ -83,6 +83,7 @@ class Select(_Abstract):
         super().__init__(uid, **kwargs)
 
         self._append_none_item = kwargs.get('append_none_item', True)
+        self._none_item_title = kwargs.get('none_item_title', '--- ' + _lang.t('widget@select_none_item') + ' ---')
         self._exclude = kwargs.get('exclude', [])
 
         self._items = []
@@ -136,7 +137,7 @@ class Select(_Abstract):
             select.append(_html.Option(self._placeholder, disabled=True, selected=True, value=''))
 
         if self._append_none_item:
-            select.append(_html.Option('--- ' + _lang.t('plugins.widget@select_none_item') + ' ---', value=''))
+            select.append(_html.Option(self._none_item_title, value=''))
 
         for item in self._items:
             if self._exclude and item[0] in self._exclude:

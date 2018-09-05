@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.15.2 (2018-09-05)
+
+New constructor's argument `none_item_title` in `select Select`.
+
+
 ### 2.15.1 (2018-09-02)
 
 Init code order of `select.Select2` fixed.
