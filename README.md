@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.16 (2018-09-09)
+
+New method `pop_item` and property `items` in `select.Breadcrumb`.
+
+
 ### 2.15.2 (2018-09-05)
 
 New constructor's argument `none_item_title` in `select Select`.

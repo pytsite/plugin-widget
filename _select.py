@@ -4,7 +4,7 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Union as _Union
+from typing import Union as _Union, Tuple as _Tuple, Optional as _Optional, List as _List
 from collections import OrderedDict as _OrderedDict
 from math import ceil as _ceil
 from datetime import datetime as _datetime
@@ -683,7 +683,14 @@ class Breadcrumb(_Abstract):
 
         return nav
 
+    @property
+    def items(self) -> _List[_Tuple[str, _Optional[str]]]:
+        return self._items.copy()
+
     def append_item(self, title: str, link: str = None):
         self._items.append((title, link))
 
         return self
+
+    def pop_item(self, index: int = None) -> _Tuple[str, _Optional[str]]:
+        return self._items.pop(index)
