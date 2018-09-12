@@ -4,7 +4,7 @@ define(['lang', 'assetman', 'http-api', 'select2'], function (lang, assetman, ht
             if (widget.data('appendNoneItem')) {
                 data['results'].unshift({
                     id: '',
-                    text: `--- ${widget.data('noneItemTitle')} ---`,
+                    text: widget.data('noneItemTitle'),
                 });
             }
 
