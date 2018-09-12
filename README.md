@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.16.1 (2018-09-12)
+
+None item title set fixed in `select.Select2`.
+
+
 ### 2.16 (2018-09-09)
 
 New method `pop_item` and property `items` in `select.Breadcrumb`.

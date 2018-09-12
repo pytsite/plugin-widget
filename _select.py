@@ -193,6 +193,7 @@ class Select2(Select):
 
         if self._append_none_item:
             self._data['append_none_item'] = self._append_none_item
+            self._data['none_item_title'] = self._none_item_title
 
         if self._ajax_url:
             self._data['ajax_url'] = self._ajax_url
