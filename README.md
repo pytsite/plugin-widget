@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.16.3 (2018-09-17)
+
+`select.Breadcrumb.pop_item()` fixed.
+
+
 ### 2.16.2 (2018-09-12)
 
 None item title fixed in `select.Select2`.

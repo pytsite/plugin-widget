@@ -685,13 +685,13 @@ class Breadcrumb(_Abstract):
         return nav
 
     @property
-    def items(self) -> _List[_Tuple[str, _Optional[str]]]:
+    def items(self) -> _List[_List[str]]:
         return self._items.copy()
 
     def append_item(self, title: str, link: str = None):
-        self._items.append((title, link))
+        self._items.append([title, link])
 
         return self
 
-    def pop_item(self, index: int = None) -> _Tuple[str, _Optional[str]]:
+    def pop_item(self, index: int = -1) -> _Tuple[str, _Optional[str]]:
         return self._items.pop(index)
