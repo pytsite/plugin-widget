@@ -361,10 +361,11 @@ class DateTime(_Text):
 
         self._format = kwargs.get('format')
         if not self._format:
+            c_lang = _lang.get_current()
             if self._datepicker and self._timepicker:
-                self._format = '%Y-%m-%d %H:%M'
+                self._format = '%d.%m.%Y %H:%M' if c_lang in ('ru', 'uk') else '%Y-%m-%d %H:%M'
             elif self._datepicker:
-                self._format = '%Y-%m-%d'
+                self._format = '%d.%m.%Y' if c_lang in ('ru', 'uk') else '%Y-%m-%d'
             elif self._timepicker:
                 self._format = '%H:%M'
 

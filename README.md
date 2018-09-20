@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 2.17 (2018-09-20)
+
+Automatic localized date format in `select.DateTime`.
+
+
 ### 2.16.3 (2018-09-17)
 
 `select.Breadcrumb.pop_item()` fixed.
