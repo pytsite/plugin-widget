@@ -2,8 +2,8 @@
   "name": "@pytsite/widget",
   "main": "js/index.js",
   "dependencies": {
+    "@pytsite/bootstrap-tokenfield": "0.x",
     "bootstrap-table": "1.x",
-    "bootstrap-tokenfield": "0.x",
     "bloodhound-js": "1.x",
     "datetimepicker-jquery": "2.x",
     "inputmask": "4.x",

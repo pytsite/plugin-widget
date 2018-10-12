@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 3.0.1 (2018-10-12)
+
+NPM dependencies fixed.
+
+
 ### 3.0 (2018-10-12)
 
 - Support of `pytsite-8.x` and `assetman-4.x`.
