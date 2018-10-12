@@ -1,0 +1,16 @@
+{
+  "name": "@pytsite/widget",
+  "main": "js/index.js",
+  "dependencies": {
+    "bootstrap-table": "1.x",
+    "bootstrap-tokenfield": "0.x",
+    "bloodhound-js": "1.x",
+    "datetimepicker-jquery": "2.x",
+    "inputmask": "4.x",
+    "jquery": "3.x",
+    "mini-css-extract-plugin": "0.x",
+    "select2": "4.x",
+    "typeahead.js": "0.x",
+    "vanderlee-colorpicker": "1.x"
+  }
+}

@@ -1,11 +1,12 @@
-define(['jquery-inputmask'], function () {
-    return function (widget) {
-        const input = widget.find('input');
+import 'inputmask';
+import 'inputmask/dist/inputmask/jquery.inputmask';
 
-        input.inputmask();
+require('@pytsite/widget').onWidgetLoad('plugins.widget._input.Text', (w) => {
+    const input = w.find('input');
 
-        input.focus(function () {
-            this.select();
-        });
-    }
+    input.inputmask();
+
+    input.focus(function () {
+        this.select();
+    });
 });

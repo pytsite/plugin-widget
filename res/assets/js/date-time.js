@@ -1,14 +1,17 @@
-define(['lang', 'jquery-datetimepicker'], function (lang) {
-    return function (widget) {
-        $.datetimepicker.setLocale(lang.current());
+import 'datetimepicker-jquery/build/jquery.datetimepicker.min.css'
+import 'datetimepicker-jquery/build/jquery.datetimepicker.full'
 
-        const opts = {
-            format: widget.data('format'),
-            datepicker: widget.data('datepicker') === 'True',
-            timepicker: widget.data('timepicker') === 'True',
-            mask: widget.data('mask') === 'True'
-        };
+const $ = require('jquery');
 
-        widget.em.find('input').datetimepicker(opts);
-    }
+require('@pytsite/widget').onWidgetLoad('plugins.widget._select.DateTime', (widget) => {
+    $.datetimepicker.setLocale(lang.current());
+
+    const opts = {
+        format: widget.data('format'),
+        datepicker: widget.data('datepicker') === 'True',
+        timepicker: widget.data('timepicker') === 'True',
+        mask: widget.data('mask') === 'True'
+    };
+
+    widget.em.find('input').datetimepicker(opts);
 });

@@ -1,17 +1,21 @@
-define(['jquery-inputmask'], function () {
-    return function (widget) {
-        var options = {
-            allowMinus: Boolean(widget.data('allowMinus')),
-            rightAlign: Boolean(widget.data('rightAlign'))
-        };
+const $ = require('jquery');
+import 'inputmask';
+import 'inputmask/dist/inputmask/jquery.inputmask';
 
-        widget.em.find('input[type=text],input[type=tel],input[type=number]').each(function () {
-            if (widget.em.hasClass('pytsite-widget-integer')) {
-                $(this).inputmask('integer', options)
-            }
-            else if (widget.em.hasClass('pytsite-widget-decimal')) {
-                $(this).inputmask('decimal', options)
-            }
-        });
-    }
+require('@pytsite/widget').onWidgetLoad('plugins.widget._input.Number', (widget) => {
+    const options = {
+        allowMinus: Boolean(widget.data('allowMinus')),
+        rightAlign: Boolean(widget.data('rightAlign'))
+    };
+
+    widget.em.find('input[type=text],input[type=tel],input[type=number]').each(function () {
+        console.log($(this));
+
+        if (widget.em.hasClass('widget-integer')) {
+            $(this).inputmask('integer', options)
+        }
+        else if (widget.em.hasClass('widget-decimal')) {
+            $(this).inputmask('decimal', options)
+        }
+    });
 });

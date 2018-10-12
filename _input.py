@@ -10,7 +10,11 @@ from ._base import Abstract as _Abstract
 from ._container import MultiRowList as _MultiRowAsList
 
 
-class Hidden(_Abstract):
+class Input(_Abstract):
+    pass
+
+
+class Hidden(Input):
     """Hidden Input Widget
     """
 
@@ -20,7 +24,6 @@ class Hidden(_Abstract):
         self._hidden = True
         self._form_group = False
         self._has_messages = False
-        self._js_modules.append('widget-input')
 
     def _get_element(self, **kwargs) -> _html.Input:
         inp = _html.Input(
@@ -37,7 +40,7 @@ class Hidden(_Abstract):
         return inp
 
 
-class Text(_Abstract):
+class Text(Input):
     """Text Input Widget
     """
 
@@ -52,9 +55,7 @@ class Text(_Abstract):
         self._prepend = kwargs.get('prepend')
         self._append = kwargs.get('append')
         self._inputmask = kwargs.get('inputmask')
-        self._css = ' '.join((self._css, 'widget-input-text'))
         self._type = 'text'
-        self._js_modules += ['widget-input', 'widget-input-text']
 
     @property
     def autocomplete(self, ) -> int:
@@ -192,8 +193,6 @@ class TextArea(_Abstract):
         self._rows = kwargs.get('rows', 5)
         self._required = kwargs.get('required', False)
         self._max_length = kwargs.get('max_length')
-        self._css = ' '.join((self._css, 'widget-textarea-input'))
-        self._js_modules.append('widget-input')
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Render the widget.
@@ -228,8 +227,6 @@ class TypeaheadText(Text):
         if not source_url:
             raise ValueError('AJAX endpoint is not specified.')
 
-        self._js_modules.append('widget-input-typeahead-text')
-        self._css = ' '.join((self._css, 'widget-input-typeahead-text'))
         source_url_query_arg = kwargs.get('source_url_query_arg', self.uid)
         source_url_q = kwargs.get('source_url_args', {})
         source_url_q.update({source_url_query_arg: '__QUERY'})
@@ -253,7 +250,6 @@ class Number(Text):
         self._right_align = kwargs.get('right_align', False)
         self._min = kwargs.get('min')
         self._max = kwargs.get('max')
-        self._js_modules.append('widget-input-number')
 
         if self._allow_minus or (self._min is not None and self._min < 0):
             self._data['allow_minus'] = 'true'
@@ -320,7 +316,6 @@ class StringList(_MultiRowAsList):
         self._prepend = kwargs.get('prepend')
         self._append = kwargs.get('append')
         self._inputmask = kwargs.get('inputmask')
-        self._css += ' widget-string-list'
 
     def _get_widgets(self) -> _List[_Abstract]:
         """Hook
@@ -348,9 +343,6 @@ class Tokens(Text):
         """
         super().__init__(uid, **kwargs)
 
-        self._js_modules.append('widget-input-tokens')
-        self._assets.append('widget@css/tokens.css')
-        self._css = ' '.join((self._css, 'widget-token-input'))
         self._local_source = kwargs.get('local_source')
         self._remote_source = kwargs.get('remote_source')
         self._data = {
@@ -391,11 +383,6 @@ class File(_Abstract):
         self._multiple = False if self._max_files == 1 else True
         self._accept = kwargs.get('accept', '*/*')
         self._upload_endpoint = kwargs.get('upload_endpoint')
-
-        self._css = ' '.join((self._css, 'widget-file'))
-        self._assets.append('widget@css/file.css')
-        self._js_modules.append('widget-input-file')
-
         self._data['max_files'] = self._max_files
 
         if self._upload_endpoint:

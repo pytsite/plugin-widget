@@ -95,8 +95,6 @@ class Select(_Abstract):
                 raise TypeError('Each item must be a list or tuple and have exactly 2 elements')
             self._items.append((int(item[0]) if self._int_keys else item[0], item[1]))
 
-        self._js_modules.append('widget-input')
-
     def set_val(self, value: _Union[int, str, list, tuple, None]):
         """Set value of the widget
         """
@@ -163,7 +161,7 @@ class Select2(Select):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        self._theme = kwargs.get('theme', 'bootstrap')
+        self._theme = kwargs.get('theme', 'default')
         self._ajax_url = kwargs.get('ajax_url')
         self._ajax_url_query = kwargs.get('ajax_url_query', {})
         self._ajax_delay = kwargs.get('ajax_delay', 250)
@@ -177,9 +175,6 @@ class Select2(Select):
 
         kwargs.setdefault('append_none_item', False)
         super().__init__(uid, **kwargs)
-
-        self._js_modules.append('widget-select-select2')
-        self._css += ' widget-select-select2'
 
     def _get_element(self, **kwargs) -> _html.Element:
         select = self._get_select_html_em()
@@ -218,10 +213,6 @@ class Checkboxes(Select):
         """Init
         """
         super().__init__(uid, multiple=True, **kwargs)
-
-        self._css += ' widget-checkboxes'
-        self._assets.append('widget@css/checkboxes.css')
-        self._js_modules.remove('widget-input')
 
         self._bootstrap_version = kwargs.get('bootstrap_version', 3)
         if self._bootstrap_version not in (3, 4):
@@ -308,19 +299,18 @@ class LanguageNav(_Abstract):
 
             # Children
             dropdown_menu = _html.Ul(css='dropdown-menu')
-            for lng in _lang.langs():
-                if lng != self._language:
-                    hl = _hreflang.get(lng)
-                    lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
-                    if hl:
-                        li = _html.Li()
-                        li.append(_html.A(lng_title, css='lang-' + lng, href=hl))
-                        dropdown_menu.append(li)
-                    else:
-                        # Link to homepage
-                        li = _html.Li()
-                        li.append(_html.A(lng_title, css='lang-' + lng, href=_router.base_url(lang=lng)))
-                        dropdown_menu.append(li)
+            for lng in _lang.langs(False):
+                hl = _hreflang.get(lng)
+                lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
+                if hl:
+                    li = _html.Li()
+                    li.append(_html.A(lng_title, css='lang-' + lng, href=hl))
+                    dropdown_menu.append(li)
+                else:
+                    # Link to homepage
+                    li = _html.Li()
+                    li.append(_html.A(lng_title, css='lang-' + lng, href=_router.base_url(lang=lng)))
+                    dropdown_menu.append(li)
 
             dropdown_root.append(toggle_a)
             dropdown_root.append(dropdown_menu)
@@ -372,8 +362,6 @@ class DateTime(_Text):
         super().__init__(uid, **kwargs)
 
         self._autocomplete = 'off'
-        self._js_modules.append('widget-select-date-time')
-        self._css += ' widget-select-datetime'
         self.add_rule(_validation.rule.DateTime(formats=[self._format]))
 
     def set_val(self, value):
@@ -444,8 +432,6 @@ class Pager(_Abstract):
         self._data['total_pages'] = self._total_pages
         self._data['per_page'] = self._items_per_page
         self._data['visible_numbers'] = self._visible_numbers
-
-        self._js_modules.append('widget-select-pager')
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Get widget's HTML element
@@ -603,10 +589,6 @@ class Score(_Abstract):
         self._max = kwargs.get('max', 5)
         self._show_numbers = kwargs.get('show_numbers', True)
 
-        self._css += ' widget-select-score'
-        self._assets.append('widget@css/score.css')
-        self._js_modules.append('widget-select-score')
-
     def _get_element(self, **kwargs) -> _html.Element:
         cont = _html.Div(css='switches-wrap')
 
@@ -636,19 +618,12 @@ class TrafficLightScore(Score):
 
         super().__init__(uid, max=3, show_numbers=False, **kwargs)
 
-        self._css += ' widget-select-traffic-light-score'
-        self._assets.append('widget@css/traffic-light-score.css')
-        self._js_modules.append('font-awesome')
-
 
 class ColorPicker(_Text):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
         super().__init__(uid, **kwargs)
-
-        self._css += ' widget-select-color-picker'
-        self._js_modules.append('widget-select-color-picker')
 
     def _get_element(self, **kwargs):
         self._data['color'] = self.value
@@ -662,7 +637,6 @@ class Breadcrumb(_Abstract):
         """
         super().__init__(uid, **kwargs)
 
-        self._css += ' widget-select-breadcrumb'
         self._form_group = False
         self._has_messages = False
 

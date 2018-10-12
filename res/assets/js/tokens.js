@@ -1,54 +1,59 @@
-define(['jquery', 'twitter-bootstrap-tokenfield'], function ($) {
-    return function (widget) {
-        const widgetInput = widget.em.find('input');
-        const localSource = widget.em.data('localSource');
-        const remoteSource = widget.em.data('remoteSource');
-        let tokenFieldOptions = {
-            beautify: false,
-            autocomplete: {
-                minLength: 2,
-                delay: 250
-            }
-        };
+import 'jquery-ui-bundle';
+import 'jquery-ui-bundle/jquery-ui.css';
+import '@pytsite/bootstrap-tokenfield';
+import '../css/tokens.scss';
 
-        // TODO: local source support.
+const $ = require('jquery');
 
-        if (remoteSource) {
-            tokenFieldOptions.autocomplete.source = function (request, response) {
-                const term = request['term'].trim();
-                if (!term.length)
-                    return;
-
-                const url = remoteSource.replace('__QUERY', term);
-                const req_data = {
-                    'exclude': widgetInput.val().split(',')
-                };
-
-                $.getJSON(url, req_data, function (resp_data) {
-                    response(resp_data);
-                });
-            }
+require('@pytsite/widget').onWidgetLoad('plugins.widget._input.Tokens', (widget) => {
+    const widgetInput = widget.em.find('input');
+    const localSource = widget.em.data('localSource');
+    const remoteSource = widget.em.data('remoteSource');
+    let tokenFieldOptions = {
+        beautify: false,
+        autocomplete: {
+            minLength: 2,
+            delay: 250
         }
+    };
 
-        widgetInput.tokenfield(tokenFieldOptions);
+    // TODO: local source support.
 
-        const widgetTokenInput = widget.em.find(`#${widgetInput.attr('id')}-tokenfield`);
+    if (remoteSource) {
+        tokenFieldOptions.autocomplete.source = function (request, response) {
+            const term = request['term'].trim();
+            if (!term.length)
+                return;
 
-        widgetInput.on('tokenfield:createtoken', function (e) {
-            e.attrs.label = e.attrs.label.trim();
-            e.attrs.value = e.attrs.value.trim();
+            const url = remoteSource.replace('__QUERY', term);
+            const req_data = {
+                'exclude': widgetInput.val().split(',')
+            };
 
-            const existingTerms = widgetInput.val().split(',');
-            const newTerm = e.attrs.value.trim();
-
-            if (existingTerms.indexOf(newTerm) >= 0) {
-                widgetTokenInput.val('');
-                return false;
-            }
-        });
-
-        widgetInput.on('tokenfield:createdtoken', function () {
-            widgetTokenInput.autocomplete('close');
-        });
+            $.getJSON(url, req_data, function (resp_data) {
+                response(resp_data);
+            });
+        }
     }
+
+    widgetInput.tokenfield(tokenFieldOptions);
+
+    const widgetTokenInput = widget.em.find(`#${widgetInput.attr('id')}-tokenfield`);
+
+    widgetInput.on('tokenfield:createtoken', function (e) {
+        e.attrs.label = e.attrs.label.trim();
+        e.attrs.value = e.attrs.value.trim();
+
+        const existingTerms = widgetInput.val().split(',');
+        const newTerm = e.attrs.value.trim();
+
+        if (existingTerms.indexOf(newTerm) >= 0) {
+            widgetTokenInput.val('');
+            return false;
+        }
+    });
+
+    widgetInput.on('tokenfield:createdtoken', function () {
+        widgetTokenInput.autocomplete('close');
+    });
 });

@@ -1,6 +1,6 @@
 {
   "name": "widget",
-  "version": "2.17",
+  "version": "3.0",
   "description": {
     "en": "Widget",
     "ru": "Widget",
@@ -13,21 +13,11 @@
     "url": "https://shepetko.com"
   },
   "requires": {
-    "pytsite": ">=7.28",
-    "plugins": [
-      "assetman>=2.5",
-      "font_awesome",
-      "hreflang",
-      "http_api>=2.1",
-      "jquery",
-      "jquery_ui",
-      "jquery_colorpicker",
-      "jquery_datetimepicker>=1.2",
-      "jquery_inputmask>=1.2",
-      "js_select2",
-      "js_typeahead",
-      "twitter_bootstrap_table",
-      "twitter_bootstrap_tokenfield"
-    ]
+    "pytsite": ">=8",
+    "plugins": {
+      "assetman": "4.x",
+      "hreflang": "1.x",
+      "http_api": "3.x"
+    }
   }
 }

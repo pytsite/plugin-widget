@@ -32,9 +32,6 @@ class MultiRow(_Abstract):
         super().__init__(uid, **kwargs)
 
         self._css += ' widget-multi-row'
-        self._js_modules.append('widget-multi-row')
-        self._assets.append('widget@css/multi-row.css')
-
         self._max_rows = kwargs.get('max_rows')
         self._header_hidden = kwargs.get('header_hidden', False)
         self._add_btn_label = kwargs.get('add_btn_label', _lang.t('plugins.widget@append'))

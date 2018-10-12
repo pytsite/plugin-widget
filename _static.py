@@ -37,7 +37,6 @@ class Text(_base.Abstract):
         super().__init__(uid, **kwargs)
 
         self._css = ' '.join((self._css, 'widget-static-control'))
-        self._js_modules.append('widget-input')
 
         self._text = kwargs.get('text', '')
 

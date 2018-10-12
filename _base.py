@@ -43,8 +43,6 @@ class Abstract(_ABC):
         self._hidden = kwargs.get('hidden', False)
         self._rules = kwargs.get('rules', [])  # type: _List[_validation.rule.Rule]
         self._form_area = kwargs.get('form_area', 'body')
-        self._js_modules = kwargs.get('js_modules', [])
-        self._assets = kwargs.get('assets', ['widget@css/widget.css'])
         self._replaces = kwargs.get('replaces')
         self._required = kwargs.get('required', False)
         self._enabled = kwargs.get('enabled', True)
@@ -98,11 +96,16 @@ class Abstract(_ABC):
     def renderable(self, **kwargs) -> _html.Element:
         """Get an HTML element representation of the widget
         """
-        class_id = self.__module__ + '.' + self.__class__.__name__
-        class_id_css = self.__class__.__name__.lower().replace('_', '-')
+        cid = []
+        cur_cls = self.__class__
+        while cur_cls is not Abstract:
+            cid.append(cur_cls.cid())
+            cur_cls = cur_cls.__bases__[0]
+
+
 
         # Wrapper div
-        self._wrap_em.set_attr('data_cid', class_id)
+        self._wrap_em.set_attr('data_cid', ' '.join(reversed(cid)))
         self._wrap_em.set_attr('data_uid', self._uid)
         self._wrap_em.set_attr('data_weight', self._weight)
         self._wrap_em.set_attr('data_form_area', self._form_area)
@@ -110,20 +113,14 @@ class Abstract(_ABC):
         self._wrap_em.set_attr('data_enabled', self._enabled)
         self._wrap_em.set_attr('data_parent_uid', self._parent.uid if self._parent else None)
 
-        # Assets to load with widget initialization
-        if self._assets:
-            self._wrap_em.set_attr('data_assets', ','.join(self._assets))
-
-        # JS modules to load with widget initialization
-        if self._js_modules:
-            self._wrap_em.set_attr('data_js_modules', ','.join(self._js_modules))
-
         # Replaces
         if self._replaces:
             self._wrap_em.set_attr('data_replaces', self._replaces)
 
         # Wrapper CSS
-        wrap_css = 'pytsite-widget pytsite-widget-{} widget-uid-{} {}'.format(class_id_css, self._uid, self._css)
+        cls_css = self.__class__.__name__.lower()
+        cid_css = self.cid().lower().replace('_', '-').replace('.', '-')
+        wrap_css = 'pytsite-widget widget-{} widget-{} widget-uid-{} {}'.format(cls_css, cid_css, self._uid, self._css)
         if self._form_group:
             wrap_css += ' form-group'
         if self._hidden:
@@ -241,6 +238,12 @@ class Abstract(_ABC):
         self._hidden = False
 
         return self
+
+    @classmethod
+    def cid(cls) -> str:
+        """Get class ID
+        """
+        return cls.__module__ + '.' + cls.__name__
 
     @property
     def uid(self) -> str:
@@ -405,18 +408,6 @@ class Abstract(_ABC):
     @h_size.setter
     def h_size(self, value: str):
         self._h_size = value
-
-    @property
-    def assets(self) -> list:
-        """Get assets list
-        """
-        return self._assets
-
-    @property
-    def js_modules(self) -> list:
-        """Get JS modules list
-        """
-        return self._js_modules
 
     @property
     def replaces(self) -> str:

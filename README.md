@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 3.0 (2018-10-12)
+
+- Support of `pytsite-8.x` and `assetman-4.x`.
+- Bugs fixed.
+
+
 ### 2.17 (2018-09-20)
 
 Automatic localized date format in `select.DateTime`.

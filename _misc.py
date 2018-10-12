@@ -27,6 +27,8 @@ class DataTable(_base.Abstract):
         # Pass data fields through setter
         self.data_fields = kwargs.get('data_fields', [])
 
+        self._css += ' widget-data-table'
+
     @property
     def toolbar(self) -> _html.Div:
         return self._toolbar
@@ -103,19 +105,26 @@ class BootstrapTable(DataTable):
     def __init__(self, uid: str, **kwargs):
         super().__init__(uid, **kwargs)
 
-        self._js_modules.append('widget-misc-bootstrap-table')
-
         self._search = kwargs.get('search', True)
         self._checkbox = kwargs.get('checkbox', True)
+        self._css += ' widget-bootstrap-table'
 
     def _get_element(self, **kwargs) -> _html.Element:
         """Get table HTML skeleton
         """
+        c_lang = _lang.get_current()
+        if c_lang == 'ru':
+            locale = 'ru-RU'
+        elif c_lang == 'uk':
+            locale = 'uk-UA'
+        else:
+            locale = 'en-US'
+
         # Table skeleton
         table = _html.Table(
             css='hidden sr-only',
+            data_locale=locale,
             data_url=self._rows_url,
-            data_toolbar='#{}-toolbar'.format(self.uid),
             data_show_refresh='true',
             data_search=str(self._search).lower(),
             data_pagination='true',
@@ -161,8 +170,7 @@ class TreeTable(DataTable):
         super().__init__(uid, **kwargs)
 
         self._form_group = False
-        self._assets.append('widget@css/tree-table.css')
-        self._js_modules.append('widget-misc-tree-table')
+        self._css += ' widget-tree-table'
 
     def render(self, **kwargs) -> str:
         """Render the widget
