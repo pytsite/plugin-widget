@@ -1,6 +1,6 @@
 {
   "name": "widget",
-  "version": "3.0.1",
+  "version": "4.0",
   "description": {
     "en": "Widget",
     "ru": "Widget",
@@ -15,7 +15,7 @@
   "requires": {
     "pytsite": ">=8",
     "plugins": {
-      "assetman": "4.x",
+      "assetman": "5.x",
       "hreflang": "1.x",
       "http_api": "3.x"
     }

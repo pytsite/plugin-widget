@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 4.0 (2018-10-22)
+
+- JS API function `onWidgetLoad()` replaced with `setupWidget()`.
+- New react components added: `Select2`, `Slots`.
+
+
 ### 3.0.1 (2018-10-12)
 
 NPM dependencies fixed.

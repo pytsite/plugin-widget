@@ -2,10 +2,10 @@ import 'jquery-ui-bundle';
 import 'jquery-ui-bundle/jquery-ui.css';
 import '@pytsite/bootstrap-tokenfield';
 import '../css/tokens.scss';
+import $ from 'jquery';
+import setupWidget from '@pytsite/widget';
 
-const $ = require('jquery');
-
-require('@pytsite/widget').onWidgetLoad('plugins.widget._input.Tokens', (widget) => {
+setupWidget('plugins.widget._input.Tokens', widget => {
     const widgetInput = widget.em.find('input');
     const localSource = widget.em.data('localSource');
     const remoteSource = widget.em.data('remoteSource');

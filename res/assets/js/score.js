@@ -1,9 +1,9 @@
 import '../css/score.scss';
 import '../css/traffic-light-score.scss';
+import $ from 'jquery';
+import setupWidget from '@pytsite/widget';
 
-const $ = require('jquery');
-
-require('@pytsite/widget').onWidgetLoad('plugins.widget._select.Score', (widget) => {
+setupWidget('plugins.widget._select.Score', widget => {
     const switches = widget.em.find('.switch');
     const input = widget.em.find('input');
 

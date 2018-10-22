@@ -1,6 +1,8 @@
 import 'vanderlee-colorpicker';
+import {lang} from '@pytsite/assetman';
+import setupWidget from '@pytsite/widget';
 
-require('@pytsite/widget').onWidgetLoad('plugins.widget._select.ColorPicker', (widget) => {
+setupWidget('plugins.widget._select.ColorPicker', widget => {
     const input = widget.em.find('input');
 
     input.css('background-color', '#' + widget.em.data('color'));

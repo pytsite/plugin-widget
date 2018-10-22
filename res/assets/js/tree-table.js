@@ -1,10 +1,11 @@
 import '../css/tree-table.scss';
-const $ = require('jquery');
+import $ from 'jquery';
+import setupWidget from '@pytsite/widget';
 
-require('@pytsite/widget').onWidgetLoad('plugins.widget._misc.TreeTable', (widget) => {
-    var tHeadEm = widget.em.find('thead');
-    var tHeadRow = $('<tr>');
-    var tBodyEm = widget.em.find('tbody');
+setupWidget('plugins.widget._misc.TreeTable', widget => {
+    const tHeadEm = widget.em.find('thead');
+    const tHeadRow = $('<tr>');
+    const tBodyEm = widget.em.find('tbody');
 
     tHeadEm.append(tHeadRow);
 

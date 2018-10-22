@@ -1,10 +1,10 @@
 import '../css/file.scss';
-
-const $ = require('jquery');
-const httpApi = require('@pytsite/http-api');
+import setupWidget from '@pytsite/widget';
+import $ from 'jquery';
+import httpApi from '@pytsite/http-api';
 
 function appendSlot(cont, num, name, msg) {
-    var slot = $('<div class="slot num-' + num + '"></div>');
+    const slot = $('<div class="slot num-' + num + '"></div>');
 
     slot.append('<span class="name">' + name + '</span>');
     slot.append('<span class="msg">' + msg + '</span>');
@@ -12,7 +12,7 @@ function appendSlot(cont, num, name, msg) {
 }
 
 function updateSlot(cont, num, msg, css) {
-    var slot = cont.find('.slot.num-' + num);
+    const slot = cont.find('.slot.num-' + num);
     slot.find('.msg').text(msg);
 
     if (css !== undefined) {
@@ -20,27 +20,28 @@ function updateSlot(cont, num, msg, css) {
     }
 }
 
-require('@pytsite/widget').onWidgetLoad('plugins.widget._input.File', (widget) => {
-    var endpoint = widget.data('uploadEndpoint');
+setupWidget('plugins.widget._input.File', widget => {
+    const endpoint = widget.data('uploadEndpoint');
+
     if (!endpoint)
         return;
 
-    var inp = widget.em.find('input').first();
-    var slots = $('<div class="slots"></div>');
-    var maxFilesCount = parseInt(widget.data('maxFiles'));
-    var addedFilesCount = 0;
-    var uploadingFilesCount = 0;
-    var uploadedFilesCount = 0;
+    const slots = $('<div class="slots"></div>');
+    const maxFilesCount = parseInt(widget.data('maxFiles'));
+    let inp = widget.em.find('input').first();
+    let addedFilesCount = 0;
+    let uploadingFilesCount = 0;
+    let uploadedFilesCount = 0;
 
     inp.before(slots);
 
     widget.em.change(function () {
-        for (var i = 0; i < inp[0].files.length; i++) {
+        for (let i = 0; i < inp[0].files.length; i++) {
             if (uploadingFilesCount + uploadedFilesCount >= maxFilesCount)
                 continue;
 
-            var data = new FormData();
-            var file = inp[0].files[i];
+            const data = new FormData();
+            const file = inp[0].files[i];
             data.append('index', addedFilesCount);
             data.append(inp[0].name, file);
             inp.attr('disabled', true);
@@ -74,7 +75,7 @@ require('@pytsite/widget').onWidgetLoad('plugins.widget._input.File', (widget) =
             });
         }
 
-        var newInp = $('<input type="file" name="' + inp.attr('name') + '">');
+        const newInp = $('<input type="file" name="' + inp.attr('name') + '">');
         inp.replaceWith(newInp);
         inp = newInp;
     });

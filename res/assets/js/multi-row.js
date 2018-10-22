@@ -1,13 +1,13 @@
-const $ = require('jquery');
-const widget = require('@pytsite/widget');
 import '@pytsite/widget/css/multi-row.scss';
+import $ from 'jquery';
+import setupWidget, {Widget} from '@pytsite/widget';
 
-widget.onWidgetLoad('plugins.widget._container.MultiRow', (w) => {
-    const headerHidden = w.data('headerHidden') === 'True';
-    const maxRows = parseInt(w.data('maxRows'));
-    let slotsHeader = w.em.find('.slots-header');
-    let slotsContainer = w.em.find('.slots');
-    let addBtn = w.em.find('.button-add-slot');
+setupWidget('plugins.widget._container.MultiRow', widget => {
+    const headerHidden = widget.data('headerHidden') === 'True';
+    const maxRows = parseInt(widget.data('maxRows'));
+    let slotsHeader = widget.em.find('.slots-header');
+    let slotsContainer = widget.em.find('.slots');
+    let addBtn = widget.em.find('.button-add-slot');
 
     function refresh() {
         const slots = slotsContainer.find('.slot:not(.base)');
@@ -34,12 +34,12 @@ widget.onWidgetLoad('plugins.widget._container.MultiRow', (w) => {
         em.find('.order-col').html('[' + (i + 1) + ']');
 
         em.find('.pytsite-widget:not(.initialized)').each(function () {
-            new widget.Widget(this, w.form, (childWidget) => {
+            new Widget(this, widget.form, (childWidget) => {
                 childWidget.uid = `${childWidget.uid}-${i}`;
 
                 // CAUTION: skip appending childWidget to the DOM of the parent,
                 // because this script do this by itself.
-                w.appendChild(childWidget, null);
+                widget.appendChild(childWidget, null);
             });
         });
 
@@ -49,7 +49,7 @@ widget.onWidgetLoad('plugins.widget._container.MultiRow', (w) => {
             e.preventDefault();
 
             $(this).closest('.slot').find('.pytsite-widget').each(function () {
-                w.removeChild($(this).attr('data-uid'));
+                widget.removeChild($(this).attr('data-uid'));
             });
 
             em.remove();
@@ -58,10 +58,10 @@ widget.onWidgetLoad('plugins.widget._container.MultiRow', (w) => {
         });
     }
 
-    w.messagesEm.insertBefore(addBtn);
+    widget.messagesEm.insertBefore(addBtn);
 
     // Setup base slot
-    let baseSlot = w.em.find('.slot.base');
+    let baseSlot = widget.em.find('.slot.base');
 
     // Create base slot's clone in the memory, not in DOM
     let baseSlotClone = baseSlot.clone();
@@ -74,7 +74,7 @@ widget.onWidgetLoad('plugins.widget._container.MultiRow', (w) => {
     baseSlot.find('[required]').attr('required', false);
 
     // Setup existing slots
-    w.em.find('.slot:not(.base)').each(function (i, em) {
+    widget.em.find('.slot:not(.base)').each(function (i, em) {
         setupSlot(i, $(em));
     });
 

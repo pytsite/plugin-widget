@@ -1,22 +1,6 @@
-import './css/widget.scss';
-import './css/checkboxes.scss';
-import './js/bootstrap-table';
-import './js/date-time';
-import './js/file';
-import './js/input';
-import './js/multi-row';
-import './js/number';
-import './js/pager';
-import './js/score';
-import './js/select2';
-import './js/text';
-import './js/tokens';
-import './js/tree-table';
-import './js/typeahead-text';
+import $ from 'jquery';
 
-const $ = require('jquery');
-
-class Widget {
+export class Widget {
     /**
      * Constructor
      *
@@ -26,6 +10,7 @@ class Widget {
      */
     constructor(em, form, readyCallback) {
         this.em = em = $(em);
+        this.em.addClass('initializing');
         this.cid = em.data('cid').split(' ');
         this.uid = em.data('uid');
         this.parentUid = em.data('parentUid');
@@ -37,14 +22,18 @@ class Widget {
         this.messagesEm = em.find('.widget-messages').first();
         this.children = {};
 
+        // Run widget initializers
         $.each(this.cid, (i, cid) => {
-            if (window.pytsiteWidgetCallbacks.hasOwnProperty(cid))
-                window.pytsiteWidgetCallbacks[cid](this);
+            if (window.pytsiteWidgetsInitializers.hasOwnProperty(cid)) {
+                $.each(pytsiteWidgetsInitializers[cid], (i, callback) => callback(this));
+            }
+
         });
 
         if ($.isFunction(readyCallback))
             readyCallback(this);
 
+        this.em.removeClass('initializing');
         this.em.addClass('initialized');
     }
 
@@ -279,19 +268,22 @@ class Widget {
 }
 
 /**
- * Initialize all non-initialized widgets found in the DOM
+ * Setup widget initializer
+ *
+ * @param {string} cid
+ * @param {function} callback
  */
-function initAll() {
-    $('.pytsite-widget').not('.initialized').each(function () {
+export default function setupWidget(cid, callback) {
+    if (!window.pytsiteWidgetsInitializers)
+        window.pytsiteWidgetsInitializers = {};
+
+    if (!window.pytsiteWidgetsInitializers.hasOwnProperty(cid))
+        window.pytsiteWidgetsInitializers[cid] = [];
+
+    window.pytsiteWidgetsInitializers[cid].push(callback);
+
+    // Automatically initialize all widgets found on the pages
+    $(`.pytsite-widget[data-cid*="${cid}"]`).not('.initialized').not('.initializing').each(function () {
         new Widget(this);
     });
 }
-
-function onWidgetLoad(widgetCID, callback) {
-    window.pytsiteWidgetCallbacks = window.pytsiteWidgetCallbacks || {};
-    window.pytsiteWidgetCallbacks[widgetCID] = callback;
-}
-
-initAll();
-
-export {Widget, onWidgetLoad}

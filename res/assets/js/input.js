@@ -1,4 +1,6 @@
-require('@pytsite/widget').onWidgetLoad('plugins.widget._input.Input', (widget) => {
+import setupWidget from '@pytsite/widget';
+
+setupWidget('plugins.widget._input.Input', widget => {
     const input = widget.find('input,button,select,textarea');
     const label = widget.find('label');
     const formName = widget.form.name.replace(/[^0-9a-z]/gi, '-');

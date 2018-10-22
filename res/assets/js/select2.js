@@ -1,9 +1,10 @@
 import 'select2';
 import 'select2/dist/css/select2.css';
-const assetman = require('@pytsite/assetman');
-const httpApi = require('@pytsite/http-api');
+import setupWidget from '@pytsite/widget';
+import assetman from '@pytsite/assetman';
+import httpApi from '@pytsite/http-api';
 
-require('@pytsite/widget').onWidgetLoad('plugins.widget._select.Select2', (widget) => {
+setupWidget('plugins.widget._select.Select2', widget => {
     function processResults(data) {
         if (widget.data('appendNoneItem')) {
             data['results'].unshift({

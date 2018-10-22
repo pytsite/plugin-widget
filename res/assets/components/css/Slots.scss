@@ -1,0 +1,44 @@
+.component-widget.component-slots {
+  display: flex;
+  flex-wrap: wrap;
+
+  .slot {
+    width: 100%;
+    position: relative;
+    border: 1px solid #ddd;
+
+    // Small devices (landscape phones, 576px and up)
+    @media (min-width: 576px) {
+      width: 50%;
+    }
+
+    @media (min-width: 768px) {
+      width: 192px;
+    }
+
+    > .inner {
+      overflow: hidden;
+    }
+
+    &.empty {
+      cursor: pointer;
+
+      > .inner {
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        left: 0;
+        text-align: center;
+        transform: translateY(-50%);
+      }
+
+      // Set height the same as width
+      &:before {
+        content: "";
+        display: block;
+        padding-top: 100%;
+      }
+
+    }
+  }
+}

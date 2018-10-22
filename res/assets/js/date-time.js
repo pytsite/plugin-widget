@@ -1,10 +1,10 @@
 import 'datetimepicker-jquery/build/jquery.datetimepicker.min.css'
 import 'datetimepicker-jquery/build/jquery.datetimepicker.full'
+import $ from 'jquery';
+import setupWidget from '@pytsite/widget';
 
-const $ = require('jquery');
-
-require('@pytsite/widget').onWidgetLoad('plugins.widget._select.DateTime', (widget) => {
-    $.datetimepicker.setLocale(lang.current());
+setupWidget('plugins.widget._select.DateTime', widget => {
+    $.datetimepicker.setLocale(document.documentElement.getAttribute('lang'));
 
     const opts = {
         format: widget.data('format'),

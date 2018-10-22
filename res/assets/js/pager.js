@@ -1,9 +1,11 @@
-const $ = require('jquery');
-const httpApi = require('@pytsite/http-api');
+import $ from 'jquery';
+import setupWidget from '@pytsite/widget';
+import {lang} from '@pytsite/assetman';
+import httpApi from '@pytsite/http-api';
 
-require('@pytsite/widget').onWidgetLoad('plugins.widget._select.Pager', (widget) => {
-    var em = widget.em;
-    var httpApiEp = em.data('httpApiEp');
+setupWidget('plugins.widget._select.Pager', widget => {
+    const em = widget.em;
+    const httpApiEp = em.data('httpApiEp');
 
     if (!httpApiEp)
         return;

@@ -1,8 +1,9 @@
-const $ = require('jquery');
 import 'inputmask';
 import 'inputmask/dist/inputmask/jquery.inputmask';
+import $ from 'jquery';
+import setupWidget from '@pytsite/widget';
 
-require('@pytsite/widget').onWidgetLoad('plugins.widget._input.Number', (widget) => {
+setupWidget('plugins.widget._input.Number', widget => {
     const options = {
         allowMinus: Boolean(widget.data('allowMinus')),
         rightAlign: Boolean(widget.data('rightAlign'))

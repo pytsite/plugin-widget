@@ -1,10 +1,10 @@
 import 'jquery';
 import 'typeahead.js';
 import '../css/typeahead-text.scss';
-
+import setupWidget from '@pytsite/widget';
 const Bloodhound = require('bloodhound-js');
 
-require('@pytsite/widget').onWidgetLoad('plugins.widget._input.TypeaheadText', (widget) => {
+setupWidget('plugins.widget._input.TypeaheadText', widget => {
     var input = widget.em.find('input');
 
     widget.em.keydown(function (event) {
