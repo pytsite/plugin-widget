@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.0.2 (2018-10-23)
+
+HTML elements IDs uniqueness issue fixed.
+
+
 ### 4.0.1 (2018-10-23)
 
 HTML elements IDs uniqueness issue fixed.

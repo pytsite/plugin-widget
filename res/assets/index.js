@@ -1,5 +1,29 @@
 import $ from 'jquery';
 
+function _setUniqueIds(e, widget) {
+    const formName = widget.form.name.replace(/[^0-9a-z]/gi, '-');
+
+    widget.find('input,button,select,textarea').each((i, em) => {
+        const $em = $(em);
+
+        const currentId = $em.attr('id');
+        if (!currentId)
+            return;
+
+        let newId;
+        if (e.type === 'appendWidget:form:pytsite')
+            newId = `${formName}-${widget.uid}-${i}`.toLowerCase();
+        else if (e.type === 'setParent:widget:pytsite')
+            newId = `${formName}-${widget.parentUid}-${widget.uid}-${i}`.toLowerCase();
+        else
+            throw 'Unknown event type';
+
+        widget.find(`label[for="${currentId}"]`).attr('for', newId);
+
+        $em.attr('id', newId);
+    });
+}
+
 export class Widget {
     /**
      * Constructor
@@ -35,21 +59,12 @@ export class Widget {
 
 
         // Set unique IDs for form controls
-        if (form) {
-            const inputs = this.find('input,button,select,textarea');
-            const label = this.find('label');
-            const formName = form.name.replace(/[^0-9a-z]/gi, '-');
-            this.on('appendWidget:form:pytsite', () => {
-                const id = `${formName}-${this.uid}`.toLowerCase();
-                inputs.attr('id', id);
-                label.attr('for', id);
-            });
-            this.on('setParent:widget:pytsite', () => {
-                const id = `${formName}-${this.parentUid}-${this.uid}`.toLowerCase();
-                inputs.attr('id', id);
-                label.attr('for', id);
-            });
-        }
+        this.on('appendWidget:form:pytsite', e => {
+            _setUniqueIds(e, this);
+        });
+        this.on('setParent:widget:pytsite', e => {
+            _setUniqueIds(e, this);
+        });
 
         this.em.removeClass('initializing');
         this.em.addClass('initialized');
