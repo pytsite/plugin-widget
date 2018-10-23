@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.0.1 (2018-10-23)
+
+HTML elements IDs uniqueness issue fixed.
+
+
 ### 4.0 (2018-10-22)
 
 - JS API function `onWidgetLoad()` replaced with `setupWidget()`.

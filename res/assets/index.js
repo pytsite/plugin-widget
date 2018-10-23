@@ -33,6 +33,24 @@ export class Widget {
         if ($.isFunction(readyCallback))
             readyCallback(this);
 
+
+        // Set unique IDs for form controls
+        if (form) {
+            const inputs = this.find('input,button,select,textarea');
+            const label = this.find('label');
+            const formName = form.name.replace(/[^0-9a-z]/gi, '-');
+            this.on('appendWidget:form:pytsite', () => {
+                const id = `${formName}-${this.uid}`.toLowerCase();
+                inputs.attr('id', id);
+                label.attr('for', id);
+            });
+            this.on('setParent:widget:pytsite', () => {
+                const id = `${formName}-${this.parentUid}-${this.uid}`.toLowerCase();
+                inputs.attr('id', id);
+                label.attr('for', id);
+            });
+        }
+
         this.em.removeClass('initializing');
         this.em.addClass('initialized');
     }

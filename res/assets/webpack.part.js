@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
     entry: [
@@ -9,7 +8,6 @@ module.exports = {
         path.join(__dirname, 'js/bootstrap-table.js'),
         path.join(__dirname, 'js/date-time.js'),
         path.join(__dirname, 'js/file.js'),
-        path.join(__dirname, 'js/input.js'),
         path.join(__dirname, 'js/multi-row.js'),
         path.join(__dirname, 'js/number.js'),
         path.join(__dirname, 'js/pager.js'),
