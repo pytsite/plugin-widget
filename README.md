@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.0.3 (2018-10-23)
+
+Tokenfield widget's CSS fixed.
+
+
 ### 4.0.2 (2018-10-23)
 
 HTML elements IDs uniqueness issue fixed.
