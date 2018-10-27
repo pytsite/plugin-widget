@@ -13,7 +13,7 @@ export default class Select2 extends React.Component {
         className: PropTypes.string,
         exclude: PropTypes.object,
         id: PropTypes.object,
-        name: PropTypes.string.isRequired,
+        name: PropTypes.string,
         options: PropTypes.object,
         onChange: PropTypes.func,
         onClosing: PropTypes.func,

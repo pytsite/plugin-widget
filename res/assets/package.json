@@ -9,6 +9,7 @@
     "inputmask": "4.x",
     "jquery": "3.x",
     "mini-css-extract-plugin": "0.x",
+    "reactstrap": "6.x",
     "select2": "4.x",
     "typeahead.js": "0.x",
     "vanderlee-colorpicker": "1.x"

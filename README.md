@@ -4,6 +4,15 @@
 ## Changelog
 
 
+### 4.1 (2018-10-28)
+
+- React components:
+    - `TwoButtonsModal` added;
+    - `Select2`:
+        - `renderSlot` renamed to `slotRenderer`;
+        - `renderEmptySlot` renamed to `emptySlotRenderer`;
+
+
 ### 4.0.3 (2018-10-23)
 
 Tokenfield widget's CSS fixed.
