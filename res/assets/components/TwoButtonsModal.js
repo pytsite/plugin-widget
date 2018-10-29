@@ -9,9 +9,9 @@ export default class TwoButtonsModal extends React.Component {
         className: PropTypes.string,
         isOpen: PropTypes.bool,
         okButtonCaption: PropTypes.string,
-        isOkButtonDisabled: PropTypes.bool,
+        isOkButtonDisabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
         cancelButtonCaption: PropTypes.string,
-        isCancelButtonDisabled: PropTypes.bool,
+        isCancelButtonDisabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
         onClickCancel: PropTypes.func,
         onClickOk: PropTypes.func,
         title: PropTypes.string,
@@ -40,20 +40,27 @@ export default class TwoButtonsModal extends React.Component {
     }
 
     render() {
-        return <Modal isOpen={this.props.isOpen} toggle={this.onClickCancel} className={this.props.className}>
-            <ModalHeader toggle={this.onClickCancel}>{this.props.title}</ModalHeader>
-            <ModalBody>
-                {this.props.children}
-            </ModalBody>
-            <ModalFooter>
-                <Button color="secondary" disabled={this.props.isCancelButtonDisabled} onClick={this.onClickCancel}>
-                    {this.props.cancelButtonCaption}
-                </Button>
-                {' '}
-                <Button color="primary" disabled={this.props.isOkButtonDisabled} onClick={this.onClickOk}>
-                    {this.props.okButtonCaption}
-                </Button>
-            </ModalFooter>
-        </Modal>
+        const isCancelBtnDisabled = this.props.isCancelButtonDisabled instanceof Function ?
+            this.props.isCancelButtonDisabled() : this.props.isCancelButtonDisabled;
+        const isOkBtnDisabled = this.props.isOkButtonDisabled instanceof Function ?
+            this.props.isOkButtonDisabled() : this.props.isOkButtonDisabled;
+
+        return (
+            <Modal isOpen={this.props.isOpen} toggle={this.onClickCancel} className={this.props.className}>
+                <ModalHeader toggle={this.onClickCancel}>{this.props.title}</ModalHeader>
+                <ModalBody>
+                    {this.props.children}
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="secondary" disabled={isCancelBtnDisabled} onClick={this.onClickCancel}>
+                        {this.props.cancelButtonCaption}
+                    </Button>
+                    {' '}
+                    <Button color="primary" disabled={isOkBtnDisabled} onClick={this.onClickOk}>
+                        {this.props.okButtonCaption}
+                    </Button>
+                </ModalFooter>
+            </Modal>
+        )
     }
 }

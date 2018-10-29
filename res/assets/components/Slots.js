@@ -7,7 +7,7 @@ export default class Slots extends React.Component {
         slotRenderer: PropTypes.func.isRequired,
         className: PropTypes.string,
         data: PropTypes.object,
-        isEmptySlotEnabled: PropTypes.bool,
+        enabled: PropTypes.bool,
         maxSlots: PropTypes.number,
         onEmptySlotClick: PropTypes.func,
         emptySlotRenderer: PropTypes.func,
@@ -42,7 +42,7 @@ export default class Slots extends React.Component {
                 </div>)
             .slice(0, this.props.maxSlots);
 
-        if (this.props.isEmptySlotEnabled && this.props.emptySlotRenderer && slots.length < this.props.maxSlots) {
+        if (this.props.enabled && this.props.emptySlotRenderer && slots.length < this.props.maxSlots) {
             slots.push(
                 <div className={'slot empty'} key={'__empty'} onClick={this.props.onEmptySlotClick}>
                     <div className="inner">

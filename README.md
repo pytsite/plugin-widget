@@ -4,6 +4,15 @@
 ## Changelog
 
 
+### 4.2 (2018-10-29)
+
+Changes in React components:
+
+- `Slots.isEmptySlotEnabled` property renamed to `enabled`.
+- Properties `isOkButtonDisabled` and `isCancelButtonDisabled` of
+  `TwoButtonsModal` can be functions now.
+
+
 ### 4.1 (2018-10-28)
 
 - React components:
