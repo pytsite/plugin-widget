@@ -19,6 +19,7 @@ class Abstract(_ABC):
         """Init
         """
         self._uid = uid
+        self._inherit_cid = kwargs.get('inherit_cid', True)
         self._wrap_em = kwargs.get('wrap_em', _html.Div())
         self._name = kwargs.get('name', uid)
         self._language = kwargs.get('language', _lang.get_current())
@@ -101,8 +102,8 @@ class Abstract(_ABC):
         while cur_cls is not Abstract:
             cid.append(cur_cls.cid())
             cur_cls = cur_cls.__bases__[0]
-
-
+            if not self._inherit_cid:  # Breaks after first iteration
+                break
 
         # Wrapper div
         self._wrap_em.set_attr('data_cid', ' '.join(reversed(cid)))

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.3 (2018-10-29)
+
+New argument `inherit_cid` added to `widget.Abstract`'s constructor.
+
+
 ### 4.2 (2018-10-29)
 
 Changes in React components:
