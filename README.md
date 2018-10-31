@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.4 (2018-10-30)
+
+`Abstract._on_form_submit()` argument type changed.
+
+
 ### 4.3 (2018-10-29)
 
 New argument `inherit_cid` added to `widget.Abstract`'s constructor.

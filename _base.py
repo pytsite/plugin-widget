@@ -8,7 +8,7 @@ from typing import Tuple as _Tuple, List as _List
 from abc import ABC as _ABC, abstractmethod as _abstractmethod
 from copy import deepcopy as _deepcopy
 from math import ceil as _ceil
-from pytsite import html as _html, validation as _validation, lang as _lang
+from pytsite import html as _html, validation as _validation, lang as _lang, http as _http
 
 
 class Abstract(_ABC):
@@ -84,15 +84,15 @@ class Abstract(_ABC):
         """
         pass
 
-    def _on_form_submit(self, form_uid: str):
+    def _on_form_submit(self, request: _http.Request):
         """Hook
         """
         pass
 
-    def form_submit(self, form_uid: str):
+    def form_submit(self, request: _http.Request):
         """Called by form while it submitting
         """
-        self._on_form_submit(form_uid)
+        self._on_form_submit(request)
 
     def renderable(self, **kwargs) -> _html.Element:
         """Get an HTML element representation of the widget
