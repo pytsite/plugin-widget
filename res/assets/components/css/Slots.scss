@@ -20,6 +20,10 @@
       overflow: hidden;
     }
 
+    &.editable {
+      cursor: pointer;
+    }
+
     &.empty {
       cursor: pointer;
 

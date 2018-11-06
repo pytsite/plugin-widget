@@ -36,7 +36,7 @@ export default class Slots extends React.Component {
     get slots() {
         const slots = Object.keys(this.props.data)
             .map(slotKey =>
-                <div className={'slot'} key={slotKey} onClick={() => this.props.onSlotClick && this.props.onSlotClick(slotKey)}>
+                <div className={'slot' + (this.props.enabled ? ' editable' : '')} key={slotKey} onClick={() => this.props.onSlotClick && this.props.onSlotClick(slotKey)}>
                     <div className="inner">
                         {this.props.slotRenderer(this.props.data[slotKey])}
                     </div>

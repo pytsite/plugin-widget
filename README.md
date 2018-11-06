@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.5.1 (2018-11-06)
+
+`Slots` React component's CSS fixed.
+
+
 ### 4.5 (2018-11-06)
 
 - New property `onReady` in `Select2` React component.
