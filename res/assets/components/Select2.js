@@ -11,6 +11,7 @@ import $ from 'jquery';
 export default class Select2 extends React.Component {
     static propTypes = {
         className: PropTypes.string,
+        disabled: PropTypes.bool,
         exclude: PropTypes.object,
         id: PropTypes.object,
         name: PropTypes.string,
@@ -51,7 +52,8 @@ export default class Select2 extends React.Component {
 
     render() {
         return (
-            <select className={this.props.className} id={this.props.id} name={this.props.name} ref={this.ref}>
+            <select ref={this.ref} className={this.props.className} id={this.props.id} name={this.props.name}
+                    disabled={this.props.disabled}>
                 {this.props.children}
             </select>
         )

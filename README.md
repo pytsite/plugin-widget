@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.4.1 (2018-11-06)
+
+`disabled` attribute support fixed in `Select2` React component.
+
+
 ### 4.4 (2018-10-30)
 
 `Abstract._on_form_submit()` argument type changed.
