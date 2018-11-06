@@ -12,10 +12,10 @@ export default class Select2 extends React.Component {
     static propTypes = {
         className: PropTypes.string,
         disabled: PropTypes.bool,
-        exclude: PropTypes.object,
         id: PropTypes.object,
         name: PropTypes.string,
         options: PropTypes.object,
+        onReady: PropTypes.func,
         onChange: PropTypes.func,
         onClosing: PropTypes.func,
         onClose: PropTypes.func,
@@ -48,6 +48,8 @@ export default class Select2 extends React.Component {
         select.on('select2:unselect', this.props.onUnselect);
 
         select.trigger('click');
+
+        this.props.onReady && this.props.onReady(select);
     }
 
     render() {

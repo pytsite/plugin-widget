@@ -10,6 +10,7 @@ export default class Slots extends React.Component {
         enabled: PropTypes.bool,
         maxSlots: PropTypes.number,
         onEmptySlotClick: PropTypes.func,
+        onSlotClick: PropTypes.func,
         emptySlotRenderer: PropTypes.func,
     };
 
@@ -35,7 +36,7 @@ export default class Slots extends React.Component {
     get slots() {
         const slots = Object.keys(this.props.data)
             .map(slotKey =>
-                <div className={'slot'} key={slotKey}>
+                <div className={'slot'} key={slotKey} onClick={() => this.props.onSlotClick && this.props.onSlotClick(slotKey)}>
                     <div className="inner">
                         {this.props.slotRenderer(this.props.data[slotKey])}
                     </div>

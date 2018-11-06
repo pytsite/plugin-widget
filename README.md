@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 4.5 (2018-11-06)
+
+- New property `onReady` in `Select2` React component.
+- New property `onSlotClick` in `Slots` React component.
+
+
 ### 4.4.1 (2018-11-06)
 
 `disabled` attribute support fixed in `Select2` React component.
