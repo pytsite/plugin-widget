@@ -166,9 +166,12 @@ class Select2(Select):
         self._ajax_url_query = kwargs.get('ajax_url_query', {})
         self._ajax_delay = kwargs.get('ajax_delay', 250)
         self._ajax_cache = kwargs.get('ajax_cache', True)
-        self._tags = kwargs.get('tags', False)
         self._linked_select = kwargs.get('linked_select')  # type: Select2
         self._linked_select_ajax_query_attr = kwargs.get('linked_select_ajax_query_attr')
+        self._maximum_selection_length = kwargs.get('maximum_selection_length', 0)
+        self._minimum_input_length = kwargs.get('minimum_input_length', 0)
+        self._multiple = kwargs.get('multiple', False)
+        self._tags = kwargs.get('tags', False)
 
         if self._linked_select and not isinstance(self._linked_select, Select2):
             raise TypeError('Instance of {} expected, got {}'.format(Select2, type(self._linked_select)))
@@ -181,6 +184,9 @@ class Select2(Select):
         select.set_attr('style', 'width: 100%;')
 
         self._data['linked_select_ajax_query_attr'] = self._linked_select_ajax_query_attr
+
+        if self._multiple:
+            self._data['multiple'] = True
 
         if self._linked_select:
             self._data['linked_select'] = self._linked_select.uid
@@ -197,6 +203,9 @@ class Select2(Select):
             self._data['ajax_cache'] = self._ajax_cache
 
         select.set_attr('data_theme', self._theme)
+        select.set_attr('data_minimum_input_length', self._minimum_input_length)
+        select.set_attr('data_maximum_selection_length', self._maximum_selection_length)
+
         if self._tags:
             select.set_attr('data_tags', 'true')
         if self._placeholder:

@@ -16,14 +16,23 @@ setupWidget('plugins.widget._select.Select2', widget => {
         return data;
     }
 
-    widget.em.find('select').select2({
-        ajax: {
-            url: assetman.url(widget.data('ajaxUrl'), widget.data('ajaxUrlQuery')),
-            delay: widget.data('ajaxDelay'),
-            processResults: processResults,
-            cache: widget.data('ajaxCache') === 'True',
-        }
-    });
+    const select2Opts = {
+        language: document.documentElement.lang,
+    };
+    const ajaxUrl = widget.data('ajaxUrl');
+
+    if (ajaxUrl) {
+        Object.assign(select2Opts, {
+            ajax: {
+                url: assetman.url(ajaxUrl, widget.data('ajaxUrlQuery')),
+                delay: widget.data('ajaxDelay'),
+                processResults: processResults,
+                cache: widget.data('ajaxCache') === 'True',
+            }
+        })
+    }
+
+    widget.em.find('select').select2(select2Opts);
 
     // Setup linked selects
     widget.form.em.on('forward:form:pytsite', function () {

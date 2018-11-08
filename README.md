@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 4.6 (2018-11-08)
+
+New arguments support added in `select.Select2`:
+`maximum_selection_length`, `minimum_input_length`, `multiple`, `tags`.
+
+
 ### 4.5.1 (2018-11-06)
 
 `Slots` React component's CSS fixed.
