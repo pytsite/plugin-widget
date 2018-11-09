@@ -82,6 +82,9 @@ class Select(_Abstract):
 
         super().__init__(uid, **kwargs)
 
+        if self._multiple and not self._name.endswith('[]'):
+            self._name += '[]'
+
         self._append_none_item = kwargs.get('append_none_item', True)
         self._none_item_title = kwargs.get('none_item_title', '--- ' + _lang.t('widget@select_none_item') + ' ---')
         self._exclude = kwargs.get('exclude', [])
@@ -153,8 +156,15 @@ class Select(_Abstract):
 
         return select
 
-    def _get_element(self, **kwargs):
-        return self._get_select_html_em()
+    def _get_element(self, **kwargs) -> _html.Element:
+        r = _html.TagLessElement()
+
+        if self._multiple:
+            r.append(_html.Input(type='hidden', name=self._name))
+
+        r.append(self._get_select_html_em())
+
+        return r
 
 
 class Select2(Select):
@@ -211,7 +221,14 @@ class Select2(Select):
         if self._placeholder:
             select.set_attr('data_placeholder', self._placeholder)
 
-        return select
+        r = _html.TagLessElement()
+
+        if self._multiple:
+            r.append(_html.Input(type='hidden', name=self._name))
+
+        r.append(select)
+
+        return r
 
 
 class Checkboxes(Select):
@@ -232,11 +249,11 @@ class Checkboxes(Select):
         :param **kwargs:
         """
         container = _html.TagLessElement()
-        container.append(_html.Input(type='hidden', name=self.name + '[]'))
+        container.append(_html.Input(type='hidden', name=self.name))
         for item in self._items:
             checked = True if item[0] in self.value else False
             div = _html.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
-            inp = _html.Input(type='checkbox', name=self.name + '[]', value=item[0], checked=checked,
+            inp = _html.Input(type='checkbox', name=self.name, value=item[0], checked=checked,
                               required=self.required)
             label = _html.Label(item[1])
 
