@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.7 (2018-11-14)
+
+New argument `exclude` added to `select.Select2`.
+
+
 ### 4.6.1 (2018-11-09)
 
 Processing of empty value of multiple-enabled `select.Select` fixed.
@@ -11,7 +16,7 @@ Processing of empty value of multiple-enabled `select.Select` fixed.
 
 ### 4.6 (2018-11-08)
 
-New arguments support added in `select.Select2`:
+New arguments added to `select.Select2`:
 - `maximum_selection_length`;
 - `minimum_input_length`;
 - `multiple`,

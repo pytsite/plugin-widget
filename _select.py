@@ -198,6 +198,11 @@ class Select2(Select):
         if self._multiple:
             self._data['multiple'] = True
 
+        if self._exclude:
+            exclude = _json_dumps([str(excl) for excl in self._exclude])
+            self._data['exclude'] = exclude
+            self._ajax_url_query['exclude'] = exclude
+
         if self._linked_select:
             self._data['linked_select'] = self._linked_select.uid
             self._data['linked_select_value'] = self._linked_select.value
