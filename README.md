@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.7.1 (2018-11-15)
+
+Forgotten `console.log` output removed.
+
+
 ### 4.7 (2018-11-14)
 
 New argument `exclude` added to `select.Select2`.

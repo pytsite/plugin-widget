@@ -10,8 +10,6 @@ setupWidget('plugins.widget._input.Number', widget => {
     };
 
     widget.em.find('input[type=text],input[type=tel],input[type=number]').each(function () {
-        console.log($(this));
-
         if (widget.em.hasClass('widget-integer')) {
             $(this).inputmask('integer', options)
         }
