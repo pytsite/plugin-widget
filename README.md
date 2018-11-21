@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.7.3 (2018-11-21)
+
+Redundant code removed.
+
+
 ### 4.7.2 (2018-11-21)
 
 Events proxying fixed in `Select2` widget's JS code.
