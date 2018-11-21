@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.7.2 (2018-11-21)
+
+Events proxying fixed in `Select2` widget's JS code.
+
+
 ### 4.7.1 (2018-11-15)
 
 Forgotten `console.log` output removed.

@@ -16,9 +16,7 @@ setupWidget('plugins.widget._select.Select2', widget => {
         return data;
     }
 
-    const select2Opts = {
-        language: document.documentElement.lang,
-    };
+    const select2Opts = {language: document.documentElement.lang};
     const ajaxUrl = widget.data('ajaxUrl');
 
     if (ajaxUrl) {
@@ -32,7 +30,12 @@ setupWidget('plugins.widget._select.Select2', widget => {
         })
     }
 
-    widget.em.find('select').select2(select2Opts);
+    // Setup Select2
+    const select = widget.em.find('select').select2(select2Opts);
+
+    // Setup events proxying
+    select.on('change select2:closing select2:close select2:opening select2:open select2:selecting select2:select ' +
+        'select2:unselecting select2:unselect', e => widget.trigger(e, [widget]));
 
     // Setup linked selects
     widget.form.em.on('forward:form:pytsite', function () {
