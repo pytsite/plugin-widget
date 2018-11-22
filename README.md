@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.8 (2018-11-22)
+
+Support of `http_api-3.3`.
+
+
 ### 4.7.3 (2018-11-21)
 
 Redundant code removed.

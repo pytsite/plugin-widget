@@ -50,7 +50,7 @@ setupWidget('plugins.widget._input.File', widget => {
             ++addedFilesCount;
             ++uploadingFilesCount;
 
-            httpApi.post(endpoint, data).done(function (r) {
+            httpApi.post(endpoint, data).then(r => {
                 if ('message' in r)
                     updateSlot(slots, r.index, r.message);
 
@@ -58,7 +58,7 @@ setupWidget('plugins.widget._input.File', widget => {
                     eval(r.eval);
 
                 ++uploadedFilesCount;
-            }).fail(function (r) {
+            }).catch(r => {
                 if ('index' in r.responseJSON) {
                     updateSlot(slots, r.responseJSON.index, r.responseJSON.error, 'has-error');
                 }
@@ -66,7 +66,7 @@ setupWidget('plugins.widget._input.File', widget => {
                     widget.setState('error');
                     widget.addMessage(r.responseJSON.error)
                 }
-            }).always(function () {
+            }).finally(() => {
                 inp.attr('disabled', false);
                 --uploadingFilesCount;
 

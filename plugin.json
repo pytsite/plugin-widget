@@ -1,6 +1,6 @@
 {
   "name": "widget",
-  "version": "4.7.3",
+  "version": "4.8",
   "description": {
     "en": "Widget",
     "ru": "Widget",
@@ -17,7 +17,7 @@
     "plugins": {
       "assetman": "5.x",
       "hreflang": "1.x",
-      "http_api": "3.x"
+      "http_api": ">=3.3<4"
     }
   }
 }

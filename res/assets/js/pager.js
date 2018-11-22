@@ -30,9 +30,9 @@ setupWidget('plugins.widget._select.Pager', widget => {
         httpApi.get(httpApiEp, {
             skip: skip,
             count: perPage
-        }).done(function (r) {
+        }).then(r => {
             $(window).trigger('plugins.widget.select.pager.httpApiLoad', [r, pageNum, widget]);
-        }).fail(function (r) {
+        }).catch(r => {
             $(window).trigger('plugins.widget.select.pager.httpApiError', [r, pageNum, widget]);
         });
     }
