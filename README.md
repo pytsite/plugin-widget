@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.8.1 (2018-11-26)
+
+`select.Select2` JS code fixed.
+
+
 ### 4.8 (2018-11-22)
 
 Support of `http_api-3.3`.

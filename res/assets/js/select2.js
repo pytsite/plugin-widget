@@ -2,7 +2,6 @@ import 'select2';
 import 'select2/dist/css/select2.css';
 import setupWidget from '@pytsite/widget';
 import assetman from '@pytsite/assetman';
-import httpApi from '@pytsite/http-api';
 
 setupWidget('plugins.widget._select.Select2', widget => {
     function processResults(data) {
@@ -61,7 +60,7 @@ setupWidget('plugins.widget._select.Select2', widget => {
             thisSelect.select2('destroy');
             thisSelect.select2({
                 ajax: {
-                    url: httpApi.url(widget.data('ajaxUrl'), ajaxArgs),
+                    url: assetman.url(widget.data('ajaxUrl'), ajaxArgs),
                     delay: parseInt(widget.data('ajaxDelay')),
                     processResults: processResults,
                     cache: widget.data('ajaxCache') === 'True',
