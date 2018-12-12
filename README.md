@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.8.3 (2018-12-12)
+
+CSS of `Slots` component fixed.
+
+
 ### 4.8.2 (2018-12-12)
 
 Minor bugfixes in `Select2`, `Slots` and `TwoButtonsModal` components.
