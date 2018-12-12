@@ -140,7 +140,7 @@ class Text(Input):
             group.append(inp)
             if self._append:
                 append = group.append(_html.Div(css='input-group-addon input-group-append'))
-                append.append(_html.Div(css='input-group-text'))
+                append.append(_html.Div(self._append, css='input-group-text'))
             inp = group
 
         if self._inputmask:

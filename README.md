@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.8.4 (2018-12-12)
+
+Missing append text fixed in `input.Text`.
+
+
 ### 4.8.3 (2018-12-12)
 
 CSS of `Slots` component fixed.
