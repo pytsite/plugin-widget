@@ -5,15 +5,15 @@ import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 
 export default class TwoButtonsModal extends React.Component {
     static propTypes = {
-        onToggle: PropTypes.func,
-        className: PropTypes.string,
-        isOpen: PropTypes.bool,
-        okButtonCaption: PropTypes.string,
-        isOkButtonDisabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
         cancelButtonCaption: PropTypes.string,
+        className: PropTypes.string,
         isCancelButtonDisabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
+        isOkButtonDisabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
+        isOpen: PropTypes.bool,
+        onToggle: PropTypes.func.isRequired,
         onClickCancel: PropTypes.func,
         onClickOk: PropTypes.func,
+        okButtonCaption: PropTypes.string,
         title: PropTypes.string,
     };
 

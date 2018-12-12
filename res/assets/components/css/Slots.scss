@@ -4,20 +4,27 @@
 
   .slot {
     width: 100%;
+    margin: .5%;
+    padding: 1%;
     position: relative;
     border: 1px solid #ddd;
 
     // Small devices (landscape phones, 576px and up)
     @media (min-width: 576px) {
-      width: 50%;
+      width: 49%;
     }
 
     @media (min-width: 768px) {
-      width: 192px;
+      width: 32%;
+    }
+
+    @media (min-width: 992px) {
+      width: 24%;
     }
 
     > .inner {
       overflow: hidden;
+      position: relative;
     }
 
     &.editable {
@@ -26,6 +33,16 @@
 
     &.empty {
       cursor: pointer;
+
+      &:hover {
+        i {
+          color: inherit;
+        }
+      }
+
+      i {
+        color: #999;
+      }
 
       > .inner {
         position: absolute;

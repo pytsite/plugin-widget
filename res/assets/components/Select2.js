@@ -28,12 +28,17 @@ export default class Select2 extends React.Component {
         userTitleFormat: PropTypes.string,
     };
 
+    static defaultProps = {
+        className: 'form-control',
+    };
+
     constructor(props) {
         super(props);
         this.ref = React.createRef();
     }
 
     componentDidMount() {
+        // https://select2.org/configuration/options-api
         const select = $(this.ref.current).select2(this.props.options);
 
         // See https://select2.org/programmatic-control/events
@@ -54,7 +59,10 @@ export default class Select2 extends React.Component {
 
     render() {
         return (
-            <select ref={this.ref} className={this.props.className} id={this.props.id} name={this.props.name}
+            <select ref={this.ref}
+                    id={this.props.id}
+                    name={this.props.name}
+                    className={this.props.className}
                     disabled={this.props.disabled}>
                 {this.props.children}
             </select>

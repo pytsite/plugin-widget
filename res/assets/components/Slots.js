@@ -4,18 +4,20 @@ import PropTypes from 'prop-types';
 
 export default class Slots extends React.Component {
     static propTypes = {
-        slotRenderer: PropTypes.func.isRequired,
         className: PropTypes.string,
-        data: PropTypes.object,
+        data: PropTypes.object.isRequired,
+        emptySlotTitle: PropTypes.string,
+        emptySlotRenderer: PropTypes.func,
         enabled: PropTypes.bool,
         maxSlots: PropTypes.number,
         onEmptySlotClick: PropTypes.func,
         onSlotClick: PropTypes.func,
-        emptySlotRenderer: PropTypes.func,
+        slotRenderer: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
         className: '',
+        maxSlots: 1000,
     };
 
     /**
@@ -36,7 +38,8 @@ export default class Slots extends React.Component {
     get slots() {
         const slots = Object.keys(this.props.data)
             .map(slotKey =>
-                <div className={'slot' + (this.props.enabled ? ' editable' : '')} key={slotKey} onClick={() => this.props.onSlotClick && this.props.onSlotClick(slotKey)}>
+                <div className={'slot' + (this.props.enabled ? ' editable' : '')} key={slotKey}
+                     onClick={() => this.props.onSlotClick && this.props.onSlotClick(slotKey)}>
                     <div className="inner">
                         {this.props.slotRenderer(this.props.data[slotKey])}
                     </div>
@@ -45,7 +48,11 @@ export default class Slots extends React.Component {
 
         if (this.props.enabled && this.props.emptySlotRenderer && slots.length < this.props.maxSlots) {
             slots.push(
-                <div className={'slot empty'} key={'__empty'} onClick={this.props.onEmptySlotClick}>
+                <div className={'slot empty'}
+                     key={'__empty'}
+                     onClick={this.props.onEmptySlotClick}
+                     title={this.props.emptySlotTitle}
+                >
                     <div className="inner">
                         {this.props.emptySlotRenderer()}
                     </div>
