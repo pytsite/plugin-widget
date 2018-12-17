@@ -4,7 +4,7 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Union as _Union, Tuple as _Tuple, Optional as _Optional, List as _List
+from typing import Union as _Union, List as _List
 from collections import OrderedDict as _OrderedDict
 from math import ceil as _ceil
 from datetime import datetime as _datetime
@@ -663,6 +663,9 @@ class ColorPicker(_Text):
 
 
 class Breadcrumb(_Abstract):
+    """Breadcrumb Widget
+    """
+
     def __init__(self, uid: str, **kwargs):
         """Init
         """
@@ -674,6 +677,8 @@ class Breadcrumb(_Abstract):
         self._items = list(kwargs.get('items', []))
 
     def _get_element(self) -> _html.Element:
+        """Hook
+        """
         nav = _html.Nav(aria_label=self.label, role='navigation')
 
         if self._items:
@@ -692,12 +697,23 @@ class Breadcrumb(_Abstract):
 
     @property
     def items(self) -> _List[_List[str]]:
+        """Get items
+        """
         return self._items.copy()
 
     def append_item(self, title: str, link: str = None):
+        """Append an item
+        """
         self._items.append([title, link])
 
         return self
 
-    def pop_item(self, index: int = -1) -> _Tuple[str, _Optional[str]]:
+    def insert_item(self, title: str, link: str = None, index: int = 0):
+        """Insert an item
+        """
+        self._items.insert(index, [title, link])
+
+    def pop_item(self, index: int = -1) -> _List[str]:
+        """Pop an item
+        """
         return self._items.pop(index)

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.9 (2018-12-17)
+
+New method `select.Breadcrumb.insert_item()` added.
+
+
 ### 4.8.4 (2018-12-12)
 
 Missing append text fixed in `input.Text`.
