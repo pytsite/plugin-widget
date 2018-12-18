@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.10 (2018-12-18)
+
+New widget `input.DNSName` added.
+
+
 ### 4.9 (2018-12-17)
 
 New method `select.Breadcrumb.insert_item()` added.

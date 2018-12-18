@@ -181,6 +181,18 @@ class Url(Text):
         self.add_rule(_validation.rule.Url())
 
 
+class DNSName(Text):
+    """DNS Name Input Widget
+    """
+
+    def __init__(self, uid: str, **kwargs):
+        """Init
+        """
+        super().__init__(uid, **kwargs)
+
+        self.add_rule(_validation.rule.DNSName())
+
+
 class TextArea(_Abstract):
     """Text Area Input Widget.
     """
