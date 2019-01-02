@@ -1,41 +1,59 @@
 .widget-treetable {
+  .widget-component {
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  .root-droppable {
+    width: 10px;
+  }
+
   .data-table-toolbar {
     margin-bottom: 1em;
   }
 
-  .depth-1 {
-    padding-left: 1.5em;
+  tr {
+    &.has-children {
+      &.is-expanded {
+        .drag-handler {
+          display: none;
+        }
+      }
+    }
+
+    &:not(.has-children) {
+      .expander {
+        display: none;
+      }
+    }
+
+    &.is-dragging {
+      border: 1px solid black;
+
+      td {
+        visibility: hidden;
+
+        &:nth-child(1), &:nth-child(2)  {
+          visibility: visible;
+        }
+      }
+    }
+
+    &.is-hidden {
+      display: none;
+    }
   }
 
-  .depth-2 {
-    padding-left: 2.5em;
+  .td-row-actions, .td-field-entity-actions {
+    width: 1%;
+    white-space: nowrap;
   }
 
-  .depth-3 {
-    padding-left: 3.5em;
-  }
-
-  .depth-4 {
-    padding-left: 4.5em;
-  }
-
-  .depth-5 {
-    padding-left: 5.5em;
-  }
-
-  .depth-6 {
-    padding-left: 6.5em;
-  }
-
-  .depth-7 {
-    padding-left: 7.5em;
-  }
-
-  .depth-8 {
-    padding-left: 8.5em;
-  }
-
-  .depth-9 {
-    padding-left: 9.5em;
+  @for $i from 1 through 10 {
+    .depth-#{$i} {
+      td:nth-child(1), td:nth-child(2) {
+        padding-left: #{$i + 0.5}em;
+      }
+    }
   }
 }

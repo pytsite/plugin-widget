@@ -10,6 +10,7 @@
     "jquery": "3.x",
     "mini-css-extract-plugin": "0.x",
     "reactstrap": "6.x",
+    "react-beautiful-dnd": "10.x",
     "select2": "4.x",
     "typeahead.js": "0.x",
     "vanderlee-colorpicker": "1.x"

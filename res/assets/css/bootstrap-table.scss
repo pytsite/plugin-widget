@@ -1,11 +1,16 @@
 .fixed-table-toolbar .bs-bars {
-    float: left;
+  float: left;
 }
 
 .fixed-table-toolbar .search, .fixed-table-toolbar .columns {
-    float: right;
+  float: right;
 }
 
 .fixed-table-pagination .pagination-detail {
-    margin: 10px;
+  margin: 10px;
+}
+
+.td-row-actions, .td-field-entity-actions {
+  width: 1%;
+  white-space: nowrap;
 }

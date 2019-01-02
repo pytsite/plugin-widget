@@ -17,7 +17,9 @@ class DataTable(_base.Abstract):
 
         self._rows_url = kwargs.get('rows_url')
         if not self._rows_url:
-            raise RuntimeError("'rows_url' argument is not provided")
+            raise ValueError("'rows_url' argument is not provided")
+
+        self._has_messages = False
 
         self._data_fields = []  # type: _List[_Tuple[str, str, bool]]  # name, title, sortable
         self._default_sort_field = kwargs.get('default_sort_field')
@@ -150,11 +152,16 @@ class BootstrapTable(DataTable):
 
         # Checkbox column
         if self._checkbox:
-            t_head_row.append(_html.Th(data_field='__state', data_checkbox='true'))
+            t_head_row.append(_html.Th(data_field='__state', data_checkbox='true', css='td-row-actions'))
 
         # Head row's cells
         for f in self._data_fields:
-            t_head_row.append(_html.Th(f[1], data_field=f[0], data_sortable='true' if f[2] else 'false'))
+            t_head_row.append(_html.Th(
+                f[1],
+                data_field=f[0],
+                data_sortable='true' if f[2] else 'false',
+                css='td-field-' + f[0],
+            ))
 
         r = _html.TagLessElement()
         r.append(self._toolbar)
@@ -169,6 +176,10 @@ class TreeTable(DataTable):
         """
         super().__init__(uid, **kwargs)
 
+        self._update_rows_url = kwargs.get('update_rows_url')
+        if not self._update_rows_url:
+            raise ValueError("'update_rows_url' argument is not provided")
+
         self._form_group = False
         self._css += ' widget-tree-table'
 
@@ -176,6 +187,7 @@ class TreeTable(DataTable):
         """Render the widget
         """
         self._data['rows_url'] = self._rows_url
+        self._data['update_rows_url'] = self._update_rows_url
         self._data['fields'] = ','.join(['{}:{}'.format(v[0], v[1]) for v in self.data_fields])
         self._data['sort_field'] = self._default_sort_field
         self._data['sort_order'] = self._default_sort_order
@@ -195,10 +207,7 @@ class TreeTable(DataTable):
         table = _html.Table(
             css='table table-hover table-bordered table-striped',
         )
-        table.append(_html.THead())
-        table.append(_html.TBody())
-        table.append(_html.TFoot())
-        r.append(table)
+        r.append(_html.Div(css='widget-component'))
 
         return r
 

@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 4.11 (2019-01-02)
+
+- New React component: `tree-table`.
+- `misc.TreeTable` reworked.
+
+
 ### 4.10 (2018-12-18)
 
 New widget `input.DNSName` added.
