@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.11.1 (2019-01-11)
+
+JS code of `BootstrapTable` and `TreeTable` fixed.
+
+
 ### 4.11 (2019-01-02)
 
 - New React component: `tree-table`.

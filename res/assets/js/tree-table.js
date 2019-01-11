@@ -350,8 +350,8 @@ class TreeTable extends React.Component {
 
         // Update data on the server, then update component's state
         const putRowsData = rows.map((row, index) => ({
-            ref: row.__id,
-            parent: row.__parent,
+            __id: row.__id,
+            __parent: row.__parent,
             order: (index * 10) + 10,
         }));
         httpApi.put(this.props.updateRowsUrl, {rows: JSON.stringify(putRowsData)})

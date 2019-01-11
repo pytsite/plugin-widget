@@ -15,7 +15,7 @@ setupWidget('plugins.widget._misc.BootstrapTable', widget => {
     function getCheckedIds() {
         const r = [];
         table.find('[name=btSelectItem]:checked').each(function () {
-            r.push($(this).closest('tr').find('.entity-actions').first().data('entityId'))
+            r.push($(this).closest('tr').data('uniqueid'))
         });
 
         return r;
@@ -57,6 +57,8 @@ setupWidget('plugins.widget._misc.BootstrapTable', widget => {
     // Show and initialize table
     table.removeClass('hidden').removeClass('sr-only').bootstrapTable({
         toolbar: widget.em.find('.data-table-toolbar')[0],
+        idField: '__id',
+        uniqueId: '__id',
         iconsPrefix: 'fa fas',
         icons: {
             paginationSwitchDown: 'fa-arrow-circle-down icon-chevron-down',
