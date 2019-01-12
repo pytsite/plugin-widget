@@ -47,6 +47,10 @@
   .td-row-actions, .td-field-entity-actions {
     width: 1%;
     white-space: nowrap;
+
+    .far {
+      font-weight: 400 !important;
+    }
   }
 
   @for $i from 1 through 10 {

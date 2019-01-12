@@ -55,7 +55,7 @@ class Row extends React.Component {
                 // Drag handle and expander
                 tds.push(
                     <td key={'actions'} className={'td-row-actions'}>
-                        <i className={'expander fa far fa-fw fa-' + (row.__collapsed ? 'plus' : 'minus') + '-square-o ' + (row.__collapsed ? 'plus' : 'minus') + '-square'}
+                        <i className={'expander fa fa-fw fa-' + (row.__collapsed ? 'plus' : 'minus') + '-square-o far fa-' + (row.__collapsed ? 'plus' : 'minus') + '-square'}
                            onClick={e => this.onExpanderClick(e)}
                         />
 
