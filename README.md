@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.11.2 (2019-01-12)
+
+Twitter Bootstrap 4 support fixed in `TreeTable`.
+
+
 ### 4.11.1 (2019-01-11)
 
 JS code of `BootstrapTable` and `TreeTable` fixed.

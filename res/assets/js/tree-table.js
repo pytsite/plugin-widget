@@ -55,11 +55,11 @@ class Row extends React.Component {
                 // Drag handle and expander
                 tds.push(
                     <td key={'actions'} className={'td-row-actions'}>
-                        <i className={'expander fa fas fa-fw fa-' + (row.__collapsed ? 'plus' : 'minus') + '-square-o'}
+                        <i className={'expander fa far fa-fw fa-' + (row.__collapsed ? 'plus' : 'minus') + '-square-o ' + (row.__collapsed ? 'plus' : 'minus') + '-square'}
                            onClick={e => this.onExpanderClick(e)}
                         />
 
-                        <i className={'drag-handler fa fas fa-fw fa-reorder'} {...provided.dragHandleProps}/>
+                        <i className={'drag-handler fa fas fa-fw fa-reorder fa-bars'} {...provided.dragHandleProps}/>
                     </td>
                 );
 
