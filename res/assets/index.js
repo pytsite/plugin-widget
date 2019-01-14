@@ -41,7 +41,7 @@ export class Widget {
         this.replaces = em.data('replaces');
         this.formArea = em.data('formArea');
         this.form = form;
-        this.alwaysHidden = em.data('hidden') === 'True';
+        this.initiallyHidden = em.data('hidden') === 'True';
         this.weight = em.data('weight');
         this.messagesEm = em.find('.widget-messages').first();
         this.children = {};
@@ -218,8 +218,8 @@ export class Widget {
      */
     hide() {
         const s = (this.em.attr('style') || '').trim();
-
         this.em.attr('style', s.length ? ';display: none;' : 'display: none;');
+        this.em.addClass('hidden sr-only');
 
         return this;
     };
@@ -230,10 +230,9 @@ export class Widget {
      * @return {Widget}
      */
     show() {
-        if (!this.alwaysHidden) {
-            const s = (this.em.attr('style') || '').trim();
-            this.em.attr('style', s.replace('display: none;', ''));
-        }
+        const s = (this.em.attr('style') || '').trim();
+        this.em.attr('style', s.replace('display: none;', ''));
+        this.em.removeClass('hidden sr-only');
 
         return this;
     };

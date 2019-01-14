@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.11.4 (2019-01-14)
+
+Widgets visibility management fixed.
+
+
 ### 4.11.3 (2019-01-12)
 
 Twitter Bootstrap 4 support fixed in `TreeTable`.
