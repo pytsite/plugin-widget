@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.11.5 (2019-01-25)
+
+Order of call of `widget.Abstract._get_element()` changed.
+
+
 ### 4.11.4 (2019-01-14)
 
 Widgets visibility management fixed.

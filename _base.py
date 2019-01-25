@@ -118,6 +118,9 @@ class Abstract(_ABC):
         if self._replaces:
             self._wrap_em.set_attr('data_replaces', self._replaces)
 
+        # Get widget's HTML element
+        em = self._get_element(**kwargs)
+
         # Wrapper CSS
         cls_css = self.__class__.__name__.lower()
         cid_css = self.cid().lower().replace('_', '-').replace('.', '-')
@@ -134,9 +137,6 @@ class Abstract(_ABC):
             if self._has_error:
                 wrap_css += ' has-error'
         self._wrap_em.set_attr('css', wrap_css)
-
-        # Get widget's HTML element
-        em = self._get_element(**kwargs)
 
         # Set widget's data attributes
         if isinstance(self._data, dict):
