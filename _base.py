@@ -4,7 +4,7 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Tuple as _Tuple, List as _List
+from typing import Tuple as _Tuple, List as _List, Optional as _Optional
 from abc import ABC as _ABC, abstractmethod as _abstractmethod
 from copy import deepcopy as _deepcopy
 from math import ceil as _ceil
@@ -79,7 +79,7 @@ class Abstract(_ABC):
                 self._data[k.replace('data_', '')] = v
 
     @_abstractmethod
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> _Optional[_html.Element]:
         """Hook
         """
         pass
@@ -120,6 +120,12 @@ class Abstract(_ABC):
 
         # Get widget's HTML element
         em = self._get_element(**kwargs)
+        if not em:
+            return _html.TagLessElement()
+
+        # Validate element's type
+        if not isinstance(em, _html.Element):
+            raise TypeError('{} expected, got {}'.format(_html.Element, type(em)))
 
         # Wrapper CSS
         cls_css = self.__class__.__name__.lower()
@@ -142,13 +148,6 @@ class Abstract(_ABC):
         if isinstance(self._data, dict):
             for k, v in self._data.items():
                 self._wrap_em.set_attr('data_' + k, v)
-
-        # If no widget content, return just wrapper
-        if not em:
-            raise ValueError('{}._get_widget() does not return anything'.format(self.__class__))
-
-        if not isinstance(em, _html.Element):
-            raise TypeError('{} expected, got {}'.format(_html.Element, type(em)))
 
         # Wrap into size container
         h_sizer = None

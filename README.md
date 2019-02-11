@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.12 (2019-02-11)
+
+Support of empty response from `widget.Abstract._get_element()`. 
+
+
 ### 4.11.5 (2019-01-25)
 
 Order of call of `widget.Abstract._get_element()` changed.
