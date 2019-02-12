@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.12.1 (2019-02-12)
+
+`widget.Abstract.form_group` attribute can be set via kwargs now.
+
+
 ### 4.12 (2019-02-11)
 
 Support of empty response from `widget.Abstract._get_element()`. 

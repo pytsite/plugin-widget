@@ -52,7 +52,7 @@ class Abstract(_ABC):
         self._children_uids = []  # type: _List[str]
         self._children_sep = kwargs.get('children_sep', '')
         self._last_children_weight = 0
-        self._form_group = True
+        self._form_group = kwargs.get('form_group', True)
 
         # Check validation rules
         if not isinstance(self._rules, (list, tuple)):
