@@ -4,19 +4,24 @@
 ## Changelog
 
 
+### 4.13 (2019-02-14)
+
+New method added: `Abstract.replace_child()`.
+
+
 ### 4.12.1 (2019-02-12)
 
-`widget.Abstract.form_group` attribute can be set via kwargs now.
+`Abstract.form_group` attribute can be set via kwargs now.
 
 
 ### 4.12 (2019-02-11)
 
-Support of empty response from `widget.Abstract._get_element()`. 
+Support of empty response from `Abstract._get_element()`. 
 
 
 ### 4.11.5 (2019-01-25)
 
-Order of call of `widget.Abstract._get_element()` changed.
+Order of call of `Abstract._get_element()` changed.
 
 
 ### 4.11.4 (2019-01-14)

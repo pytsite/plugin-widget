@@ -537,6 +537,26 @@ class Abstract(_ABC):
 
         self._children = [w for w in self._children if w.uid != uid]
 
+        return self
+
+    def replace_child(self, child_uid: str, replacement):
+        """
+        :type child_uid: str
+        :type replacement: Abstract
+        :return: Abstract
+        """
+        child = self.get_child(child_uid)
+
+        replacement.replaces = child_uid
+        replacement.form_area = child.form_area
+
+        if not replacement.weight:
+            replacement.weight = child.weight
+
+        self.remove_child(child_uid).append_child(replacement)
+
+        return self
+
     def has_descendant(self, uid: str) -> bool:
         """Check if the widget contains descendant
         """
