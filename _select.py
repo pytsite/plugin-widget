@@ -4,7 +4,7 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Union as _Union, List as _List
+from typing import Union as _Union, List as _List, Tuple as _Tuple
 from collections import OrderedDict as _OrderedDict
 from math import ceil as _ceil
 from datetime import datetime as _datetime
@@ -249,29 +249,33 @@ class Checkboxes(Select):
         if self._bootstrap_version not in (3, 4):
             self._bootstrap_version = 3
 
+        self._item_renderer = kwargs.get('item_renderer', self._default_item_renderer)
+
+    def _default_item_renderer(self, item: _Tuple[str, str]) -> _html.Element:
+        checked = True if item[0] in self.value else False
+        div = _html.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
+        inp = _html.Input(type='checkbox', name=self.name, value=item[0], checked=checked,
+                          required=self.required)
+        label = _html.Label(item[1])
+
+        if self._bootstrap_version == 3:
+            label.append(inp)
+            div.append(label)
+        elif self._bootstrap_version == 4:
+            inp.set_attr('css', 'form-check-input')
+            label.set_attr('css', 'form-check-label')
+            div.append(inp)
+            div.append(label)
+
+        return div
+
     def _get_element(self, **kwargs) -> _html.Element:
-        """Render the widget.
-        :param **kwargs:
+        """Render the widget
         """
         container = _html.TagLessElement()
-        container.append(_html.Input(type='hidden', name=self.name))
+        container.append(_html.Input(type='hidden', name=self.name))  # It is important to have an empty input!
         for item in self._items:
-            checked = True if item[0] in self.value else False
-            div = _html.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
-            inp = _html.Input(type='checkbox', name=self.name, value=item[0], checked=checked,
-                              required=self.required)
-            label = _html.Label(item[1])
-
-            if self._bootstrap_version == 3:
-                label.append(inp)
-                div.append(label)
-            elif self._bootstrap_version == 4:
-                inp.set_attr('css', 'form-check-input')
-                label.set_attr('css', 'form-check-label')
-                div.append(inp)
-                div.append(label)
-
-            container.append(div)
+            container.append(self._item_renderer(item))
 
         return container
 

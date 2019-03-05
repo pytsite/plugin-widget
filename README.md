@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.14 (2019-03-05)
+
+New arg `item_renderer` added to `select.Checkboxes`'s constructor.
+
+
 ### 4.13 (2019-02-14)
 
 New method added: `Abstract.replace_child()`.
