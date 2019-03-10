@@ -533,9 +533,10 @@ class Abstract(_ABC):
         """Remove child widget
         """
         if not self.has_child(uid):
-            raise RuntimeError("Widget '{}' doesn't contain child '{}'.".format(self.uid, uid))
+            raise RuntimeError("Widget '{}' doesn't contain child '{}'".format(self.uid, uid))
 
         self._children = [w for w in self._children if w.uid != uid]
+        self._children_uids.remove(uid)
 
         return self
 

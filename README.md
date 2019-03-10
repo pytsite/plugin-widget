@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.14.1 (2019-03-10)
+
+Error in `widget.Base.remove_child()` fixed.
+
+
 ### 4.14 (2019-03-05)
 
 New arg `item_renderer` added to `select.Checkboxes`'s constructor.
