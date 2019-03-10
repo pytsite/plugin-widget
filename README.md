@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.14.2 (2019-03-10)
+
+Incorrect return value of `widget.Base.replace_child()` fixed.
+
+
 ### 4.14.1 (2019-03-10)
 
 Error in `widget.Base.remove_child()` fixed.

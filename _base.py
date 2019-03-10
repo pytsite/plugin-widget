@@ -556,7 +556,7 @@ class Abstract(_ABC):
 
         self.remove_child(child_uid).append_child(replacement)
 
-        return self
+        return replacement
 
     def has_descendant(self, uid: str) -> bool:
         """Check if the widget contains descendant
