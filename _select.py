@@ -308,8 +308,9 @@ class LanguageNav(_Abstract):
         self._has_messages = False
         self._dropdown = kwargs.get('dropdown')
         self._dropup = kwargs.get('dropup')
-        self._css += ' nav navbar-nav widget-select-language-nav'
+        self._css += ' nav nav-pills widget-select-language-nav'
         self._language_titles = kwargs.get('language_titles', {})
+        self._bs_version = kwargs.get('bs_version', 4)
 
     def _get_element(self, **kwargs) -> _html.Element:
         if len(_lang.langs()) == 1:
@@ -320,55 +321,63 @@ class LanguageNav(_Abstract):
         # Dropdown menu
         if self._dropdown or self._dropup:
             # Root element
-            dropdown_root = _html.Li(css='dropdown' if self._dropdown else 'dropup')
-            toggle_a = _html.A(
-                self._language_titles.get(self._language) or _lang.lang_title(self.language),
-                css='dropdown-toggle lang-' + self.language,
-                data_toggle='dropdown',
-                role='button',
-                aria_haspopup='true',
-                aria_expanded='false',
-                href='#',
-                content_first=True)
-            toggle_a.append(_html.Span(css='caret'))
+            if self._bs_version == 3:
+                dropdown_root = _html.Li(css='dropdown' if self._dropdown else 'dropup')
+                toggler = _html.A(
+                    self._language_titles.get(self._language) or _lang.lang_title(self.language),
+                    css='dropdown-toggle lang-' + self.language,
+                    data_toggle='dropdown',
+                    role='button',
+                    aria_haspopup='true',
+                    aria_expanded='false',
+                    href='#',
+                    content_first=True)
+                toggler.append(_html.Span(css='caret'))
+                dropdown_root.append(toggler)
+            else:
+                dropdown_root = _html.Div(css='dropdown' if self._dropdown else 'dropup')
+                toggler = _html.Button(
+                    self._language_titles.get(self._language) or _lang.lang_title(self.language),
+                    type='button',
+                    css='btn btn-link dropdown-toggle',
+                    data_toggle='dropdown',
+                    aria_haspopup='true',
+                    aria_expanded='false',
+                )
+                dropdown_root.append(toggler)
 
             # Children
-            dropdown_menu = _html.Ul(css='dropdown-menu')
+            menu_cont_em = _html.Ul if self._bs_version == 3 else _html.Div
+            menu_cont = menu_cont_em(css='dropdown-menu')
             for lng in _lang.langs(False):
-                hl = _hreflang.get(lng)
                 lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
-                if hl:
-                    li = _html.Li()
-                    li.append(_html.A(lng_title, css='lang-' + lng, href=hl))
-                    dropdown_menu.append(li)
-                else:
-                    # Link to homepage
-                    li = _html.Li()
-                    li.append(_html.A(lng_title, css='lang-' + lng, href=_router.base_url(lang=lng)))
-                    dropdown_menu.append(li)
+                a = _html.A(lng_title, css='dropdown-item lang-' + lng, href=_router.base_url(lang=lng))
 
-            dropdown_root.append(toggle_a)
-            dropdown_root.append(dropdown_menu)
+                hl = _hreflang.get(lng)
+                if hl:
+                    a.set_attr('href', hl)
+
+                menu_cont.append(_html.Li(a) if self._bs_version == 3 else a)
+
+            dropdown_root.append(menu_cont)
             root.append(dropdown_root)
         else:
             # Simple list
             for lng in _lang.langs(True):
                 lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
+                li = _html.Li(css='nav-item {}'.format('active' if lng == self._language else ''))
+                a = _html.A(lng_title, css='nav-link lang-' + lng, href=_router.base_url(lang=lng), title=lng_title)
+
+                # Active language
                 if lng == self._language:
-                    # Active language
-                    li = _html.Li(css='active')
-                    li.append(_html.A(lng_title, css='lang-' + lng, href=_router.current_url(), title=lng_title))
-                    root.append(li)
+                    a.set_attr('css', '{} active'.format(a.get_attr('css'))).set_attr('href', _router.current_url())
+
+                # Inactive language, related link
                 elif _hreflang.get(lng):
-                    # Inactive language, related link
-                    li = _html.Li()
-                    li.append(_html.A(lng_title, css='lang-' + lng, href=_hreflang.get(lng), title=lng_title))
-                    root.append(li)
-                else:
-                    # Link to homepage, no related link found
-                    li = _html.Li()
-                    li.append(_html.A(lng_title, css='lang-' + lng, href=_router.base_url(lang=lng), title=lng_title))
-                    root.append(li)
+                    a.set_attr('href', _hreflang.get(lng))
+
+                li.append(a)
+                root.append(li)
 
         return root
 
