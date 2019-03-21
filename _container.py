@@ -11,7 +11,12 @@ from ._base import Abstract as _Abstract
 
 
 class Container(_Abstract):
+    """Base Container Widget
+    """
+
     def __init__(self, uid: str, **kwargs):
+        """Init
+        """
         super().__init__(uid, **kwargs)
 
         self._body_css = kwargs.get('body_css', '')
@@ -25,15 +30,17 @@ class Container(_Abstract):
 
 
 class MultiRow(_Abstract):
-    """Multi Row Widget
+    """Multi Row Container Widget
     """
 
     def __init__(self, uid: str, **kwargs):
+        """Init
+        """
         super().__init__(uid, **kwargs)
 
         self._css += ' widget-multi-row'
         self._max_rows = kwargs.get('max_rows')
-        self._header_hidden = kwargs.get('header_hidden', False)
+        self._is_header_hidden = kwargs.get('is_header_hidden', False)
         self._add_btn_label = kwargs.get('add_btn_label', _lang.t('plugins.widget@append'))
         self._add_btn_icon = kwargs.get('add_btn_icon', 'fa fa-fw fas fa-plus')
 
@@ -150,7 +157,7 @@ class MultiRow(_Abstract):
     def _get_element(self, **kwargs) -> _html.Element:
         """Hook
         """
-        self._data['header-hidden'] = self._header_hidden
+        self._data['header-hidden'] = self._is_header_hidden
 
         if self._max_rows:
             self._data['max-rows'] = self._max_rows
@@ -198,7 +205,7 @@ class MultiRowList(MultiRow):
     """
 
     def __init__(self, uid: str, **kwargs):
-        self._unique = kwargs.get('unique', False)
+        self._is_unique = kwargs.get('is_unique', True)
         super().__init__(uid, **kwargs)
 
     def _get_row_widget_name(self, widget: _Abstract):
@@ -226,7 +233,7 @@ class MultiRowList(MultiRow):
         if isinstance(value, dict):
             value = [v for v in value.values()]
 
-        self._value = _util.cleanup_list(value, self._unique)
+        self._value = _util.cleanup_list(value, self._is_unique)
 
     def validate(self):
         row_widgets = self._get_widgets()

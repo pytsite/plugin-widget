@@ -4,6 +4,13 @@
 ## Changelog
 
 
+### 4.16 (2019-03-21)
+
+- `container.MultiRow.header_hidden` renamed to `is_header_hidden`.
+- `container.MultiRowList.unique` property renamed to `is_unique` and 
+made `True` by default. 
+
+
 ### 4.15.1 (2019-03-21)
 
 CSS fix in `widget.select.LanguageNav`.
