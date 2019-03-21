@@ -319,7 +319,7 @@ class StringList(_MultiRowAsList):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
-        kwargs.setdefault('header_hidden', True)
+        kwargs.setdefault('is_header_hidden', True)
         super().__init__(uid, **kwargs)
 
         self._autocomplete = kwargs.get('autocomplete', 'on')

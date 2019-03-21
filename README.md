@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.16.1 (2019-03-21)
+
+Property usage error fixed in `input.StringList`. 
+
+
 ### 4.16 (2019-03-21)
 
 - `container.MultiRow.header_hidden` renamed to `is_header_hidden`.
