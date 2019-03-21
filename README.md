@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.15.1 (2019-03-21)
+
+CSS fix in `widget.select.LanguageNav`.
+
+
 ### 4.15 (2019-03-15)
 
 Support of Bootstrap 4 added in `widget.select.LanguageNav`.

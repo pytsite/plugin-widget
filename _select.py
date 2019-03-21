@@ -308,7 +308,7 @@ class LanguageNav(_Abstract):
         self._has_messages = False
         self._dropdown = kwargs.get('dropdown')
         self._dropup = kwargs.get('dropup')
-        self._css += ' nav nav-pills widget-select-language-nav'
+        self._css += ' nav widget-select-language-nav'
         self._language_titles = kwargs.get('language_titles', {})
         self._bs_version = kwargs.get('bs_version', 4)
 
@@ -322,6 +322,7 @@ class LanguageNav(_Abstract):
         if self._dropdown or self._dropup:
             # Root element
             if self._bs_version == 3:
+                self._css += ' navbar-nav'
                 dropdown_root = _html.Li(css='dropdown' if self._dropdown else 'dropup')
                 toggler = _html.A(
                     self._language_titles.get(self._language) or _lang.lang_title(self.language),
@@ -361,8 +362,11 @@ class LanguageNav(_Abstract):
 
             dropdown_root.append(menu_cont)
             root.append(dropdown_root)
+
+        # Simple list
         else:
-            # Simple list
+            self._css += ' nav-pills'
+
             for lng in _lang.langs(True):
                 lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
                 li = _html.Li(css='nav-item {}'.format('active' if lng == self._language else ''))
