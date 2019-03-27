@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.16.2 (2019-03-27)
+
+Initial mask formatting fixed in `select.DateTime`. 
+
+
 ### 4.16.1 (2019-03-21)
 
 Property usage error fixed in `input.StringList`. 
