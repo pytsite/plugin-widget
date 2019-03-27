@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.16.3 (2019-03-27)
+
+Initial mask formatting fixed in `select.DateTime` #2.
+
+
 ### 4.16.2 (2019-03-27)
 
 Initial mask formatting fixed in `select.DateTime`. 

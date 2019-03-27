@@ -4,8 +4,8 @@ import $ from 'jquery';
 import setupWidget from '@pytsite/widget';
 
 setupWidget('plugins.widget._select.DateTime', widget => {
-    $.datetimepicker.setLocale(document.documentElement.getAttribute('lang'));
-
+    const input = widget.em.find('input');
+    const inputVal = input.val();
     const opts = {
         format: widget.data('format'),
         datepicker: widget.data('datepicker') === 'True',
@@ -13,5 +13,11 @@ setupWidget('plugins.widget._select.DateTime', widget => {
         mask: widget.data('mask') === 'True'
     };
 
-    widget.em.find('input').datetimepicker(opts).val('');
+    // Initialize datetime picker
+    $.datetimepicker.setLocale(document.documentElement.getAttribute('lang'));
+    input.datetimepicker(opts);
+
+    // Workaround to cleanup mask symbols from text input
+    if (!inputVal)
+        input.val('');
 });
