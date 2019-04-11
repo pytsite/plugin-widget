@@ -10,7 +10,10 @@ setupWidget('plugins.widget._select.DateTime', widget => {
         format: widget.data('format'),
         datepicker: widget.data('datepicker') === 'True',
         timepicker: widget.data('timepicker') === 'True',
-        mask: widget.data('mask') === 'True'
+        mask: widget.data('mask') === 'True',
+        scrollMonth: false,
+        scrollTime: false,
+        scrollInput: false,
     };
 
     // Initialize datetime picker

@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 4.16.4 (2019-04-11)
+
+Buggy mousewheel scrolling processing completely disabled in 
+`select.DateTime` widget.
+
+
 ### 4.16.3 (2019-03-27)
 
 Initial mask formatting fixed in `select.DateTime` #2.
