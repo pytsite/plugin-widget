@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.16.5 (2019-05-15)
+
+Support of `Select2-4.0.7` fixed.
+
+
 ### 4.16.4 (2019-04-11)
 
 Buggy mousewheel scrolling processing completely disabled in 

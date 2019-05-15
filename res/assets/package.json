@@ -3,6 +3,7 @@
   "main": "js/index.js",
   "dependencies": {
     "@pytsite/bootstrap-tokenfield": "0.x",
+    "@ttskch/select2-bootstrap4-theme": "^1.2.2",
     "bootstrap-table": "1.x",
     "bloodhound-js": "1.x",
     "jquery-datetimepicker": "^2.5.21",
@@ -11,7 +12,8 @@
     "mini-css-extract-plugin": "0.x",
     "reactstrap": "^7.1.0",
     "react-beautiful-dnd": "10.x",
-    "select2": "4.x",
+    "select2": "^4.0.7",
+    "select2-bootstrap-theme": "^0.1.0-beta.10",
     "typeahead.js": "0.x",
     "vanderlee-colorpicker": "1.x"
   }

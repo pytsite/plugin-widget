@@ -367,7 +367,7 @@ class LanguageNav(_Abstract):
         else:
             self._css += ' nav-pills'
 
-            for lng in _lang.langs(True):
+            for lng in _lang.langs():
                 lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
                 li = _html.Li(css='nav-item {}'.format('active' if lng == self._language else ''))
                 a = _html.A(lng_title, css='nav-link lang-' + lng, href=_router.base_url(lang=lng), title=lng_title)
