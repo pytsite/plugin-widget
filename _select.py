@@ -85,7 +85,7 @@ class Select(_Abstract):
         if self._multiple and not self._name.endswith('[]'):
             self._name += '[]'
 
-        self._append_none_item = kwargs.get('append_none_item', True)
+        self._append_none_item = kwargs.get('append_none_item', not self.required)
         self._none_item_title = kwargs.get('none_item_title', '--- ' + _lang.t('widget@select_none_item') + ' ---')
         self._exclude = kwargs.get('exclude', [])
 
@@ -186,7 +186,6 @@ class Select2(Select):
         if self._linked_select and not isinstance(self._linked_select, Select2):
             raise TypeError('Instance of {} expected, got {}'.format(Select2, type(self._linked_select)))
 
-        kwargs.setdefault('append_none_item', False)
         super().__init__(uid, **kwargs)
 
     def _get_element(self, **kwargs) -> _html.Element:

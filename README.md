@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.16.6 (2019-05-19)
+
+`append_none_item` arg's initial value fixed in `Select`. 
+
+
 ### 4.16.5 (2019-05-15)
 
 Support of `Select2-4.0.7` fixed.
