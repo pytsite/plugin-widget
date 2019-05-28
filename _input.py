@@ -313,7 +313,7 @@ class Decimal(Number):
 
 
 class StringList(_MultiRowAsList):
-    """List of strings widget.
+    """List of Strings Widget
     """
 
     def __init__(self, uid: str, **kwargs):
@@ -343,6 +343,7 @@ class StringList(_MultiRowAsList):
             prepend=self._prepend,
             append=self._append,
             inputmask=self._inputmask,
+            enabled=self._enabled,
         )]
 
 

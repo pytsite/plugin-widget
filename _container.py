@@ -133,10 +133,13 @@ class MultiRow(_Abstract):
 
         # Actions
         actions_td = _html.Td(css='actions-col')
-        remove_btn = _html.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
-        remove_btn.append(_html.I(css='fa fas fa-icon fa-remove fa-times'))
-        actions_td.append(remove_btn)
         slot_tr.append(actions_td)
+
+        # 'Remove' button
+        if self._enabled:
+            remove_btn = _html.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
+            remove_btn.append(_html.I(css='fa fas fa-icon fa-remove fa-times'))
+            actions_td.append(remove_btn)
 
         return slot_tr
 
@@ -188,14 +191,17 @@ class MultiRow(_Abstract):
 
         # Footer
         tfoot = _html.TFoot()
-        tr = _html.Tr()
-        td = _html.Td(colspan=len(self._get_widgets()) + 2)
-        add_btn = _html.A(self._add_btn_label or '', href='#', css='button-add-slot btn btn-default btn-light btn-sm')
-        add_btn.append(_html.I(css=self._add_btn_icon))
-        td.append(add_btn)
-        tr.append(td)
-        tfoot.append(tr)
+        tfoot_tr = _html.Tr()
+        tfoot_td = _html.Td(colspan=len(self._get_widgets()) + 2)
+        tfoot_tr.append(tfoot_td)
+        tfoot.append(tfoot_tr)
         table.append(tfoot)
+
+        if self._enabled:
+            add_btn = _html.A(self._add_btn_label or '', href='#',
+                              css='button-add-slot btn btn-default btn-light btn-sm')
+            add_btn.append(_html.I(css=self._add_btn_icon))
+            tfoot_td.append(add_btn)
 
         return table
 

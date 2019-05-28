@@ -4,6 +4,12 @@
 ## Changelog
 
 
+### 4.16.8 (2019-05-28)
+
+Missing usage of `enabled` arg fixed in `container.MultiRow` and 
+`input.StringList`.
+
+
 ### 4.16.7 (2019-05-28)
 
 `enabled` arg usage fixed in `input.TextArea`.
