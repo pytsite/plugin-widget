@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.16.7 (2019-05-28)
+
+`enabled` arg usage fixed in `input.TextArea`.
+
+
 ### 4.16.6 (2019-05-19)
 
 `append_none_item` arg's initial value fixed in `Select`. 

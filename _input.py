@@ -194,7 +194,7 @@ class DNSName(Text):
 
 
 class TextArea(_Abstract):
-    """Text Area Input Widget.
+    """Text Area Input Widget
     """
 
     def __init__(self, uid: str, **kwargs):
@@ -207,15 +207,15 @@ class TextArea(_Abstract):
         self._max_length = kwargs.get('max_length')
 
     def _get_element(self, **kwargs) -> _html.Element:
-        """Render the widget.
-        :param **kwargs:
+        """Hook
         """
         html_input = _html.TextArea(
             content=self.get_val(),
             uid=self._uid,
             name=self._name,
+            disabled=not self._enabled,
             css=' '.join(('form-control', self._css)),
-            placeholder=self.placeholder,
+            placeholder=self._placeholder,
             rows=self._rows,
             required=self._required
         )
