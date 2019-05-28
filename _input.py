@@ -213,7 +213,7 @@ class TextArea(_Abstract):
             content=self.get_val(),
             uid=self._uid,
             name=self._name,
-            disabled=not self._enabled,
+            disabled='disabled' if not self._enabled else None,
             css=' '.join(('form-control', self._css)),
             placeholder=self._placeholder,
             rows=self._rows,

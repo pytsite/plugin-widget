@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.16.9 (2019-05-28)
+
+Improper HTML element attr usage fixed in `input.TextArea`.
+
+
 ### 4.16.8 (2019-05-28)
 
 Missing usage of `enabled` arg fixed in `container.MultiRow` and 
