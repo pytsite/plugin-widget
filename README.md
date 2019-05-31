@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.17 (2019-05-31)
+
+New JS API function `initAll()` added.
+
+
 ### 4.16.9 (2019-05-28)
 
 Improper HTML element attr usage fixed in `input.TextArea`.

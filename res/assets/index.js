@@ -300,6 +300,15 @@ export class Widget {
 }
 
 /**
+ * Init all widgets found on the page
+ */
+export function initAll() {
+    $(`.pytsite-widget`).not('.initialized').not('.initializing').each(function () {
+        new Widget(this);
+    });
+}
+
+/**
  * Setup widget initializer
  *
  * @param {string} cid
@@ -314,8 +323,6 @@ export default function setupWidget(cid, callback) {
 
     window.pytsiteWidgetsInitializers[cid].push(callback);
 
-    // Automatically initialize all widgets found on the pages
-    $(`.pytsite-widget[data-cid*="${cid}"]`).not('.initialized').not('.initializing').each(function () {
-        new Widget(this);
-    });
+    // Automatically initialize all widgets found on the page
+    initAll();
 }
