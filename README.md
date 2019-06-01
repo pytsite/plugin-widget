@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.17.1 (2019-06-01)
+
+JS API function `initAll()` fixed.
+
+
 ### 4.17 (2019-05-31)
 
 New JS API function `initAll()` added.

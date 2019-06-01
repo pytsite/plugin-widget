@@ -51,7 +51,6 @@ export class Widget {
             if (window.pytsiteWidgetsInitializers.hasOwnProperty(cid)) {
                 $.each(pytsiteWidgetsInitializers[cid], (i, callback) => callback(this));
             }
-
         });
 
         if ($.isFunction(readyCallback))
@@ -302,8 +301,8 @@ export class Widget {
 /**
  * Init all widgets found on the page
  */
-export function initAll() {
-    $(`.pytsite-widget`).not('.initialized').not('.initializing').each(function () {
+export function initAll(cid) {
+    $(`.pytsite-widget[data-cid*="${cid}"]`).not('.initialized').not('.initializing').each(function () {
         new Widget(this);
     });
 }
@@ -324,5 +323,5 @@ export default function setupWidget(cid, callback) {
     window.pytsiteWidgetsInitializers[cid].push(callback);
 
     // Automatically initialize all widgets found on the page
-    initAll();
+    initAll(cid);
 }
