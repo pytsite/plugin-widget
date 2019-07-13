@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.18.2 (2019-07-13)
+
+Improper usage of `htmler` fixed.
+
+
 ### 4.18.1 (2019-07-13)
 
 Error in `input.Text` fixed.

@@ -648,7 +648,7 @@ class Score(Abstract):
             a = htmler.Span(css='switch score-' + str(i), data_score=str(i))
 
             if self._show_numbers:
-                a.content = str(i)
+                a.append_text(str(i))
 
             if i == self.get_val():
                 a.set_attr('css', a.get_attr('css') + ' active')

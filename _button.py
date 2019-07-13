@@ -57,7 +57,7 @@ class Button(_base.Abstract):
         else:
             self._html_em.set_attr('css', 'btn btn-' + self._color)
 
-        self._html_em.content = self.get_val()
+        self._html_em.append_text(self.get_val())
         if self._icon and not self._html_em.children:
             self._html_em.append_child(htmler.I(css=self._icon))
 

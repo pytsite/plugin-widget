@@ -107,11 +107,11 @@ class Table(_base.Abstract):
 
                     if isinstance(cell, dict):
                         if 'content' in cell:
-                            td.content = cell.pop('content')
+                            td.append_text(cell.pop('content'))
                         for attr in cell.keys():
                             td.set_attr(attr, cell[attr])
                     elif isinstance(cell, str):
-                        td.content = cell
+                        td.append_text(cell)
                     else:
                         raise TypeError('Dict or str expected, got {}'.format(type(cell)))
 
