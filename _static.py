@@ -4,8 +4,8 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Union as _Union
-from pytsite import html as _html
+import htmler
+from typing import Union
 from . import _base
 
 
@@ -23,7 +23,7 @@ class HTML(_base.Abstract):
         if not self._em:
             raise ValueError('Element is not specified.')
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         return self._em
 
 
@@ -48,13 +48,13 @@ class Text(_base.Abstract):
     def text(self, value: str):
         self._text = value
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Render the widget.
         :param **kwargs:
         """
-        container = _html.TagLessElement()
-        container.append(_html.Input(type='hidden', uid=self.uid, name=self.name, value=self.value))
-        container.append(_html.P(self._text, css='form-control-static', title=self._title))
+        container = htmler.TagLessElement()
+        container.append_child(htmler.Input(type='hidden', uid=self.uid, name=self.name, value=self.value))
+        container.append_child(htmler.P(self._text, css='form-control-static', title=self._title))
 
         return container
 
@@ -69,7 +69,7 @@ class Table(_base.Abstract):
         self._tbody = []
         self._tfoot = []
 
-    def add_row(self, cells: _Union[list, tuple], index: int = None, part: str = 'tbody'):
+    def add_row(self, cells: Union[list, tuple], index: int = None, part: str = 'tbody'):
         if not isinstance(cells, (list, tuple)):
             raise TypeError('List or tuple expected, got {}'.format(type(cells)))
 
@@ -83,27 +83,27 @@ class Table(_base.Abstract):
         else:
             self._tbody.insert(index, cells)
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        table = _html.Table(css='table table-bordered table-hover')
+    def _get_element(self, **kwargs) -> htmler.Element:
+        table = htmler.Table(css='table table-bordered table-hover')
 
         for part in self._thead, self._tbody, self._tfoot:
             if not part:
                 continue
 
             if part is self._thead:
-                t_part = _html.THead()
+                t_part = htmler.Thead()
             elif part is self._tbody:
-                t_part = _html.TBody()
+                t_part = htmler.Tbody()
             else:
-                t_part = _html.TFoot()
+                t_part = htmler.Tfoot()
 
-            table.append(t_part)
+            table.append_child(t_part)
 
             # Append rows
             for row in part:
-                tr = _html.Tr()
+                tr = htmler.Tr()
                 for cell in row:
-                    td = _html.Th() if part is self._thead else _html.Td()
+                    td = htmler.Th() if part is self._thead else htmler.Td()
 
                     if isinstance(cell, dict):
                         if 'content' in cell:
@@ -115,8 +115,8 @@ class Table(_base.Abstract):
                     else:
                         raise TypeError('Dict or str expected, got {}'.format(type(cell)))
 
-                    tr.append(td)
+                    tr.append_child(td)
 
-                t_part.append(tr)
+                t_part.append_child(tr)
 
         return table

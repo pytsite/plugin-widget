@@ -4,13 +4,14 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import List as _List, Dict as _Dict
-from abc import abstractmethod as _abstractmethod
-from pytsite import lang as _lang, validation as _validation, html as _html, util as _util
-from ._base import Abstract as _Abstract
+import htmler
+from typing import List, Dict
+from abc import abstractmethod
+from pytsite import lang as lang, validation, util
+from ._base import Abstract
 
 
-class Container(_Abstract):
+class Container(Abstract):
     """Base Container Widget
     """
 
@@ -23,13 +24,13 @@ class Container(_Abstract):
         self._form_group = False
         self._has_messages = False
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Hook
         """
-        return _html.Div(css='children ' + self._body_css)
+        return htmler.Div(css='children ' + self._body_css)
 
 
-class MultiRow(_Abstract):
+class MultiRow(Abstract):
     """Multi Row Container Widget
     """
 
@@ -41,7 +42,7 @@ class MultiRow(_Abstract):
         self._css += ' widget-multi-row'
         self._max_rows = kwargs.get('max_rows')
         self._is_header_hidden = kwargs.get('is_header_hidden', False)
-        self._add_btn_label = kwargs.get('add_btn_label', _lang.t('plugins.widget@append'))
+        self._add_btn_label = kwargs.get('add_btn_label', lang.t('plugins.widget@append'))
         self._add_btn_icon = kwargs.get('add_btn_icon', 'fa fa-fw fas fa-plus')
 
     @property
@@ -52,7 +53,7 @@ class MultiRow(_Abstract):
     def add_btn_icon(self) -> str:
         return self._add_btn_icon
 
-    def set_val(self, value: _List[dict]):
+    def set_val(self, value: List[dict]):
         if value is None:
             value = []
 
@@ -90,13 +91,13 @@ class MultiRow(_Abstract):
         """Validate widget's rules
         """
         for i in range(len(self.value)):
-            row_widgets = {w.uid: w for w in self._get_widgets()}  # type: _Dict[str, _Abstract]
+            row_widgets = {w.uid: w for w in self._get_widgets()}  # type: Dict[str, Abstract]
             for w_name, w_value in self.value[i].items():
-                widget = row_widgets[w_name]  # type: _Abstract
+                widget = row_widgets[w_name]  # type: Abstract
                 widget.value = w_value
                 try:
                     widget.validate()
-                except _validation.error.RuleError as e:
+                except validation.error.RuleError as e:
                     msg_id = 'plugins.widget@multi_row_validation_error'
                     msg_args = {
                         'row_index': i + 1,
@@ -104,52 +105,52 @@ class MultiRow(_Abstract):
                         'orig_msg': str(e)
                     }
 
-                    raise _validation.error.RuleError(msg_id, msg_args)
+                    raise validation.error.RuleError(msg_id, msg_args)
 
-    @_abstractmethod
-    def _get_widgets(self) -> _List[_Abstract]:
+    @abstractmethod
+    def _get_widgets(self) -> List[Abstract]:
         """Hook
         """
         pass
 
-    def _get_row_widget_name(self, widget: _Abstract):
+    def _get_row_widget_name(self, widget: Abstract):
         return '{}[{}][]'.format(self.name, widget.name)
 
-    def _get_row(self, widgets: _List[_Abstract], row_num: int = 0, add_css: str = '') -> _html.Tr:
+    def _get_row(self, widgets: List[Abstract], row_num: int = 0, add_css: str = '') -> htmler.Tr:
         """Build single row
         """
-        slot_tr = _html.Tr(css='slot ' + add_css)
-        slot_tr.append(_html.Td('[{}]'.format(row_num + 1), css='order-col'))
+        slot_tr = htmler.Tr(css='slot ' + add_css)
+        slot_tr.append_child(htmler.Td('[{}]'.format(row_num + 1), css='order-col'))
 
         # Widgets
         for w in widgets:
             w.name = self._get_row_widget_name(w)
             w.form_group = False
 
-            w_td = _html.Td(css='widget-col widget-col-' + w.uid)
-            w_td.append(w.renderable())
+            w_td = htmler.Td(css='widget-col widget-col-' + w.uid)
+            w_td.append_child(w.renderable())
 
-            slot_tr.append(w_td)
+            slot_tr.append_child(w_td)
 
         # Actions
-        actions_td = _html.Td(css='actions-col')
-        slot_tr.append(actions_td)
+        actions_td = htmler.Td(css='actions-col')
+        slot_tr.append_child(actions_td)
 
         # 'Remove' button
         if self._enabled:
-            remove_btn = _html.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
-            remove_btn.append(_html.I(css='fa fas fa-icon fa-remove fa-times'))
-            actions_td.append(remove_btn)
+            remove_btn = htmler.A(href='#', css='button-remove-slot btn btn-sm btn-danger')
+            remove_btn.append_child(htmler.I(css='fa fas fa-icon fa-remove fa-times'))
+            actions_td.append_child(remove_btn)
 
         return slot_tr
 
-    def _get_rows(self) -> _List[_html.Tr]:
+    def _get_rows(self) -> List[htmler.Tr]:
         """Build table body rows
         """
         r = []
 
         for i in range(len(self.value)):
-            row_widgets = {w.uid: w for w in self._get_widgets()}  # type: _Dict[str, _Abstract]
+            row_widgets = {w.uid: w for w in self._get_widgets()}  # type: Dict[str, Abstract]
             for w_name, w_value in self.value[i].items():
                 row_widgets[w_name].value = w_value
 
@@ -157,7 +158,7 @@ class MultiRow(_Abstract):
 
         return r
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Hook
         """
         self._data['header-hidden'] = self._is_header_hidden
@@ -166,42 +167,42 @@ class MultiRow(_Abstract):
             self._data['max-rows'] = self._max_rows
 
         base_row = self._get_widgets()
-        table = _html.Table(css='content-table')
+        table = htmler.Table(css='content-table')
 
         # Header
-        thead = _html.THead(css='hidden sr-only slots-header')
-        table.append(thead)
-        row = _html.Tr()
-        thead.append(row)
-        row.append(_html.Th('&nbsp;', css='order-col'))
+        thead = htmler.Thead(css='hidden sr-only slots-header')
+        table.append_child(thead)
+        row = htmler.Tr()
+        thead.append_child(row)
+        row.append_child(htmler.Th('&nbsp;', css='order-col'))
         for w in self._get_widgets():
-            row.append(_html.Th(w.label, css='widget-col'))
-        row.append(_html.Th(css='actions-col'))
+            row.append_child(htmler.Th(w.label, css='widget-col'))
+        row.append_child(htmler.Th(css='actions-col'))
 
         # Table body
-        tbody = _html.TBody(css='slots')
-        table.append(tbody)
+        tbody = htmler.Tbody(css='slots')
+        table.append_child(tbody)
 
         # Base slot
-        tbody.append(self._get_row(base_row, add_css='base hidden sr-only'))
+        tbody.append_child(self._get_row(base_row, add_css='base hidden sr-only'))
 
         # Rows
         for em in self._get_rows():
-            tbody.append(em)
+            tbody.append_child(em)
 
         # Footer
-        tfoot = _html.TFoot()
-        tfoot_tr = _html.Tr()
-        tfoot_td = _html.Td(colspan=len(self._get_widgets()) + 2)
-        tfoot_tr.append(tfoot_td)
-        tfoot.append(tfoot_tr)
-        table.append(tfoot)
+        tfoot = htmler.Tfoot()
+        tfoot_tr = htmler.Tr()
+        tfoot_td = htmler.Td(colspan=len(self._get_widgets()) + 2)
+        tfoot_tr.append_child(tfoot_td)
+        tfoot.append_child(tfoot_tr)
+        table.append_child(tfoot)
 
         if self._enabled:
-            add_btn = _html.A(self._add_btn_label or '', href='#',
-                              css='button-add-slot btn btn-default btn-light btn-sm')
-            add_btn.append(_html.I(css=self._add_btn_icon))
-            tfoot_td.append(add_btn)
+            add_btn = htmler.A(self._add_btn_label or '', href='#',
+                               css='button-add-slot btn btn-default btn-light btn-sm')
+            add_btn.append_child(htmler.I(css=self._add_btn_icon))
+            tfoot_td.append_child(add_btn)
 
         return table
 
@@ -214,10 +215,10 @@ class MultiRowList(MultiRow):
         self._is_unique = kwargs.get('is_unique', True)
         super().__init__(uid, **kwargs)
 
-    def _get_row_widget_name(self, widget: _Abstract):
+    def _get_row_widget_name(self, widget: Abstract):
         return '{}[]'.format(self.name)
 
-    def _get_rows(self) -> _List[_html.Tr]:
+    def _get_rows(self) -> List[htmler.Tr]:
         """Build table body rows
         """
         r = []
@@ -231,7 +232,7 @@ class MultiRowList(MultiRow):
 
         return r
 
-    def set_val(self, value: _List[str]):
+    def set_val(self, value: List[str]):
         if value is None:
             value = []
 
@@ -239,7 +240,7 @@ class MultiRowList(MultiRow):
         if isinstance(value, dict):
             value = [v for v in value.values()]
 
-        self._value = _util.cleanup_list(value, self._is_unique)
+        self._value = util.cleanup_list(value, self._is_unique)
 
     def validate(self):
         row_widgets = self._get_widgets()
@@ -250,7 +251,7 @@ class MultiRowList(MultiRow):
                 try:
                     widget.value = self.value[row_num + col_num]
                     widget.validate()
-                except _validation.error.RuleError as e:
+                except validation.error.RuleError as e:
                     msg_id = 'plugins.widget@multi_row_validation_error'
                     msg_args = {
                         'row_index': row_num + 1,
@@ -258,7 +259,7 @@ class MultiRowList(MultiRow):
                         'orig_msg': str(e)
                     }
 
-                    raise _validation.error.RuleError(msg_id, msg_args)
+                    raise validation.error.RuleError(msg_id, msg_args)
 
 
 class Card(Container):
@@ -276,23 +277,23 @@ class Card(Container):
         self._css += ' card panel panel-default'
         self._header_css = kwargs.get('header_css', '')
         self._footer_css = kwargs.get('header_css', '')
-        self._header = _html.Div(kwargs.get('header'), css='card-header panel-heading')
-        self._footer = _html.Div(kwargs.get('footer'), css='card-footer panel-footer')
+        self._header = htmler.Div(kwargs.get('header'), css='card-header panel-heading')
+        self._footer = htmler.Div(kwargs.get('footer'), css='card-footer panel-footer')
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Hook
         """
-        em = _html.TagLessElement()
+        em = htmler.TagLessElement()
 
-        if self._header.content:
+        if len(self._header):
             self._header.add_css(self._header_css)
-            em.append(self._header)
+            em.append_child(self._header)
 
-        body = em.append(_html.Div(css='card-body panel-body children'))
+        body = em.append_child(htmler.Div(css='card-body panel-body children'))
         body.add_css(self._body_css)
 
-        if self._footer.content:
+        if len(self._footer):
             self._footer.add_css(self._footer_css)
-            em.append(self._footer)
+            em.append_child(self._footer)
 
         return em

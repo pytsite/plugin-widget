@@ -4,8 +4,8 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Union as _Union, List as _List
-from pytsite import html as _html
+import htmler
+from typing import Union, List
 from . import _base
 
 
@@ -25,7 +25,7 @@ class Button(_base.Abstract):
         self._form_group = False
         self._has_messages = False
 
-        self._html_em = _html.Button(type='button')
+        self._html_em = htmler.Button(type='button')
 
         if self._dismiss:
             self._html_em.set_attr('data_dismiss', self._dismiss)
@@ -39,14 +39,14 @@ class Button(_base.Abstract):
         self._icon = value
 
     @property
-    def color(self) -> _Union[str, _List[str]]:
+    def color(self) -> Union[str, List[str]]:
         return self._color
 
     @color.setter
-    def color(self, value: _Union[str, _List[str]]):
+    def color(self, value: Union[str, List[str]]):
         self._color = value
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Render the widget.
         :param **kwargs:
         """
@@ -59,7 +59,7 @@ class Button(_base.Abstract):
 
         self._html_em.content = self.get_val()
         if self._icon and not self._html_em.children:
-            self._html_em.append(_html.I(css=self._icon))
+            self._html_em.append_child(htmler.I(css=self._icon))
 
         for k, v in self._data.items():
             self._html_em.set_attr('data_' + k, v)
@@ -76,7 +76,7 @@ class Submit(Button):
         """
         super().__init__(uid, **kwargs)
 
-        self._html_em = _html.Button(type='submit')
+        self._html_em = htmler.Button(type='submit')
 
         if self._dismiss:
             self._html_em.set_attr('data_dismiss', self._dismiss)
@@ -91,7 +91,7 @@ class Link(Button):
         """
         super().__init__(uid, **kwargs)
 
-        self._html_em = _html.A(href=kwargs.get('href', '#'))
+        self._html_em = htmler.A(href=kwargs.get('href', '#'))
 
         if self._dismiss:
             self._html_em.set_attr('data_dismiss', self._dismiss)

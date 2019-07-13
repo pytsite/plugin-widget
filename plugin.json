@@ -1,6 +1,6 @@
 {
   "name": "widget",
-  "version": "4.17.1",
+  "version": "4.18",
   "description": {
     "en": "Widget",
     "ru": "Widget",
@@ -13,7 +13,10 @@
     "url": "https://shepetko.com"
   },
   "requires": {
-    "pytsite": ">=8.9",
+    "pytsite": ">=9.0",
+    "packages": {
+      "htmler": ">=0.1"
+    },
     "plugins": {
       "assetman": "^5.1",
       "hreflang": "^1.1",

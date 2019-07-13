@@ -4,18 +4,19 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Union as _Union, List as _List, Tuple as _Tuple
-from collections import OrderedDict as _OrderedDict
-from math import ceil as _ceil
-from datetime import datetime as _datetime
-from json import dumps as _json_dumps
-from pytsite import html as _html, lang as _lang, validation as _validation, util as _util, router as _router
-from plugins import hreflang as _hreflang
-from ._base import Abstract as _Abstract
-from ._input import Text as _Text
+import htmler
+from typing import Union, List, Tuple
+from collections import OrderedDict
+from math import ceil
+from datetime import datetime
+from json import dumps as json_dumps
+from pytsite import lang, validation, util, router
+from plugins import hreflang
+from ._base import Abstract
+from ._input import Text
 
 
-class Checkbox(_Abstract):
+class Checkbox(Abstract):
     """Single Checkbox Widget
     """
 
@@ -47,27 +48,27 @@ class Checkbox(_Abstract):
     def checked(self, value: bool):
         self.set_val(value)
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        div = _html.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
-        div.append(_html.Input(type='hidden', name=self._name))
+    def _get_element(self, **kwargs) -> htmler.Element:
+        div = htmler.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
+        div.append_child(htmler.Input(type='hidden', name=self._name))
 
-        inp = _html.Input(uid=self._uid, name=self._name, type='checkbox', value='True', checked=self.checked,
-                          required=self.required)
-        label = _html.Label(self._label, label_for=self._uid)
+        inp = htmler.Input(id=self._uid, name=self._name, type='checkbox', value='True', checked=self.checked,
+                           required=self.required)
+        label = htmler.Label(self._label, label_for=self._uid)
 
         if self._bootstrap_version == 3:
-            label.append(inp)
-            div.append(label)
+            label.append_child(inp)
+            div.append_child(label)
         elif self._bootstrap_version == 4:
             inp.set_attr('css', 'form-check-input')
             label.set_attr('css', 'form-check-label')
-            div.append(inp)
-            div.append(label)
+            div.append_child(inp)
+            div.append_child(label)
 
         return div
 
 
-class Select(_Abstract):
+class Select(Abstract):
     """Select Widget.
     """
 
@@ -86,7 +87,7 @@ class Select(_Abstract):
             self._name += '[]'
 
         self._append_none_item = kwargs.get('append_none_item', not self.required)
-        self._none_item_title = kwargs.get('none_item_title', '--- ' + _lang.t('widget@select_none_item') + ' ---')
+        self._none_item_title = kwargs.get('none_item_title', '--- ' + lang.t('widget@select_none_item') + ' ---')
         self._exclude = kwargs.get('exclude', [])
 
         self._items = []
@@ -98,7 +99,7 @@ class Select(_Abstract):
                 raise TypeError('Each item must be a list or tuple and have exactly 2 elements')
             self._items.append((int(item[0]) if self._int_keys else item[0], item[1]))
 
-    def set_val(self, value: _Union[int, str, list, tuple, None]):
+    def set_val(self, value: Union[int, str, list, tuple, None]):
         """Set value of the widget
         """
         if value is not None:
@@ -109,7 +110,7 @@ class Select(_Abstract):
                 if not isinstance(value, list):
                     value = [value]
 
-                value = _util.cleanup_list(value, True)
+                value = util.cleanup_list(value, True)
 
             if self._int_keys:
                 if self._multiple:
@@ -120,9 +121,9 @@ class Select(_Abstract):
 
         super().set_val(value)
 
-    def _get_select_html_em(self) -> _html.Element:
-        select = _html.Select(
-            uid=self._uid,
+    def _get_select_html_em(self) -> htmler.Element:
+        select = htmler.Select(
+            id=self._uid,
             name=self.name,
             css='form-control',
             required=self._required
@@ -135,34 +136,34 @@ class Select(_Abstract):
             select.set_attr('disabled', 'disabled')
 
         if self._placeholder:
-            select.append(_html.Option(self._placeholder, disabled=True, selected=True, value=''))
+            select.append_child(htmler.Option(self._placeholder, disabled=True, selected=True, value=''))
 
         if self._append_none_item:
-            select.append(_html.Option(self._none_item_title, value=''))
+            select.append_child(htmler.Option(self._none_item_title, value=''))
 
         for item in self._items:
             if self._exclude and item[0] in self._exclude:
                 continue
 
-            option = _html.Option(item[1], value=item[0])
+            option = htmler.Option(item[1], value=item[0])
             if self._multiple:
                 if item[0] in self._value:
-                    option.set_attr('selected', True)
+                    option.set_attr('selected', 'true')
             else:
                 if item[0] == self._value:
-                    option.set_attr('selected', True)
+                    option.set_attr('selected', 'true')
 
-            select.append(option)
+            select.append_child(option)
 
         return select
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        r = _html.TagLessElement()
+    def _get_element(self, **kwargs) -> htmler.Element:
+        r = htmler.TagLessElement()
 
         if self._multiple:
-            r.append(_html.Input(type='hidden', name=self._name))
+            r.append_child(htmler.Input(type='hidden', name=self._name))
 
-        r.append(self._get_select_html_em())
+        r.append_child(self._get_select_html_em())
 
         return r
 
@@ -188,7 +189,7 @@ class Select2(Select):
 
         super().__init__(uid, **kwargs)
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         select = self._get_select_html_em()
         select.set_attr('style', 'width: 100%;')
 
@@ -198,7 +199,7 @@ class Select2(Select):
             self._data['multiple'] = True
 
         if self._exclude:
-            exclude = _json_dumps([str(excl) for excl in self._exclude])
+            exclude = json_dumps([str(excl) for excl in self._exclude])
             self._data['exclude'] = exclude
             self._ajax_url_query['exclude'] = exclude
 
@@ -212,7 +213,7 @@ class Select2(Select):
 
         if self._ajax_url:
             self._data['ajax_url'] = self._ajax_url
-            self._data['ajax_url_query'] = _json_dumps(self._ajax_url_query)
+            self._data['ajax_url_query'] = json_dumps(self._ajax_url_query)
             self._data['ajax_delay'] = self._ajax_delay
             self._data['ajax_cache'] = self._ajax_cache
 
@@ -225,12 +226,12 @@ class Select2(Select):
         if self._placeholder:
             select.set_attr('data_placeholder', self._placeholder)
 
-        r = _html.TagLessElement()
+        r = htmler.TagLessElement()
 
         if self._multiple:
-            r.append(_html.Input(type='hidden', name=self._name))
+            r.append_child(htmler.Input(type='hidden', name=self._name))
 
-        r.append(select)
+        r.append_child(select)
 
         return r
 
@@ -250,31 +251,31 @@ class Checkboxes(Select):
 
         self._item_renderer = kwargs.get('item_renderer', self._default_item_renderer)
 
-    def _default_item_renderer(self, item: _Tuple[str, str]) -> _html.Element:
+    def _default_item_renderer(self, item: Tuple[str, str]) -> htmler.Element:
         checked = True if item[0] in self.value else False
-        div = _html.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
-        inp = _html.Input(type='checkbox', name=self.name, value=item[0], checked=checked,
-                          required=self.required)
-        label = _html.Label(item[1])
+        div = htmler.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
+        inp = htmler.Input(type='checkbox', name=self.name, value=item[0], checked=checked,
+                           required=self.required)
+        label = htmler.Label(item[1])
 
         if self._bootstrap_version == 3:
-            label.append(inp)
-            div.append(label)
+            label.append_child(inp)
+            div.append_child(label)
         elif self._bootstrap_version == 4:
             inp.set_attr('css', 'form-check-input')
             label.set_attr('css', 'form-check-label')
-            div.append(inp)
-            div.append(label)
+            div.append_child(inp)
+            div.append_child(label)
 
         return div
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Render the widget
         """
-        container = _html.TagLessElement()
-        container.append(_html.Input(type='hidden', name=self.name))  # It is important to have an empty input!
+        container = htmler.TagLessElement()
+        container.append_child(htmler.Input(type='hidden', name=self.name))  # It is important to have an empty input!
         for item in self._items:
-            container.append(self._item_renderer(item))
+            container.append_child(self._item_renderer(item))
 
         return container
 
@@ -289,11 +290,11 @@ class Language(Select):
         super().__init__(uid, **kwargs)
         self._items = kwargs.get('items', [])
 
-        for code in _lang.langs():
-            self._items.append((code, _lang.lang_title(code)))
+        for code in lang.langs():
+            self._items.append_child((code, lang.lang_title(code)))
 
 
-class LanguageNav(_Abstract):
+class LanguageNav(Abstract):
     """Language Nav Widget
     """
 
@@ -302,7 +303,7 @@ class LanguageNav(_Abstract):
         """
         super().__init__(uid, **kwargs)
 
-        self._wrap_em = _html.Ul()
+        self._wrap_em = htmler.Ul()
         self._form_group = False
         self._has_messages = False
         self._dropdown = kwargs.get('dropdown')
@@ -311,20 +312,20 @@ class LanguageNav(_Abstract):
         self._language_titles = kwargs.get('language_titles', {})
         self._bs_version = kwargs.get('bs_version', 4)
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        if len(_lang.langs()) == 1:
-            return _html.TagLessElement()
+    def _get_element(self, **kwargs) -> htmler.Element:
+        if len(lang.langs()) == 1:
+            return htmler.TagLessElement()
 
-        root = _html.TagLessElement()
+        root = htmler.TagLessElement()
 
         # Dropdown menu
         if self._dropdown or self._dropup:
             # Root element
             if self._bs_version == 3:
                 self._css += ' navbar-nav'
-                dropdown_root = _html.Li(css='dropdown' if self._dropdown else 'dropup')
-                toggler = _html.A(
-                    self._language_titles.get(self._language) or _lang.lang_title(self.language),
+                dropdown_root = htmler.Li(css='dropdown' if self._dropdown else 'dropup')
+                toggler = htmler.A(
+                    self._language_titles.get(self._language) or lang.lang_title(self.language),
                     css='dropdown-toggle lang-' + self.language,
                     data_toggle='dropdown',
                     role='button',
@@ -332,60 +333,60 @@ class LanguageNav(_Abstract):
                     aria_expanded='false',
                     href='#',
                     content_first=True)
-                toggler.append(_html.Span(css='caret'))
-                dropdown_root.append(toggler)
+                toggler.append_child(htmler.Span(css='caret'))
+                dropdown_root.append_child(toggler)
             else:
-                dropdown_root = _html.Div(css='dropdown' if self._dropdown else 'dropup')
-                toggler = _html.Button(
-                    self._language_titles.get(self._language) or _lang.lang_title(self.language),
+                dropdown_root = htmler.Div(css='dropdown' if self._dropdown else 'dropup')
+                toggler = htmler.Button(
+                    self._language_titles.get(self._language) or lang.lang_title(self.language),
                     type='button',
                     css='btn btn-link dropdown-toggle',
                     data_toggle='dropdown',
                     aria_haspopup='true',
                     aria_expanded='false',
                 )
-                dropdown_root.append(toggler)
+                dropdown_root.append_child(toggler)
 
             # Children
-            menu_cont_em = _html.Ul if self._bs_version == 3 else _html.Div
+            menu_cont_em = htmler.Ul if self._bs_version == 3 else htmler.Div
             menu_cont = menu_cont_em(css='dropdown-menu')
-            for lng in _lang.langs(False):
-                lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
-                a = _html.A(lng_title, css='dropdown-item lang-' + lng, href=_router.base_url(lang=lng))
+            for lng in lang.langs(False):
+                lng_title = self._language_titles.get(lng) or lang.lang_title(lng)
+                a = htmler.A(lng_title, css='dropdown-item lang-' + lng, href=router.base_url(lang=lng))
 
-                hl = _hreflang.get(lng)
+                hl = hreflang.get(lng)
                 if hl:
                     a.set_attr('href', hl)
 
-                menu_cont.append(_html.Li(a) if self._bs_version == 3 else a)
+                menu_cont.append_child(htmler.Li(a) if self._bs_version == 3 else a)
 
-            dropdown_root.append(menu_cont)
-            root.append(dropdown_root)
+            dropdown_root.append_child(menu_cont)
+            root.append_child(dropdown_root)
 
         # Simple list
         else:
             self._css += ' nav-pills'
 
-            for lng in _lang.langs():
-                lng_title = self._language_titles.get(lng) or _lang.lang_title(lng)
-                li = _html.Li(css='nav-item {}'.format('active' if lng == self._language else ''))
-                a = _html.A(lng_title, css='nav-link lang-' + lng, href=_router.base_url(lang=lng), title=lng_title)
+            for lng in lang.langs():
+                lng_title = self._language_titles.get(lng) or lang.lang_title(lng)
+                li = htmler.Li(css='nav-item {}'.format('active' if lng == self._language else ''))
+                a = htmler.A(lng_title, css='nav-link lang-' + lng, href=router.base_url(lang=lng), title=lng_title)
 
                 # Active language
                 if lng == self._language:
-                    a.set_attr('css', '{} active'.format(a.get_attr('css'))).set_attr('href', _router.current_url())
+                    a.set_attr('css', '{} active'.format(a.get_attr('css'))).set_attr('href', router.current_url())
 
                 # Inactive language, related link
-                elif _hreflang.get(lng):
-                    a.set_attr('href', _hreflang.get(lng))
+                elif hreflang.get(lng):
+                    a.set_attr('href', hreflang.get(lng))
 
-                li.append(a)
-                root.append(li)
+                li.append_child(a)
+                root.append_child(li)
 
         return root
 
 
-class DateTime(_Text):
+class DateTime(Text):
     """Date/Time Select Widget
     """
 
@@ -398,7 +399,7 @@ class DateTime(_Text):
 
         self._format = kwargs.get('format')
         if not self._format:
-            c_lang = _lang.get_current()
+            c_lang = lang.get_current()
             if self._datepicker and self._timepicker:
                 self._format = '%d.%m.%Y %H:%M' if c_lang in ('ru', 'uk') else '%Y-%m-%d %H:%M'
             elif self._datepicker:
@@ -409,22 +410,22 @@ class DateTime(_Text):
         super().__init__(uid, **kwargs)
 
         self._autocomplete = 'off'
-        self.add_rule(_validation.rule.DateTime(formats=[self._format]))
+        self.add_rule(validation.rule.DateTime(formats=[self._format]))
 
     def set_val(self, value):
         """Set value of the widget.
         """
         if isinstance(value, str) and value:
-            value = _util.parse_date_time(value, [self._format] if self._format else None)
+            value = util.parse_date_time(value, [self._format] if self._format else None)
 
         return super().set_val(value)
 
-    def get_val(self, **kwargs) -> _datetime:
+    def get_val(self, **kwargs) -> datetime:
         """Get value of the widget.
         """
         return super().get_val(**kwargs)
 
-    def _get_element(self, **kwargs) -> _html.Input:
+    def _get_element(self, **kwargs) -> htmler.Input:
         """Render the widget
         :param **kwargs:
         """
@@ -440,7 +441,7 @@ class DateTime(_Text):
         return super()._get_element(**kwargs).set_attr('value', value.strftime(self._format) if value else '')
 
 
-class Pager(_Abstract):
+class Pager(Abstract):
     """Pagination Widget
     """
 
@@ -456,7 +457,7 @@ class Pager(_Abstract):
         self._total_items = total_items
         self._items_per_page = per_page
         self._http_api_ep = http_api_ep
-        self._total_pages = int(_ceil(self._total_items / self._items_per_page))
+        self._total_pages = int(ceil(self._total_items / self._items_per_page))
         self._visible_numbers = visible_numbers
 
         if self._visible_numbers > self._total_pages:
@@ -464,7 +465,7 @@ class Pager(_Abstract):
 
         # Detect current page
         try:
-            self._current_page = int(_router.request().inp.get('page', 1))
+            self._current_page = int(router.request().inp.get('page', 1))
         except ValueError:
             self._current_page = 1
 
@@ -480,13 +481,13 @@ class Pager(_Abstract):
         self._data['per_page'] = self._items_per_page
         self._data['visible_numbers'] = self._visible_numbers
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Get widget's HTML element
         """
         if self._total_pages == 0:
-            return _html.TagLessElement()
+            return htmler.TagLessElement()
 
-        start_visible_num = self._current_page - _ceil((self._visible_numbers - 1) / 2)
+        start_visible_num = self._current_page - ceil((self._visible_numbers - 1) / 2)
         if start_visible_num < 1:
             start_visible_num = 1
         end_visible_num = start_visible_num + (self._visible_numbers - 1)
@@ -495,48 +496,48 @@ class Pager(_Abstract):
             end_visible_num = self._total_pages
             start_visible_num = end_visible_num - (self._visible_numbers - 1)
 
-        ul = _html.Ul(css='pagination ' + self._css)
-        links_url = _router.current_url()
+        ul = htmler.Ul(css='pagination ' + self._css)
+        links_url = router.current_url()
 
         # Link to the first page
         if start_visible_num > 1:
-            li = _html.Li(css='first-page page-item')
-            a = _html.A('«', css='page-link', title=_lang.t('plugins.widget@first_page'),
-                        href=_router.url(links_url, query={'page': 1}))
-            li.append(a)
-            ul.append(li)
+            li = htmler.Li(css='first-page page-item')
+            a = htmler.A('«', css='page-link', title=lang.t('plugins.widget@first_page'),
+                         href=router.url(links_url, query={'page': 1}))
+            li.append_child(a)
+            ul.append_child(li)
 
             # Link to the previous page
-            li = _html.Li(css='previous-page page-item')
-            a = _html.A('‹', css='page-link', title=_lang.t('plugins.widget@previous_page'),
-                        href=_router.url(links_url, query={'page': self._current_page - 1}))
-            li.append(a)
-            ul.append(li)
+            li = htmler.Li(css='previous-page page-item')
+            a = htmler.A('‹', css='page-link', title=lang.t('plugins.widget@previous_page'),
+                         href=router.url(links_url, query={'page': self._current_page - 1}))
+            li.append_child(a)
+            ul.append_child(li)
 
         # Links to visible pages
         for num in range(start_visible_num, end_visible_num + 1):
-            li = _html.Li(css='page page-item', data_page=num)
+            li = htmler.Li(css='page page-item', data_page=num)
             if self._current_page == num:
                 li.set_attr('css', 'page page-item active')
-            a = _html.A(str(num), css='page-link', title=_lang.t('plugins.widget@page_num', {'num': num}),
-                        href=_router.url(links_url, query={'page': num}))
-            li.append(a)
-            ul.append(li)
+            a = htmler.A(str(num), css='page-link', title=lang.t('plugins.widget@page_num', {'num': num}),
+                         href=router.url(links_url, query={'page': num}))
+            li.append_child(a)
+            ul.append_child(li)
 
         if end_visible_num < self._total_pages:
             # Link to the next page
-            li = _html.Li(css='next-page page-item')
-            a = _html.A('›', css='page-link', title=_lang.t('plugins.widget@next_page'),
-                        href=_router.url(links_url, query={'page': self._current_page + 1}))
-            li.append(a)
-            ul.append(li)
+            li = htmler.Li(css='next-page page-item')
+            a = htmler.A('›', css='page-link', title=lang.t('plugins.widget@next_page'),
+                         href=router.url(links_url, query={'page': self._current_page + 1}))
+            li.append_child(a)
+            ul.append_child(li)
 
             # Link to the last page
-            li = _html.Li(css='last-page page-item')
-            a = _html.A('»', css='page-link', title=_lang.t('plugins.widget@page_num', {'num': self._total_pages}),
-                        href=_router.url(links_url, query={'page': self._total_pages}))
-            li.append(a)
-            ul.append(li)
+            li = htmler.Li(css='last-page page-item')
+            a = htmler.A('»', css='page-link', title=lang.t('plugins.widget@page_num', {'num': self._total_pages}),
+                         href=router.url(links_url, query={'page': self._total_pages}))
+            li.append_child(a)
+            ul.append_child(li)
 
         return ul
 
@@ -564,7 +565,7 @@ class Pager(_Abstract):
         return self._total_pages
 
 
-class Tabs(_Abstract):
+class Tabs(Abstract):
     """Tabs Widget
     """
 
@@ -573,7 +574,7 @@ class Tabs(_Abstract):
         """
         super().__init__(uid, **kwargs)
 
-        self._tabs = _OrderedDict()
+        self._tabs = OrderedDict()
 
     def add_tab(self, tab_id: str, title: str):
         """Add a tab.
@@ -586,7 +587,7 @@ class Tabs(_Abstract):
 
         return self
 
-    def add_widget(self, widget: _Abstract, tab_id: str = None) -> _Abstract:
+    def add_widget(self, widget: Abstract, tab_id: str = None) -> Abstract:
         """Add a child widget.
         """
         if not self._tabs:
@@ -595,36 +596,36 @@ class Tabs(_Abstract):
         if not tab_id:
             tab_id = list(self._tabs.keys())[0]
 
-        self._tabs[tab_id]['widgets'].append(widget)
+        self._tabs[tab_id]['widgets'].append_child(widget)
 
         return widget
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        tab_panel = _html.Div(role='tabpanel')
-        tabs_nav = _html.Ul(css='nav nav-tabs', role='tablist')
-        tabs_content = _html.Div(css='tab-content')
-        tab_panel.append(tabs_nav)
-        tab_panel.append(tabs_content)
+    def _get_element(self, **kwargs) -> htmler.Element:
+        tab_panel = htmler.Div(role='tabpanel')
+        tabs_nav = htmler.Ul(css='nav nav-tabs', role='tablist')
+        tabs_content = htmler.Div(css='tab-content')
+        tab_panel.append_child(tabs_nav)
+        tab_panel.append_child(tabs_content)
 
         tab_count = 0
         for tab_id, tab in self._tabs.items():
-            li = _html.Li(role='presentation', css='active' if tab_count == 0 else '')
-            li.append(_html.A(tab['title'], href='#tab-uid-' + tab_id, role='tab', data_toggle='tab'))
-            tabs_nav.append(li)
+            li = htmler.Li(role='presentation', css='active' if tab_count == 0 else '')
+            li.append_child(htmler.A(tab['title'], href='#tab-uid-' + tab_id, role='tab', data_toggle='tab'))
+            tabs_nav.append_child(li)
             tab_content_css = 'tabpanel tab-pane'
             tab_content_css += ' active' if tab_count == 0 else ''
-            tab_content_div = _html.Div('', css=tab_content_css, uid='tab-uid-' + tab_id)
-            tabs_content.append(tab_content_div)
+            tab_content_div = htmler.Div('', css=tab_content_css, id='tab-uid-' + tab_id)
+            tabs_content.append_child(tab_content_div)
 
-            for widget in sorted(tab['widgets'], key=lambda x: x.weight):  # type: _Abstract
-                tab_content_div.append(widget.renderable())
+            for widget in sorted(tab['widgets'], key=lambda x: x.weight):  # type: Abstract
+                tab_content_div.append_child(widget.renderable())
 
             tab_count += 1
 
         return tab_panel
 
 
-class Score(_Abstract):
+class Score(Abstract):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
@@ -636,15 +637,15 @@ class Score(_Abstract):
         self._max = kwargs.get('max', 5)
         self._show_numbers = kwargs.get('show_numbers', True)
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        cont = _html.Div(css='switches-wrap')
+    def _get_element(self, **kwargs) -> htmler.Element:
+        cont = htmler.Div(css='switches-wrap')
 
         if self._enabled:
-            cont.append(_html.Input(name=self.uid, type='hidden', value=self.get_val()))
+            cont.append_child(htmler.Input(name=self.uid, type='hidden', value=self.get_val()))
             self.css += ' enabled'
 
         for i in range(self._min, self._max + 1):
-            a = _html.Span(css='switch score-' + str(i), data_score=str(i))
+            a = htmler.Span(css='switch score-' + str(i), data_score=str(i))
 
             if self._show_numbers:
                 a.content = str(i)
@@ -652,7 +653,7 @@ class Score(_Abstract):
             if i == self.get_val():
                 a.set_attr('css', a.get_attr('css') + ' active')
 
-            cont.append(a)
+            cont.append_child(a)
 
         return cont
 
@@ -666,7 +667,7 @@ class TrafficLightScore(Score):
         super().__init__(uid, max=3, show_numbers=False, **kwargs)
 
 
-class ColorPicker(_Text):
+class ColorPicker(Text):
     def __init__(self, uid: str, **kwargs):
         """Init
         """
@@ -678,7 +679,7 @@ class ColorPicker(_Text):
         return super()._get_element()
 
 
-class Breadcrumb(_Abstract):
+class Breadcrumb(Abstract):
     """Breadcrumb Widget
     """
 
@@ -692,33 +693,34 @@ class Breadcrumb(_Abstract):
 
         self._items = list(kwargs.get('items', []))
 
-    def _get_element(self) -> _html.Element:
+    def _get_element(self) -> htmler.Element:
         """Hook
         """
-        nav = _html.Nav(aria_label=self.label, role='navigation')
+        nav = htmler.Nav(aria_label=self.label, role='navigation')
 
         if self._items:
-            ol = nav.append(_html.Ol(css='breadcrumb'))
+            ol = nav.append_child(htmler.Ol(css='breadcrumb'))
 
             for item in self._items:
                 item_len = len(item)
 
                 if item_len > 1 and item[1]:
-                    ol.append(_html.Li(_html.A(_util.escape_html(item[0]), href=item[1]), css='breadcrumb-item'))
+                    ol.append_child(
+                        htmler.Li(htmler.A(util.escape_html(item[0]), href=item[1]), css='breadcrumb-item'))
                 elif item_len == 1 or (item_len > 1 and not item[1]):
-                    ol.append(_html.Li(_util.escape_html(item[0]), css='breadcrumb-item active'))
+                    ol.append_child(htmler.Li(util.escape_html(item[0]), css='breadcrumb-item active'))
                     break
 
         return nav
 
     @property
-    def items(self) -> _List[_List[str]]:
+    def items(self) -> List[List[str]]:
         """Get items
         """
         return self._items.copy()
 
     def append_item(self, title: str, link: str = None):
-        """Append an item
+        """append_child an item
         """
         self._items.append([title, link])
 
@@ -729,7 +731,7 @@ class Breadcrumb(_Abstract):
         """
         self._items.insert(index, [title, link])
 
-    def pop_item(self, index: int = -1) -> _List[str]:
+    def pop_item(self, index: int = -1) -> List[str]:
         """Pop an item
         """
         return self._items.pop(index)

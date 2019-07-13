@@ -4,13 +4,14 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import List as _List
-from pytsite import html as _html, validation as _validation, router as _router
-from ._base import Abstract as _Abstract
-from ._container import MultiRowList as _MultiRowAsList
+import htmler
+from typing import List
+from pytsite import validation, router
+from ._base import Abstract
+from ._container import MultiRowList
 
 
-class Input(_Abstract):
+class Input(Abstract):
     pass
 
 
@@ -25,10 +26,10 @@ class Hidden(Input):
         self._form_group = False
         self._has_messages = False
 
-    def _get_element(self, **kwargs) -> _html.Input:
-        inp = _html.Input(
+    def _get_element(self, **kwargs) -> htmler.Input:
+        inp = htmler.Input(
             type='hidden',
-            uid=self.uid,
+            id=self.uid,
             name=self.name,
             value=self.value,
             required=self.required
@@ -105,13 +106,13 @@ class Text(Input):
     def inputmask(self, value: int):
         self._inputmask = value
 
-    def _get_element(self, **kwargs) -> _html.Input:
+    def _get_element(self, **kwargs) -> htmler.Input:
         """Render the widget
         :param **kwargs:
         """
-        inp = _html.Input(
+        inp = htmler.Input(
             type=self._type,
-            uid=self._uid,
+            id=self._uid,
             name=self._name,
             css='form-control',
             autocomplete=self._autocomplete,
@@ -124,7 +125,7 @@ class Text(Input):
             inp.set_attr('value', value)
 
         if not self._enabled:
-            inp.set_attr('disabled', True)
+            inp.set_attr('disabled', 'true')
 
         if self._min_length:
             inp.set_attr('minlength', self._min_length)
@@ -133,14 +134,14 @@ class Text(Input):
             inp.set_attr('maxlength', self._max_length)
 
         if self._prepend or self._append:
-            group = _html.Div(css='input-group')
+            group = htmler.Div(css='input-group')
             if self._prepend:
-                prepend = group.append(_html.Div(css='input-group-addon input-group-prepend'))
-                prepend.append(_html.Div(self._prepend, css='input-group-text'))
-            group.append(inp)
+                prepend = group.append_child(htmler.Div(css='input-group-addon input-group-prepend'))
+                prepend.append(htmler.Div(self._prepend, css='input-group-text'))
+            group.append_child(inp)
             if self._append:
-                append = group.append(_html.Div(css='input-group-addon input-group-append'))
-                append.append(_html.Div(self._append, css='input-group-text'))
+                append = group.append_child(htmler.Div(css='input-group-addon input-group-append'))
+                append.append(htmler.Div(self._append, css='input-group-text'))
             inp = group
 
         if self._inputmask:
@@ -166,7 +167,7 @@ class Email(Text):
         super().__init__(uid, **kwargs)
 
         self._type = 'email'
-        self.add_rule(_validation.rule.Email())
+        self.add_rule(validation.rule.Email())
 
 
 class Url(Text):
@@ -178,7 +179,7 @@ class Url(Text):
         """
         super().__init__(uid, **kwargs)
 
-        self.add_rule(_validation.rule.Url())
+        self.add_rule(validation.rule.Url())
 
 
 class DNSName(Text):
@@ -190,10 +191,10 @@ class DNSName(Text):
         """
         super().__init__(uid, **kwargs)
 
-        self.add_rule(_validation.rule.DNSName())
+        self.add_rule(validation.rule.DNSName())
 
 
-class TextArea(_Abstract):
+class TextArea(Abstract):
     """Text Area Input Widget
     """
 
@@ -206,12 +207,12 @@ class TextArea(_Abstract):
         self._required = kwargs.get('required', False)
         self._max_length = kwargs.get('max_length')
 
-    def _get_element(self, **kwargs) -> _html.Element:
+    def _get_element(self, **kwargs) -> htmler.Element:
         """Hook
         """
-        html_input = _html.TextArea(
+        html_input = htmler.Textarea(
             content=self.get_val(),
-            uid=self._uid,
+            id=self._uid,
             name=self._name,
             disabled='disabled' if not self._enabled else None,
             css=' '.join(('form-control', self._css)),
@@ -242,7 +243,7 @@ class TypeaheadText(Text):
         source_url_query_arg = kwargs.get('source_url_query_arg', self.uid)
         source_url_q = kwargs.get('source_url_args', {})
         source_url_q.update({source_url_query_arg: '__QUERY'})
-        source_url = _router.url(source_url, query=source_url_q)
+        source_url = router.url(source_url, query=source_url_q)
 
         self._data['source_url'] = source_url
         self._data['min_length'] = kwargs.get('typeahead_min_length', 1)
@@ -270,9 +271,9 @@ class Number(Text):
 
         # Validation rules
         if self._min is not None:
-            self.add_rule(_validation.rule.GreaterOrEqual(than=self._min))
+            self.add_rule(validation.rule.GreaterOrEqual(than=self._min))
         if self._max is not None:
-            self.add_rule(_validation.rule.LessOrEqual(than=self._max))
+            self.add_rule(validation.rule.LessOrEqual(than=self._max))
 
     def set_val(self, value, **kwargs):
         """Set value of the widget
@@ -297,7 +298,7 @@ class Integer(Number):
         """
         super().__init__(uid, convert_type=int, **kwargs)
 
-        self.add_rule(_validation.rule.Integer())
+        self.add_rule(validation.rule.Integer())
 
 
 class Decimal(Number):
@@ -309,10 +310,10 @@ class Decimal(Number):
         """
         super().__init__(uid, convert_type=float, **kwargs)
 
-        self.add_rule(_validation.rule.Decimal())
+        self.add_rule(validation.rule.Decimal())
 
 
-class StringList(_MultiRowAsList):
+class StringList(MultiRowList):
     """List of Strings Widget
     """
 
@@ -329,7 +330,7 @@ class StringList(_MultiRowAsList):
         self._append = kwargs.get('append')
         self._inputmask = kwargs.get('inputmask')
 
-    def _get_widgets(self) -> _List[_Abstract]:
+    def _get_widgets(self) -> List[Abstract]:
         """Hook
         """
         return [Text(
@@ -371,10 +372,10 @@ class Tokens(Text):
 
         return super().set_val(value)
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        html_input = _html.Input(
+    def _get_element(self, **kwargs) -> htmler.Element:
+        html_input = htmler.Input(
             type='text',
-            uid=self._uid,
+            id=self._uid,
             name=self._name,
             value=','.join(self.get_val()) if self.get_val() else '',
             css=' '.join(('form-control', self._css)),
@@ -383,7 +384,7 @@ class Tokens(Text):
         return html_input
 
 
-class File(_Abstract):
+class File(Abstract):
     """File Input Widget
     """
 
@@ -401,10 +402,10 @@ class File(_Abstract):
         if self._upload_endpoint:
             self._data['upload-endpoint'] = self._upload_endpoint
 
-    def _get_element(self, **kwargs) -> _html.Element:
-        html_input = _html.Input(
+    def _get_element(self, **kwargs) -> htmler.Element:
+        html_input = htmler.Input(
             type='file',
-            uid=self._uid,
+            id=self._uid,
             name=self._name,
             accept=self._accept,
         )

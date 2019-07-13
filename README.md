@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.18 (2019-07-13)
+
+Support of `pytsite-9.0`.
+
+
 ### 4.17.1 (2019-06-01)
 
 JS API function `initAll()` fixed.

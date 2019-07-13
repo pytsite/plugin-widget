@@ -4,14 +4,15 @@ __author__ = 'Oleksandr Shepetko'
 __email__ = 'a@shepetko.com'
 __license__ = 'MIT'
 
-from typing import Tuple as _Tuple, List as _List, Optional as _Optional
-from abc import ABC as _ABC, abstractmethod as _abstractmethod
-from copy import deepcopy as _deepcopy
-from math import ceil as _ceil
-from pytsite import html as _html, validation as _validation, lang as _lang, http as _http
+import htmler
+from typing import Tuple, List, Optional
+from abc import ABC, abstractmethod
+from copy import deepcopy
+from math import ceil
+from pytsite import validation, lang, http
 
 
-class Abstract(_ABC):
+class Abstract(ABC):
     """Abstract Base Widget
     """
 
@@ -20,9 +21,9 @@ class Abstract(_ABC):
         """
         self._uid = uid
         self._inherit_cid = kwargs.get('inherit_cid', True)
-        self._wrap_em = kwargs.get('wrap_em', _html.Div())
+        self._wrap_em = kwargs.get('wrap_em', htmler.Div())  # type: htmler.Element
         self._name = kwargs.get('name', uid)
-        self._language = kwargs.get('language', _lang.get_current())
+        self._language = kwargs.get('language', lang.get_current())
         self._weight = kwargs.get('weight', 0)
         self._default = kwargs.get('default')
         self._value = None  # Wil be set later
@@ -42,14 +43,14 @@ class Abstract(_ABC):
         self._h_size_label = kwargs.get('h_size_label', False)
         self._h_size_row_css = kwargs.get('h_size_row_css', '')
         self._hidden = kwargs.get('hidden', False)
-        self._rules = kwargs.get('rules', [])  # type: _List[_validation.rule.Rule]
+        self._rules = kwargs.get('rules', [])  # type: List[validation.rule.Rule]
         self._form_area = kwargs.get('form_area', 'body')
         self._replaces = kwargs.get('replaces')
         self._required = kwargs.get('required', False)
         self._enabled = kwargs.get('enabled', True)
         self._parent = kwargs.get('parent')
-        self._children = []  # type: _List[Abstract]
-        self._children_uids = []  # type: _List[str]
+        self._children = []  # type: List[Abstract]
+        self._children_uids = []  # type: List[str]
         self._children_sep = kwargs.get('children_sep', '')
         self._last_children_weight = 0
         self._form_group = kwargs.get('form_group', True)
@@ -60,41 +61,41 @@ class Abstract(_ABC):
         if isinstance(self._rules, tuple):
             self._rules = list(self._rules)
         for rule in self._rules:
-            if not isinstance(rule, _validation.rule.Rule):
+            if not isinstance(rule, validation.rule.Rule):
                 raise TypeError('Instance of pytsite.validation.rule.Base expected.')
 
         # Required
         if self.required:
-            self.add_rule(_validation.rule.NonEmpty())
+            self.add_rule(validation.rule.NonEmpty())
 
         # It is important to filter value through the setter-method
         if 'value' in kwargs:
             self.set_val(kwargs.get('value'))
         else:
-            self.set_val(_deepcopy(self._default))
+            self.set_val(deepcopy(self._default))
 
         # Process data-attributes
         for k, v in kwargs.items():
             if k.startswith('data_'):
                 self._data[k.replace('data_', '')] = v
 
-    @_abstractmethod
-    def _get_element(self, **kwargs) -> _Optional[_html.Element]:
+    @abstractmethod
+    def _get_element(self, **kwargs) -> Optional[htmler.Element]:
         """Hook
         """
         pass
 
-    def _on_form_submit(self, request: _http.Request):
+    def _on_form_submit(self, request: http.Request):
         """Hook
         """
         pass
 
-    def form_submit(self, request: _http.Request):
+    def form_submit(self, request: http.Request):
         """Called by form while it submitting
         """
         self._on_form_submit(request)
 
-    def renderable(self, **kwargs) -> _html.Element:
+    def renderable(self, **kwargs) -> htmler.Element:
         """Get an HTML element representation of the widget
         """
         cid = []
@@ -121,11 +122,11 @@ class Abstract(_ABC):
         # Get widget's HTML element
         em = self._get_element(**kwargs)
         if not em:
-            return _html.TagLessElement()
+            return htmler.TagLessElement()
 
         # Validate element's type
-        if not isinstance(em, _html.Element):
-            raise TypeError('{} expected, got {}'.format(_html.Element, type(em)))
+        if not isinstance(em, htmler.Element):
+            raise TypeError('{} expected, got {}'.format(htmler.Element, type(em)))
 
         # Wrapper CSS
         cls_css = self.__class__.__name__.lower()
@@ -152,34 +153,34 @@ class Abstract(_ABC):
         # Wrap into size container
         h_sizer = None
         if self._h_size:
-            h_sizer = _html.Div(css='h-sizer ' + self._h_size)
+            h_sizer = htmler.Div(css='h-sizer ' + self._h_size)
             em = em.wrap(h_sizer)
-            em = em.wrap(_html.Div(css='row ' + self._h_size_row_css))
+            em = em.wrap(htmler.Div(css='row ' + self._h_size_row_css))
 
         # Append label element
         if self._label and not self._label_disabled:
-            label = _html.Label(self._label, label_for=self.uid)
+            label = htmler.Label(self._label, label_for=self.uid)
             if self._h_size and self._h_size_label:
-                label = label.wrap(_html.Div(css='h-sizer ' + self._h_size))
-                label = label.wrap(_html.Div(css='row ' + self._h_size_row_css))
+                label = label.wrap(htmler.Div(css='h-sizer ' + self._h_size))
+                label = label.wrap(htmler.Div(css='row ' + self._h_size_row_css))
             if self._label_hidden:
                 label.set_attr('css', 'sr-only')
-            self._wrap_em.append(label)
+            self._wrap_em.append_child(label)
 
         # Append widget's element
-        self._wrap_em.append(em)
+        self._wrap_em.append_child(em)
 
         # Append help block
         if self._help:
-            self._wrap_em.append(_html.Small(self._help, css='help-block form-text text-muted'))
+            self._wrap_em.append_child(htmler.Small(self._help, css='help-block form-text text-muted'))
 
         # Append messages placeholder
         if self._has_messages:
-            messages = _html.Div(css='widget-messages')
+            messages = htmler.Div(css='widget-messages')
             if h_sizer:
-                h_sizer.append(messages)
+                h_sizer.append_child(messages)
             else:
-                self._wrap_em.append(messages)
+                self._wrap_em.append_child(messages)
 
         return self._wrap_em
 
@@ -218,12 +219,12 @@ class Abstract(_ABC):
     def set_val(self, value):
         """Set value of the widget
         """
-        self._value = value if value is not None else _deepcopy(self._default)
+        self._value = value if value is not None else deepcopy(self._default)
 
         return self
 
     def clr_val(self):
-        self._value = _deepcopy(self._default)
+        self._value = deepcopy(self._default)
 
     def hide(self):
         """Hides the widget
@@ -424,10 +425,10 @@ class Abstract(_ABC):
     @required.setter
     def required(self, value: bool):
         if value:
-            self.add_rule(_validation.rule.NonEmpty())
+            self.add_rule(validation.rule.NonEmpty())
         else:
             # Clear all added NonEmpty rules
-            self.clr_rules().add_rules([r for r in self.get_rules() if not isinstance(r, _validation.rule.NonEmpty)])
+            self.clr_rules().add_rules([r for r in self.get_rules() if not isinstance(r, validation.rule.NonEmpty)])
 
         self._required = value
 
@@ -465,7 +466,7 @@ class Abstract(_ABC):
     def children(self):
         """Get children widgets.
 
-        :return: _List[Abstract]
+        :return: List[Abstract]
         """
         return self._children.copy()
 
@@ -501,7 +502,7 @@ class Abstract(_ABC):
             self._last_children_weight += 100
             child.weight = self._last_children_weight
         elif child.weight > self._last_children_weight:
-            self._last_children_weight = _ceil(child.weight / 100) * 100
+            self._last_children_weight = ceil(child.weight / 100) * 100
 
         # Obviously, child must be placed in the same form's area as its parent
         child.form_area = self.form_area
@@ -570,14 +571,14 @@ class Abstract(_ABC):
 
         return False
 
-    def add_rule(self, rule: _validation.rule.Rule):
+    def add_rule(self, rule: validation.rule.Rule):
         """Add single validation rule
         """
         self._rules.append(rule)
 
         return self
 
-    def add_rules(self, rules: _List[_validation.rule.Rule]):
+    def add_rules(self, rules: List[validation.rule.Rule]):
         """Add multiple validation rules
         """
         for rule in rules:
@@ -585,7 +586,7 @@ class Abstract(_ABC):
 
         return self
 
-    def get_rules(self) -> _Tuple[_validation.rule.Rule, ...]:
+    def get_rules(self) -> Tuple[validation.rule.Rule, ...]:
         """Get validation rules
         """
         return tuple(self._rules)
@@ -615,7 +616,7 @@ class Abstract(_ABC):
         for super_cls in cls.__mro__:
             if issubclass(super_cls, Abstract):
                 full_msg_id = super_cls.get_package_name() + '@' + partly_msg_id
-                if _lang.is_translation_defined(full_msg_id):
+                if lang.is_translation_defined(full_msg_id):
                     return full_msg_id
 
         return cls.get_package_name() + '@' + partly_msg_id
@@ -624,10 +625,10 @@ class Abstract(_ABC):
     def t(cls, partial_msg_id: str, args: dict = None) -> str:
         """Translate a string in model context
         """
-        return _lang.t(cls.resolve_msg_id(partial_msg_id), args)
+        return lang.t(cls.resolve_msg_id(partial_msg_id), args)
 
     @classmethod
     def t_plural(cls, partial_msg_id: str, num: int = 2) -> str:
         """Translate a string into plural form.
         """
-        return _lang.t_plural(cls.resolve_msg_id(partial_msg_id), num)
+        return lang.t_plural(cls.resolve_msg_id(partial_msg_id), num)
