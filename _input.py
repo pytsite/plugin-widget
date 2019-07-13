@@ -137,11 +137,11 @@ class Text(Input):
             group = htmler.Div(css='input-group')
             if self._prepend:
                 prepend = group.append_child(htmler.Div(css='input-group-addon input-group-prepend'))
-                prepend.append(htmler.Div(self._prepend, css='input-group-text'))
+                prepend.append_child(htmler.Div(self._prepend, css='input-group-text'))
             group.append_child(inp)
             if self._append:
                 append = group.append_child(htmler.Div(css='input-group-addon input-group-append'))
-                append.append(htmler.Div(self._append, css='input-group-text'))
+                append.append_child(htmler.Div(self._append, css='input-group-text'))
             inp = group
 
         if self._inputmask:
