@@ -54,14 +54,16 @@ class Checkbox(Abstract):
 
         inp = htmler.Input(id=self._uid, name=self._name, type='checkbox', value='True', checked=self.checked,
                            required=self.required)
-        label = htmler.Label(self._label, label_for=self._uid)
+        label = htmler.Label(label_for=self._uid)
 
         if self._bootstrap_version == 3:
             label.append_child(inp)
+            label.append_text(self._label)
             div.append_child(label)
         elif self._bootstrap_version == 4:
             inp.set_attr('css', 'form-check-input')
             label.set_attr('css', 'form-check-label')
+            label.append_text(self._label)
             div.append_child(inp)
             div.append_child(label)
 
@@ -256,14 +258,16 @@ class Checkboxes(Select):
         div = htmler.Div(css='form-check' if self._bootstrap_version == 4 else 'checkbox')
         inp = htmler.Input(type='checkbox', name=self.name, value=item[0], checked=checked,
                            required=self.required)
-        label = htmler.Label(item[1])
+        label = htmler.Label()
 
         if self._bootstrap_version == 3:
             label.append_child(inp)
+            label.append_text(item[1])
             div.append_child(label)
         elif self._bootstrap_version == 4:
             inp.set_attr('css', 'form-check-input')
             label.set_attr('css', 'form-check-label')
+            label.append_text(item[1])
             div.append_child(inp)
             div.append_child(label)
 

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.18.3 (2019-07-16)
+
+Errors fixed in `Card`, `Checkbox` and `Checkboxes` widgets.
+
+
 ### 4.18.2 (2019-07-13)
 
 Improper usage of `htmler` fixed.

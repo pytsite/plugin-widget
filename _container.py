@@ -277,8 +277,8 @@ class Card(Container):
         self._css += ' card panel panel-default'
         self._header_css = kwargs.get('header_css', '')
         self._footer_css = kwargs.get('header_css', '')
-        self._header = htmler.Div(kwargs.get('header'), css='card-header panel-heading')
-        self._footer = htmler.Div(kwargs.get('footer'), css='card-footer panel-footer')
+        self._header = kwargs.get('header', '')
+        self._footer = kwargs.get('footer', '')
 
     def _get_element(self, **kwargs) -> htmler.Element:
         """Hook
@@ -286,14 +286,16 @@ class Card(Container):
         em = htmler.TagLessElement()
 
         if len(self._header):
-            self._header.add_css(self._header_css)
-            em.append_child(self._header)
+            header = htmler.Div(self._header, css='card-header panel-heading')
+            header.add_css(self._header_css)
+            em.append_child(header)
 
         body = em.append_child(htmler.Div(css='card-body panel-body children'))
         body.add_css(self._body_css)
 
         if len(self._footer):
-            self._footer.add_css(self._footer_css)
-            em.append_child(self._footer)
+            footer = htmler.Div(self._footer, css='card-footer panel-footer')
+            footer.add_css(self._footer_css)
+            em.append_child(footer)
 
         return em
