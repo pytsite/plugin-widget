@@ -211,7 +211,7 @@ class TextArea(Abstract):
         """Hook
         """
         html_input = htmler.Textarea(
-            content=self.get_val(),
+            self.get_val(),
             id=self._uid,
             name=self._name,
             disabled='disabled' if not self._enabled else None,

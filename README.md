@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.18.4 (2019-07-18)
+
+Error in `TextArea` fixed.
+
+
 ### 4.18.3 (2019-07-16)
 
 Errors fixed in `Card`, `Checkbox` and `Checkboxes` widgets.
