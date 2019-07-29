@@ -4,9 +4,14 @@
 ## Changelog
 
 
+### 4.18.5 (2019-07-29)
+
+Error in `select.Tabs` fixed.
+
+
 ### 4.18.4 (2019-07-18)
 
-Error in `TextArea` fixed.
+Error in `input.TextArea` fixed.
 
 
 ### 4.18.3 (2019-07-16)

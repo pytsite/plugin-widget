@@ -600,7 +600,7 @@ class Tabs(Abstract):
         if not tab_id:
             tab_id = list(self._tabs.keys())[0]
 
-        self._tabs[tab_id]['widgets'].append_child(widget)
+        self._tabs[tab_id]['widgets'].append(widget)
 
         return widget
 
