@@ -199,9 +199,11 @@ class MultiRow(Abstract):
         table.append_child(tfoot)
 
         if self._enabled:
-            add_btn = htmler.A(self._add_btn_label or '', href='#',
-                               css='button-add-slot btn btn-default btn-light btn-sm')
-            add_btn.append_child(htmler.I(css=self._add_btn_icon))
+            add_btn = htmler.A(href='#', css='button-add-slot btn btn-default btn-light btn-sm')
+            if self._add_btn_icon:
+                add_btn.append_child(htmler.I(css=self._add_btn_icon))
+            if self._add_btn_label:
+                add_btn.append_child(self._add_btn_label)
             tfoot_td.append_child(add_btn)
 
         return table
@@ -290,7 +292,7 @@ class Card(Container):
             header.add_css(self._header_css)
             em.append_child(header)
 
-        body = em.append_child(htmler.Div(css='card-body panel-body children'))
+        body = em.append_child(htmler.Div(css='card-body panel-body children'))  # type: htmler.Element
         body.add_css(self._body_css)
 
         if len(self._footer):

@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.18.6 (2019-07-30)
+
+Error in `container.MultiRow` fixed.
+
+
 ### 4.18.5 (2019-07-29)
 
 Error in `select.Tabs` fixed.
