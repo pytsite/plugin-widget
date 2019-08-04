@@ -4,6 +4,11 @@
 ## Changelog
 
 
+### 4.18.7 (2019-08-04)
+
+Requirements updated.
+
+
 ### 4.18.6 (2019-07-30)
 
 Error in `container.MultiRow` fixed.
